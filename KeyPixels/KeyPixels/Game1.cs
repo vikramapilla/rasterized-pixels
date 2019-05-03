@@ -16,6 +16,7 @@ namespace KeyPixels
         Matrix projectionMatrix;
 
         Model playerModel;
+        Model ground;
 
         public static Vector3 playerPosition = Vector3.Zero;
 
@@ -40,6 +41,7 @@ namespace KeyPixels
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerModel = Content.Load<Model>("Models/Shot_Tria");
+            ground = Content.Load<Model>("Models/Ground_Tria");
         }
         
 
@@ -70,6 +72,7 @@ namespace KeyPixels
 
             // TODO: Add your drawing code here
             Draw3DModel(playerModel, worldMatrix, viewMatrix, projectionMatrix);
+            Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             base.Draw(gameTime);
         }
 
@@ -82,11 +85,16 @@ namespace KeyPixels
                     effect.World = worldMatrix;
                     effect.View = viewMatrix;
                     effect.Projection = projectionMatrix;
+                    effect.EnableDefaultLighting();
+                    effect.DiffuseColor = Color.Blue.ToVector3();
+                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.Alpha = 1.0f;
+                    
                 }
                 mesh.Draw();
             }
         }
-
+      
         public static Vector3 getPosition()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
