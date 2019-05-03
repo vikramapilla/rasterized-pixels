@@ -12,8 +12,8 @@ namespace KeyPixels
         SpriteBatch spriteBatch;
 
         Matrix worldMatrix;
-        Matrix viewMatrix;
-        Matrix projectionMatrix;
+        public static Matrix viewMatrix;
+        public static Matrix projectionMatrix;
 
         Model playerModel;
         Model ground;
@@ -94,7 +94,24 @@ namespace KeyPixels
                 mesh.Draw();
             }
         }
-      
+
+        public static void DrawModel(Model model, Matrix worldMatrix)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+
+                    effect.World = worldMatrix;
+                    effect.View = viewMatrix;
+                    effect.Projection = projectionMatrix;
+                }
+                mesh.Draw();
+            }
+        }
+
         public static Vector3 getPosition()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
