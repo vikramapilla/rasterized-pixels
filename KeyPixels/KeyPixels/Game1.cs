@@ -17,6 +17,8 @@ namespace KeyPixels
 
         Model playerModel;
 
+        public static Vector3 playerPosition = Vector3.Zero;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -27,8 +29,7 @@ namespace KeyPixels
 
         protected override void Initialize()
         {
-            worldMatrix = Matrix.CreateTranslation(Vector3.Zero) * Matrix.CreateRotationZ(MathHelper.PiOver2);
-            viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
+            viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.UnitZ);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
 
             base.Initialize();
@@ -54,6 +55,10 @@ namespace KeyPixels
                 Exit();
 
             // TODO: Add your update logic here
+            getPosition();
+            worldMatrix = Matrix.CreateTranslation(playerPosition) * Matrix.CreateRotationZ(MathHelper.PiOver2);
+
+
 
             base.Update(gameTime);
         }
@@ -80,6 +85,30 @@ namespace KeyPixels
                 }
                 mesh.Draw();
             }
+        }
+
+        public static Vector3 getPosition()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                playerPosition += new Vector3(0, 0, 0.1f);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                playerPosition -= new Vector3(0, 0, 0.1f);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                playerPosition -= new Vector3(0.1f, 0, 0);
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                playerPosition += new Vector3(0.1f, 0, 0);
+            }
+
+
+
+            return playerPosition;
         }
 
     }
