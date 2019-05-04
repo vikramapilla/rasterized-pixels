@@ -11,9 +11,9 @@ namespace KeyPixels
     {
         static Model shotModel;
         static List<_Value> posShot;
-        static float speed;
+        float speed;
 
-        private struct _Value{
+        public struct _Value{
             Matrix posMatrix;
             float angleFly;
 
@@ -42,8 +42,6 @@ namespace KeyPixels
             {
                 return new _Value(posMatrix, angleFly);
             }
-
-
         };
 
         public Shots(ContentManager contentManager, string modelName,float _speed, Color _color)
@@ -62,7 +60,6 @@ namespace KeyPixels
             ColorModel(_color);
         }
 
-
         public void createShot(Matrix pos,float ang)
         {
             posShot.Add(new _Value(pos, ang));
@@ -73,8 +70,21 @@ namespace KeyPixels
             posShot.Clear();
         }
 
+        public void updateShotPos(GameTime tm)
+        {
+            int N = posShot.Count;
 
-
+            for (int i = 0; i < N; i++)
+            {
+                Matrix rot = Matrix.CreateRotationY(posShot[i].getAngleFly());
+                Vector3 addVec = new Vector3(0, 0, speed);
+                Matrix addPos = Matrix.CreateTranslation(addVec)*rot;
+                Matrix newM = addPos * posShot[i].getMatric();
+                var cd = posShot[i];
+                cd.setMatrix(newM);
+                posShot[i] = cd;
+            }
+        }
 
         public void Draw()
         {

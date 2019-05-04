@@ -43,7 +43,7 @@ namespace KeyPixels
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.2f, Color.Red,30);
+            shots = new Shots(Content, "Models/Shot_Tria", 0.1f, Color.Red,30);
         }
        
 
@@ -59,6 +59,7 @@ namespace KeyPixels
                 Exit();
 
             // TODO: Add your update logic here
+            shots.updateShotPos(gameTime);
             getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
 
