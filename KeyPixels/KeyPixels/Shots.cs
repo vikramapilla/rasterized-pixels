@@ -93,7 +93,6 @@ namespace KeyPixels
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
-                    effect.EnableDefaultLighting();
                     effect.DiffuseColor = c.ToVector3();
                     effect.Alpha = 1f;
                 }
