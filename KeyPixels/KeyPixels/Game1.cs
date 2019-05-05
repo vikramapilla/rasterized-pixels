@@ -141,7 +141,8 @@ namespace KeyPixels
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                shots.createShot(Matrix.CreateTranslation(playerPosition), 0f);
+                shots.createShot(Matrix.CreateTranslation(playerPosition));
+                shots.createShot(Matrix.CreateRotationY(1f)*Matrix.CreateTranslation(playerPosition));
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
