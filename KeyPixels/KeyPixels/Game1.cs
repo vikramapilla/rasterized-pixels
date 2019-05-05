@@ -17,7 +17,10 @@ namespace KeyPixels
 
         Model playerModel;
         Model ground;
+        Model wall;
         static Shots shots;
+
+        CreateBoundingBox cbB;
 
         public static Vector3 playerPosition = Vector3.Zero;
 
@@ -43,7 +46,10 @@ namespace KeyPixels
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.1f, Color.Red,30);
+            wall = Content.Load<Model>("Models/Wall_Long_Tria");
+            shots = new Shots(Content, "Models/Shot_Tria", 0.01f,new Vector3(0,0,1), Color.Red,30);
+
+            cbB = new CreateBoundingBox(wall,Matrix.Identity);
         }
        
 
@@ -59,11 +65,14 @@ namespace KeyPixels
                 Exit();
 
             // TODO: Add your update logic here
-            shots.updateShotPos(gameTime);
+            shots.updateShotsPos(gameTime);
             getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
 
-
+            if (shots.IsCollision(cbB.bBox, Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix))
+            {
+                
+            }
 
             base.Update(gameTime);
         }
@@ -78,6 +87,7 @@ namespace KeyPixels
 
             Draw3DModel(playerModel, worldMatrix, viewMatrix, projectionMatrix);
             Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
+            Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
 
             base.Draw(gameTime);
         }
@@ -142,7 +152,7 @@ namespace KeyPixels
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 shots.createShot(Matrix.CreateTranslation(playerPosition));
-                shots.createShot(Matrix.CreateRotationY(1f)*Matrix.CreateTranslation(playerPosition));
+                shots.createShot(Matrix.CreateRotationY(1.4f)*Matrix.CreateTranslation(playerPosition));
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
