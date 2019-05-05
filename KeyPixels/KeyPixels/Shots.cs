@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 
 using System.Collections.Generic;
@@ -9,87 +8,71 @@ namespace KeyPixels
 {
     class Shots
     {
-        static Model shotModel;
-        static List<_Value> posShot;
-        static float speed;
-
-        private struct _Value{
-            Matrix posMatrix;
-            float angleFly;
-
-            public _Value(Matrix m,float aFly)
-            {
-                posMatrix = m;
-                angleFly = aFly;
-            }
-
-            public Matrix getMatric()
-            {
-                return posMatrix;
-            }
-
-            public void setMatrix(Matrix m)
-            {
-                posMatrix = m;
-            }
-
-            public float getAngleFly()
-            {
-                return angleFly;
-            }
-
-            public _Value getValue()
-            {
-                return new _Value(posMatrix, angleFly);
-            }
-
-
-        };
+        private static Model mModel;
+        private static List<Matrix> posModel;
+        private float speed;
 
         public Shots(ContentManager contentManager, string modelName,float _speed, Color _color)
         {
-            shotModel = contentManager.Load<Model>(modelName);
-            posShot = new List<_Value>();
+            mModel = contentManager.Load<Model>(modelName);
+            posModel = new List<Matrix>();
             speed = _speed;
             ColorModel(_color);
         }
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Color _color, int nStart)
         {
-            shotModel = contentManager.Load<Model>(modelName);
-            posShot = new List<_Value>(nStart);
+            mModel = contentManager.Load<Model>(modelName);
+            posModel = new List<Matrix>(nStart);
             speed = _speed;
             ColorModel(_color);
         }
 
-
-        public void createShot(Matrix pos,float ang)
+        public void createShot(Matrix posMatrix)
         {
-            posShot.Add(new _Value(pos, ang));
+            posModel.Add(posMatrix);
         }
 
         public void clearAll()
         {
-            posShot.Clear();
+            posModel.Clear();
         }
 
+        public void updateShotPos(GameTime tm)
+        {
+            int N = posModel.Count;
+            for (int i = 0; i < N; i++)
+            {
+                var temp = posModel[i];
+                Matrix rotM = new Matrix();
+                Matrix _transM = new Matrix();
 
+                //extrahiere Rotations Matrix
+                rotM.M11 = temp.M11; rotM.M12 = temp.M12; rotM.M13 = temp.M13; rotM.M21 = temp.M21; rotM.M22 = temp.M22;
+                rotM.M23 = temp.M23; rotM.M31 = temp.M31; rotM.M32 = temp.M32; rotM.M33 = temp.M33; rotM.M44 = 1;
 
+                //extrahiere Translations Matrix
+                _transM.M11 = 1; _transM.M22 = 1; _transM.M33 = 1;
+                _transM.M41 = temp.M41; _transM.M42 = temp.M42; _transM.M43 = temp.M43; _transM.M44 = 1;
+
+                posModel[i] = Matrix.CreateTranslation(new Vector3(0, 0, speed)) * rotM * _transM;
+            }
+        }
 
         public void Draw()
         {
-            int N = posShot.Count;
+            int N = posModel.Count;
 
             for (int i = 0; i < N; i++)
             {
-                Game1.DrawModel(shotModel, posShot[i].getMatric());
+                Game1.DrawModel(mModel, posModel[i]);
             }
         }
 
 
         private void ColorModel(Color c)
         {
-            foreach (ModelMesh mesh in shotModel.Meshes)
+            foreach (ModelMesh mesh in mModel.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {
