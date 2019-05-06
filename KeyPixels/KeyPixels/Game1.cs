@@ -83,7 +83,7 @@ namespace KeyPixels
             GraphicsDevice.Clear(Color.SlateGray);
 
             // TODO: Add your drawing code here
-            shots.Draw();
+            shots.Draw(viewMatrix,projectionMatrix);
 
             Draw3DModel(playerModel, worldMatrix, viewMatrix, projectionMatrix);
             Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
@@ -109,23 +109,6 @@ namespace KeyPixels
 //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
                     
-                }
-                mesh.Draw();
-            }
-        }
-
-        public static void DrawModel(Model model, Matrix worldMatrix)
-        {
-            foreach (ModelMesh mesh in model.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-
-                    effect.World = worldMatrix;
-                    effect.View = viewMatrix;
-                    effect.Projection = projectionMatrix;
                 }
                 mesh.Draw();
             }
