@@ -19,7 +19,7 @@ namespace KeyPixels
 
         public Camera(GraphicsDeviceManager graphics)
         {
-            position = new Vector3(0, 2f, 4f);
+            position = new Vector3(4f, 2f, 0f);
             target = Vector3.Zero;
             fieldOfView = MathHelper.PiOver4;
             aspectRatio = graphics.PreferredBackBufferWidth / graphics.PreferredBackBufferHeight;

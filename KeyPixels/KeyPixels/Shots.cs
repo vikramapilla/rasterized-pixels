@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
 namespace KeyPixels
@@ -9,28 +8,47 @@ namespace KeyPixels
     class Shots
     {
         private static Model mModel;
-        private static List<Matrix> posModel;
-        private float speed;
+        private static List<_Value> posModel;
+        private static Vector3 target;
+        private static CreateBoundingBox bbModel;
 
-        public Shots(ContentManager contentManager, string modelName,float _speed, Color _color)
+        private struct _Value {
+            public Matrix _matrix;
+            public Vector3 _target;
+        };
+
+        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _targetSpeed)
         {
-            mModel = contentManager.Load<Model>(modelName);
-            posModel = new List<Matrix>();
-            speed = _speed;
+            helpConstruct(contentManager, modelName, _speed, _targetSpeed);
+            posModel = new List<_Value>();
+        }
+
+        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _targetSpeed, int nStart)
+        {
+            helpConstruct(contentManager, modelName, _speed, _targetSpeed);
+            posModel = new List<_Value>(nStart);
+        }
+
+        public Shots(ContentManager contentManager, string modelName,float _speed,Vector3 _targetSpeed, Color _color)
+        {
+            helpConstruct(contentManager, modelName, _speed, _targetSpeed);
+            posModel = new List<_Value>();
             ColorModel(_color);
         }
 
-        public Shots(ContentManager contentManager, string modelName, float _speed, Color _color, int nStart)
+        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _targetSpeed, Color _color, int nStart)
         {
-            mModel = contentManager.Load<Model>(modelName);
-            posModel = new List<Matrix>(nStart);
-            speed = _speed;
+            helpConstruct(contentManager, modelName, _speed, _targetSpeed);
+            posModel = new List<_Value>(nStart);
             ColorModel(_color);
         }
 
         public void createShot(Matrix posMatrix)
         {
-            posModel.Add(posMatrix);
+            _Value temp = new _Value();
+            temp._matrix = posMatrix;
+            temp._target = Vector3.Transform(target, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+            posModel.Add(temp);
         }
 
         public void clearAll()
@@ -38,37 +56,74 @@ namespace KeyPixels
             posModel.Clear();
         }
 
-        public void updateShotPos(GameTime tm)
+        public void updateShotsPos(GameTime tm)
         {
             int N = posModel.Count;
             for (int i = 0; i < N; i++)
             {
                 var temp = posModel[i];
-                Matrix rotM = new Matrix();
-                Matrix _transM = new Matrix();
-
-                //extrahiere Rotations Matrix
-                rotM.M11 = temp.M11; rotM.M12 = temp.M12; rotM.M13 = temp.M13; rotM.M21 = temp.M21; rotM.M22 = temp.M22;
-                rotM.M23 = temp.M23; rotM.M31 = temp.M31; rotM.M32 = temp.M32; rotM.M33 = temp.M33; rotM.M44 = 1;
-
-                //extrahiere Translations Matrix
-                _transM.M11 = 1; _transM.M22 = 1; _transM.M33 = 1;
-                _transM.M41 = temp.M41; _transM.M42 = temp.M42; _transM.M43 = temp.M43; _transM.M44 = 1;
-
-                posModel[i] = Matrix.CreateTranslation(new Vector3(0, 0, speed)) * rotM * _transM;
+                temp._matrix.Translation += temp._target;
+                posModel[i] = temp;
             }
         }
 
-        public void Draw()
+        public bool IsCollision(BoundingBox _bModel, Matrix WorldMatrix)
+        {
+            BoundingBox bBox1;
+            BoundingBox bBox2;
+            int N = posModel.Count;
+            for (int i = 0; i < N; i++)
+            {
+                bBox1.Max = Vector3.Transform(bbModel.bBox.Max, posModel[i]._matrix);
+                bBox1.Min = Vector3.Transform(bbModel.bBox.Min, posModel[i]._matrix);
+
+                for (int enemyMeshIndex = 0; enemyMeshIndex < mModel.Meshes.Count; enemyMeshIndex++)
+                {
+                    bBox2.Max = Vector3.Transform(_bModel.Max, WorldMatrix);
+                    bBox2.Min = Vector3.Transform(_bModel.Min, WorldMatrix);
+
+                    if (bBox1.Intersects(bBox2))
+                    {
+                        posModel.Remove(posModel[i]);
+                        return true;
+                    }
+                }
+            }
+            return false;
+
+        }
+
+        public void Draw(Matrix viewMatrix, Matrix projectionMatrix)
         {
             int N = posModel.Count;
 
             for (int i = 0; i < N; i++)
             {
-                Game1.DrawModel(mModel, posModel[i]);
+                foreach (ModelMesh mesh in mModel.Meshes)
+                {
+                    foreach (BasicEffect effect in mesh.Effects)
+                    {
+                        effect.EnableDefaultLighting();
+                        effect.PreferPerPixelLighting = true;
+
+                        effect.World = posModel[i]._matrix;
+                        effect.View = viewMatrix;
+                        effect.Projection = projectionMatrix;
+                    }
+                    mesh.Draw();
+                }
             }
         }
 
+
+
+        private void helpConstruct(ContentManager contentManager, string modelName, float _speed, Vector3 _targetSpeed)
+        {
+            mModel = contentManager.Load<Model>(modelName);
+            _targetSpeed.Normalize();
+            target = new Vector3(_targetSpeed.X * _speed, _targetSpeed.Y * _speed, _targetSpeed.Z * _speed);
+            bbModel = new CreateBoundingBox(mModel, Matrix.Identity);
+        }
 
         private void ColorModel(Color c)
         {
