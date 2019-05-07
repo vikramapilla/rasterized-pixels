@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -9,16 +9,19 @@ namespace KeyPixels
     {
         GraphicsDeviceManager graphics;
         Camera camera;
-        Player player;
         SpriteBatch spriteBatch;
 
         Matrix worldMatrix;
         public static Matrix viewMatrix;
         public static Matrix projectionMatrix;
-        
+
+        Model playerModel;
         Model ground;
         Model wall;
         static Shots shots;
+
+        Player player;
+        Map map;
 
         CreateBoundingBox cbB;
 
@@ -29,7 +32,6 @@ namespace KeyPixels
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             camera = new Camera(graphics);
-            player = new Player();
         }
 
 
@@ -38,6 +40,7 @@ namespace KeyPixels
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
 
+            player = new Player();
             player.initialize(Content);
             base.Initialize();
         }
@@ -46,10 +49,11 @@ namespace KeyPixels
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.01f,new Vector3(0,0,1), Color.Red,30);
-
+            map = new Map(ground, wall, viewMatrix, projectionMatrix);
             cbB = new CreateBoundingBox(wall,Matrix.Identity);
         }
        
@@ -67,10 +71,12 @@ namespace KeyPixels
 
             // TODO: Add your update logic here
             shots.updateShotsPos(gameTime);
-            playerPosition = getPosition();
+            getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
 
-            if (shots.IsCollision(cbB.bBox, Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix))
+            Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix;
+
+            if (shots.IsCollision(ref cbB.bBox,ref mm))
             {
                 
             }
@@ -84,16 +90,16 @@ namespace KeyPixels
             GraphicsDevice.Clear(Color.SlateGray);
 
             // TODO: Add your drawing code here
-            shots.Draw(viewMatrix,projectionMatrix);
-
+            shots.Draw(ref viewMatrix,ref projectionMatrix);
+            
+            //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
+            //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             player.Draw();
-            Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
-            Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
-
+            map.CreateMap();
             base.Draw(gameTime);
         }
 
-        public static void Draw3DModel(Model model, Matrix _worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix)
+        public static void Draw3DModel(Model model, Matrix worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix)
         {
             foreach (ModelMesh mesh in model.Meshes)
             {
@@ -102,7 +108,7 @@ namespace KeyPixels
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
 
-                    effect.World = _worldMatrix;
+                    effect.World = worldMatrix;
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
 
@@ -115,14 +121,12 @@ namespace KeyPixels
             }
         }
 
-
-
         public static Vector3 getPosition()
-        { 
+        {
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 shots.createShot(Matrix.CreateTranslation(playerPosition));
-                shots.createShot(Matrix.CreateRotationY(1.4f)*Matrix.CreateTranslation(playerPosition));
+                shots.createShot(Matrix.CreateRotationY(1.4f) * Matrix.CreateTranslation(playerPosition));
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
