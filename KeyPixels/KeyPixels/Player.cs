@@ -28,7 +28,7 @@ namespace KeyPixels
 
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                angle = -180f;
+                angle = 0f;
                 playerPosition += new Vector3(0, 0, 0.01f);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
@@ -38,30 +38,30 @@ namespace KeyPixels
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                angle = -90f;
+                angle = 90f;
                 playerPosition += new Vector3(0.01f, 0, 0);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                angle = 90f;
+                angle = -90f;
                 playerPosition -= new Vector3(0.01f, 0, 0);
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.W) && Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                angle = -135f;
+                angle = 45f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.W) && Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                angle = 135f;
+                angle = -45f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                angle = -45f;
+                angle = 135f;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                angle = 45f;
+                angle = -135f;
             }
             worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(playerPosition);
             System.Diagnostics.Debug.WriteLine(angle);

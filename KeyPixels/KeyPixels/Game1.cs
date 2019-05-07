@@ -21,7 +21,7 @@ namespace KeyPixels
         static Shots shots;
 
         Map map;
-        Player player;
+        static Player player;
 
         CreateBoundingBox cbB;
 
@@ -76,10 +76,10 @@ namespace KeyPixels
 
             Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix;
 
-            if (shots.IsCollision(ref cbB.bBox, ref mm))
-            {
+            //if (shots.IsCollision(ref cbB.bBox, ref mm))
+            //{
 
-            }
+            //}
 
             base.Update(gameTime);
         }
@@ -114,7 +114,7 @@ namespace KeyPixels
                     effect.DiffuseColor = Color.Blue.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
-
+                    
                 }
                 mesh.Draw();
             }
@@ -124,8 +124,8 @@ namespace KeyPixels
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                shots.createShot(Matrix.CreateTranslation(playerPosition));
-                shots.createShot(Matrix.CreateRotationY(1.4f) * Matrix.CreateTranslation(playerPosition));
+                shots.createShot(player.worldMatrix);
+                shots.createShot(Matrix.CreateRotationY(1.4f) * player.worldMatrix);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
@@ -133,7 +133,7 @@ namespace KeyPixels
             }
 
 
-            return playerPosition;
+            return player.worldMatrix.Translation;
         }
 
     }

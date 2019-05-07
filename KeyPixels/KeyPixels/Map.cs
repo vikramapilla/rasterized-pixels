@@ -14,12 +14,15 @@ namespace KeyPixels
         Model _wall;
         Matrix _viewMatrix;
         Matrix _projectionMatrix;
+        public List<Matrix> wallposMatrix;
         public Map(Model ground,Model wall, Matrix viewMatrix, Matrix projectionMatrix)
         {
             _ground = ground;
             _wall = wall;
             _viewMatrix = viewMatrix;
             _projectionMatrix = projectionMatrix;
+            wallposMatrix = new List<Matrix>();
+            
         }
         public void CreateMap()
         {
@@ -49,92 +52,119 @@ namespace KeyPixels
                     else if (a[j, i] == 2)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
-
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
                     }
                     else if (a[j, i] == 3)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 4)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
 
                     }
                     else if (a[j, i] == 5)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2+1, 0, posz * 2 - j * 2 ));
 
                     }
                     else if (a[j, i] == 6)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 + 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 7)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 8)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 9)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 + 1, 0, posz * 2 - j * 2));
 
 
                     }
                     else if (a[j, i] == 10)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
-                        Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 + 1, 0, posz * 2 - j * 2));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 11)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 12)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
-                        Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2 - 1, posz * 2 - j * 2, _wall, 90);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 + 1, 0, posz * 2 - j * 2));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
 
                     }
                     else if (a[j, i] == 13)
                     {
                         Draw(posx * 2 - i * 2, posz * 2 - j * 2, _ground, 0);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
-                        Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
-                        Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 - 1, _wall, 0);
+                        //Draw(posx * 2 - i * 2 + 1, posz * 2 - j * 2, _wall, 90);
+                        //Draw(posx * 2 - i * 2, posz * 2 - j * 2 + 1, _wall, 0);
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 + 1, 0, posz * 2 - j * 2));
+                        wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
 
                     }
                     else { }
 
                     
                 }
+            }
+            foreach (Matrix m in wallposMatrix)
+            {
+                Draw(_wall, m);
             }
         }
         
@@ -150,6 +180,26 @@ namespace KeyPixels
                     effect.PreferPerPixelLighting = true;
                     effect.View = _viewMatrix;
                     effect.World = Matrix.CreateRotationY(MathHelper.ToRadians(angle))*Matrix.CreateTranslation(posx,0,posz);
+                    effect.Projection = _projectionMatrix;
+                    effect.DiffuseColor = Color.Blue.ToVector3();
+                    effect.Alpha = 1.0f;
+                }
+                meshn.Draw();
+            }
+
+        }
+        public void Draw( Model model, Matrix world)
+
+        {
+
+            foreach (ModelMesh meshn in model.Meshes)
+            {
+                foreach (BasicEffect effect in meshn.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+                    effect.View = _viewMatrix;
+                    effect.World = world;
                     effect.Projection = _projectionMatrix;
                     effect.DiffuseColor = Color.Blue.ToVector3();
                     effect.Alpha = 1.0f;
