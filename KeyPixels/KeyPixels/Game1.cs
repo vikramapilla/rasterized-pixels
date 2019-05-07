@@ -91,19 +91,19 @@ namespace KeyPixels
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                playerPosition += new Vector3(0, 0, 0.1f);
+                playerPosition += new Vector3(0, 0, 0.01f);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                playerPosition -= new Vector3(0, 0, 0.1f);
+                playerPosition -= new Vector3(0, 0, 0.01f);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                playerPosition -= new Vector3(0.1f, 0, 0);
+                playerPosition -= new Vector3(0.01f, 0, 0);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                playerPosition += new Vector3(0.1f, 0, 0);
+                playerPosition += new Vector3(0.01f, 0, 0);
             }
 
 
