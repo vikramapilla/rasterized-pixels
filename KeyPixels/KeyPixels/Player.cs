@@ -29,22 +29,22 @@ namespace KeyPixels
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
                 angle = -180f;
-                playerPosition -= new Vector3(0.01f, 0, 0);
+                playerPosition += new Vector3(0, 0, 0.01f);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
                 angle = 180f;
-                playerPosition += new Vector3(0.01f, 0, 0);
+                playerPosition -= new Vector3(0, 0, 0.01f);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
                 angle = -90f;
-                playerPosition += new Vector3(0, 0, 0.01f);
+                playerPosition += new Vector3(0.01f, 0, 0);
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 angle = 90f;
-                playerPosition -= new Vector3(0, 0, 0.01f);
+                playerPosition -= new Vector3(0.01f, 0, 0);
             }
 
             if (Keyboard.GetState().IsKeyDown(Keys.W) && Keyboard.GetState().IsKeyDown(Keys.D))
