@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -20,6 +20,8 @@ namespace KeyPixels
         Model wall;
         static Shots shots;
 
+        Map map;
+
         CreateBoundingBox cbB;
 
         public static Vector3 playerPosition = Vector3.Zero;
@@ -36,7 +38,7 @@ namespace KeyPixels
         {
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
-
+            
             base.Initialize();
         }
         
@@ -48,7 +50,7 @@ namespace KeyPixels
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.01f,new Vector3(0,0,1), Color.Red,30);
-
+            map = new Map(ground, wall, viewMatrix, projectionMatrix);
             cbB = new CreateBoundingBox(wall,Matrix.Identity);
         }
        
@@ -88,9 +90,9 @@ namespace KeyPixels
             shots.Draw(ref viewMatrix,ref projectionMatrix);
 
             Draw3DModel(playerModel, worldMatrix, viewMatrix, projectionMatrix);
-            Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
-            Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
-
+            //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
+            //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
+            map.CreateMap();
             base.Draw(gameTime);
         }
 
