@@ -69,7 +69,9 @@ namespace KeyPixels
             getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
 
-            if (shots.IsCollision(cbB.bBox, Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix))
+            Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix;
+
+            if (shots.IsCollision(ref cbB.bBox,ref mm))
             {
                 
             }
@@ -83,7 +85,7 @@ namespace KeyPixels
             GraphicsDevice.Clear(Color.SlateGray);
 
             // TODO: Add your drawing code here
-            shots.Draw(viewMatrix,projectionMatrix);
+            shots.Draw(ref viewMatrix,ref projectionMatrix);
 
             Draw3DModel(playerModel, worldMatrix, viewMatrix, projectionMatrix);
             Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
@@ -135,7 +137,7 @@ namespace KeyPixels
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 shots.createShot(Matrix.CreateTranslation(playerPosition));
-                shots.createShot(Matrix.CreateRotationY(1.4f)*Matrix.CreateTranslation(playerPosition));
+                shots.createShot(Matrix.CreateRotationY(1.4f) * Matrix.CreateTranslation(playerPosition));
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C))
             {
