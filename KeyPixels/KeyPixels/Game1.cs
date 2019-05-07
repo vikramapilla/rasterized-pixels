@@ -20,8 +20,8 @@ namespace KeyPixels
         Model wall;
         static Shots shots;
 
-        Player player;
         Map map;
+        Player player;
 
         CreateBoundingBox cbB;
 
@@ -40,11 +40,9 @@ namespace KeyPixels
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
 
-            player = new Player();
-            player.initialize(Content);
             base.Initialize();
         }
-        
+
 
         protected override void LoadContent()
         {
@@ -52,11 +50,13 @@ namespace KeyPixels
             playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.01f,new Vector3(0,0,1), Color.Red,30);
+            shots = new Shots(Content, "Models/Shot_Tria", 0.01f, new Vector3(0, 0, 1), Color.Red, 30);
+            player = new Player();
+            player.initialize(Content);
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
-            cbB = new CreateBoundingBox(wall,Matrix.Identity);
+            cbB = new CreateBoundingBox(wall, Matrix.Identity);
         }
-       
+
 
         protected override void UnloadContent()
         {
@@ -76,9 +76,9 @@ namespace KeyPixels
 
             Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix;
 
-            if (shots.IsCollision(ref cbB.bBox,ref mm))
+            if (shots.IsCollision(ref cbB.bBox, ref mm))
             {
-                
+
             }
 
             base.Update(gameTime);
@@ -90,11 +90,10 @@ namespace KeyPixels
             GraphicsDevice.Clear(Color.SlateGray);
 
             // TODO: Add your drawing code here
-            shots.Draw(ref viewMatrix,ref projectionMatrix);
-            
+            shots.Draw(ref viewMatrix, ref projectionMatrix);
+            player.Draw();
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
-            player.Draw();
             map.CreateMap();
             base.Draw(gameTime);
         }
@@ -113,9 +112,9 @@ namespace KeyPixels
                     effect.Projection = _projectionMatrix;
 
                     effect.DiffuseColor = Color.Blue.ToVector3();
-//                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
-                    
+
                 }
                 mesh.Draw();
             }
@@ -134,7 +133,7 @@ namespace KeyPixels
             }
 
 
-                return playerPosition;
+            return playerPosition;
         }
 
     }
