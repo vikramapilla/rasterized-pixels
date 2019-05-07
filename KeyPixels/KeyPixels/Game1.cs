@@ -80,6 +80,7 @@ namespace KeyPixels
             //{
 
             //}
+            player.getPosition();
 
             base.Update(gameTime);
         }

@@ -23,9 +23,8 @@ namespace KeyPixels
             playerPosition = new Vector3(0, 0, 0);
         }
 
-        public void Draw()
+        public void getPosition()
         {
-
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
                 angle = 0f;
@@ -65,9 +64,12 @@ namespace KeyPixels
             }
             worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(playerPosition);
             System.Diagnostics.Debug.WriteLine(angle);
+        }
 
+
+        public void Draw()
+        {
             Game1.Draw3DModel(playerModel, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
-
         }
 
     }
