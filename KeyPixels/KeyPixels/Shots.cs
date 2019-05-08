@@ -68,7 +68,7 @@ namespace KeyPixels
             _Value temp = new _Value();
             temp._matrix = posMatrix;
             Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
-            FastCalcMono3D.SmartMatrixVec3NotY(ref directionAddSpeed, ref help, ref temp._directionAddSpeed);
+            //FastCalcMono3D.SmartMatrixVec3NotY(ref directionAddSpeed, ref help, ref temp._directionAddSpeed);
             posModel.Add(temp);
         }
 
@@ -88,7 +88,7 @@ namespace KeyPixels
             for (int i = 0; i < N; i++)
             {
                 var temp = posModel[i];
-                FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                //FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
                 posModel[i] = temp;
             }
         }
@@ -103,7 +103,7 @@ namespace KeyPixels
             for (int i = 0; i < N; i++)
             {
                 var temp = posModel[i];
-                FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                //FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
                 posModel[i] = temp;
             }
         }

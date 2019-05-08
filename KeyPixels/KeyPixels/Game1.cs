@@ -54,6 +54,7 @@ namespace KeyPixels
             player = new Player();
             player.initialize(Content);
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
+            map.CreateMap();
             cbB = new CreateBoundingBox(wall, Matrix.Identity);
         }
 
@@ -95,7 +96,7 @@ namespace KeyPixels
             player.Draw();
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
-            map.CreateMap();
+            map.Draw();
             base.Draw(gameTime);
         }
 

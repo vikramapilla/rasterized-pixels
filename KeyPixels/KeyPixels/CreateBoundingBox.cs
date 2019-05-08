@@ -8,13 +8,14 @@ namespace KeyPixels
     {
         public BoundingBox bBox;
         private Vector2[] pVec2;
+        
 
         public CreateBoundingBox(Model model, Matrix meshTransform)
         {
             Vector3 meshMax = new Vector3(float.MinValue);
             Vector3 meshMin = new Vector3(float.MaxValue);
             pVec2 = new Vector2[4];
-
+            
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (ModelMeshPart part in mesh.MeshParts)
@@ -52,7 +53,7 @@ namespace KeyPixels
             Vector2[] temp = new Vector2[4];
             for (int i = 0; i < 4; ++i)
             {
-                FastCalcMono3D.SmartMatrixVec2_XZ(ref pVec2[i], ref MM, ref temp[i]);
+                //FastCalcMono3D.SmartMatrixVec2_XZ(ref pVec2[i], ref MM, ref temp[i]);
                 temp[i].X += MM.M41;
                 temp[i].Y += MM.M43;
             }
