@@ -12,7 +12,8 @@ namespace KeyPixels
         private static Vector3 directionAddSpeed;
         private static CreateBoundingBox bbModel;
 
-        private struct _Value {
+        private struct _Value
+        {
             public Matrix _matrix;
             public Vector3 _directionAddSpeed;
         };
@@ -29,7 +30,7 @@ namespace KeyPixels
             posModel = new List<_Value>(nStart);
         }
 
-        public Shots(ContentManager contentManager, string modelName,float _speed,Vector3 _directionSpeed, Color _color)
+        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _color)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<_Value>();
@@ -56,11 +57,26 @@ namespace KeyPixels
             posModel.Add(temp);
         }
 
+
+        /// <summary>
+        ///     createShot will be create a Shot of now time posPlayer. Y in Vector not use! faster!
+        ///     E.g. posMatrix := Player Matrix (+ Translate Shot position)
+        /// </summary>
+
+        public void createShotnotY(Matrix posMatrix)
+        {
+            _Value temp = new _Value();
+            temp._matrix = posMatrix;
+            Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
+            FastCalcMono3D.SmartMatrixVec3NotY(ref directionAddSpeed, ref help, ref temp._directionAddSpeed);
+            posModel.Add(temp);
+        }
+
         /// <summary>
         ///     clearAll will be remove all position Matrix.
         /// </summary>
 
-        public void clearAll() {posModel.Clear();}
+        public void clearAll() { posModel.Clear(); }
 
         /// <summary>
         ///     updateShotsPos will be change all position Matrix with seperate Speed vector.
@@ -72,12 +88,27 @@ namespace KeyPixels
             for (int i = 0; i < N; i++)
             {
                 var temp = posModel[i];
-                temp._matrix.Translation += temp._directionAddSpeed;
+                FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
                 posModel[i] = temp;
             }
         }
 
-        public bool IsCollision(ref BoundingBox _bModel,ref Matrix WorldMatrix)
+        /// <summary>
+        ///     updateShotsPos will be change all position Matrix with seperate Speed vector. Y in Vector not use! faster!
+        /// </summary>
+
+        public void updateShotsPosnotY(GameTime tm)
+        {
+            int N = posModel.Count;
+            for (int i = 0; i < N; i++)
+            {
+                var temp = posModel[i];
+                FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                posModel[i] = temp;
+            }
+        }
+
+        public bool IsCollision(ref BoundingBox _bModel, ref Matrix WorldMatrix)
         {
             BoundingBox bBox1;
             BoundingBox bBox2;
@@ -102,7 +133,7 @@ namespace KeyPixels
             return false;
         }
 
-        public bool IsCollision(ref BoundingBox _bModel,ref Matrix[] WorldMatrix,out List<int> _number)
+        public bool IsCollision(ref BoundingBox _bModel, ref Matrix[] WorldMatrix, out List<int> _number)
         {
             BoundingBox bBox1;
             BoundingBox bBox2;
@@ -116,7 +147,7 @@ namespace KeyPixels
 
                 for (int enemyMeshIndex = 0; enemyMeshIndex < mModel.Meshes.Count; enemyMeshIndex++)
                 {
-                    for(int z=0;z<WorldMatrix.Length; ++z)
+                    for (int z = 0; z < WorldMatrix.Length; ++z)
                     {
                         bBox2.Max = Vector3.Transform(_bModel.Max, WorldMatrix[z]);
                         bBox2.Min = Vector3.Transform(_bModel.Min, WorldMatrix[z]);
@@ -141,7 +172,7 @@ namespace KeyPixels
         ///     projectionMatrix := Matrix.CreatePerspectiveFieldOfView(,,,)
         /// </summary>
 
-        public void Draw(ref Matrix viewMatrix,ref Matrix projectionMatrix)
+        public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
             int N = posModel.Count;
 

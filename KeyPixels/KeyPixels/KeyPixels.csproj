@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Camera.cs" />
     <Compile Include="CreateBoundingBox.cs" />
+    <Compile Include="FastCalcMono3D.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Player.cs" />
