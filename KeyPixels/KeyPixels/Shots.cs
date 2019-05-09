@@ -88,6 +88,7 @@ namespace KeyPixels
             for (int i = 0; i < N; i++)
             {
                 var temp = posModel[i];
+                temp._matrix.Translation += temp._directionAddSpeed;
                 //FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
                 posModel[i] = temp;
             }
