@@ -53,7 +53,7 @@ namespace KeyPixels
             playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.01f, new Vector3(0, 0, 1), Color.Red, 30);
+            shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red, 30);
             player = new Player();
             player.initialize(Content);
             enemy = new Enemy();

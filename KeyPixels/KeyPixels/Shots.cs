@@ -112,6 +112,7 @@ namespace KeyPixels
         {
             BoundingBox bBox1;
             BoundingBox bBox2;
+            bool hit= false;
             int N = posModel.Count;
             for (int i = 0; i < N; i++)
             {
@@ -126,11 +127,12 @@ namespace KeyPixels
                     if (bBox1.Intersects(bBox2))
                     {
                         posModel.Remove(posModel[i]);
-                        return true;
+                        hit = true;
+                        N--;
                     }
                 }
             }
-            return false;
+            return hit;
         }
 
         public bool IsCollision(ref BoundingBox _bModel, ref Matrix[] WorldMatrix, out List<int> _number)
