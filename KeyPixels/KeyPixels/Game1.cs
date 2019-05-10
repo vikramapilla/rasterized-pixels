@@ -25,6 +25,7 @@ namespace KeyPixels
         static Enemy enemy;
 
         CreateBoundingBox cbB;
+        static int colldown;
 
         public static Vector3 playerPosition = Vector3.Zero;
 
@@ -40,6 +41,7 @@ namespace KeyPixels
         {
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
+            colldown = 0;
 
             base.Initialize();
         }
@@ -78,12 +80,14 @@ namespace KeyPixels
             getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
 
-            Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 1) * worldMatrix;
+            Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 0) * worldMatrix;
+            foreach (Matrix m in map.wallposMatrix) { 
+            cbB = new CreateBoundingBox(wall, m);
+            if (shots.IsCollision(ref cbB.bBox, ref mm))
+            {
 
-            //if (shots.IsCollision(ref cbB.bBox, ref mm))
-            //{
-
-            //}
+            }
+            }
             player.getPosition();
 
             base.Update(gameTime);
@@ -128,10 +132,15 @@ namespace KeyPixels
 
         public static Vector3 getPosition()
         {
+            colldown -= 1;
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
-                shots.createShot(player.worldMatrix);
-                shots.createShot(Matrix.CreateRotationY(1.4f) * player.worldMatrix);
+                if (colldown < 1)
+                {
+                    shots.createShot(player.worldMatrix);
+                    shots.createShot(Matrix.CreateRotationY(1.4f) * player.worldMatrix);
+                    colldown = 50;
+                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.C))
             {

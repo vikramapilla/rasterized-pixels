@@ -16,6 +16,7 @@ namespace KeyPixels
         Matrix _projectionMatrix;
         public List<Matrix> wallposMatrix;
         List<Matrix> groundposMatrix;
+        List<Array> mapList;
         public Map(Model ground,Model wall, Matrix viewMatrix, Matrix projectionMatrix)
         {
             _ground = ground;
@@ -30,7 +31,8 @@ namespace KeyPixels
         {
             int posx;
             int posz;
-            
+            wallposMatrix.Clear();
+            groundposMatrix.Clear();
             int[,] a = new int[7, 7] {
                 { 0, 0, 10, 0, 0, 0, 0 },
                 { 0, 6, 3, 0, 6, 7, 0 },
@@ -189,7 +191,7 @@ namespace KeyPixels
                     effect.View = _viewMatrix;
                     effect.World = world;
                     effect.Projection = _projectionMatrix;
-                    effect.DiffuseColor = Color.Blue.ToVector3();
+                    effect.DiffuseColor = Color.MistyRose.ToVector3();
                     effect.Alpha = 1.0f;
                 }
                 meshn.Draw();
