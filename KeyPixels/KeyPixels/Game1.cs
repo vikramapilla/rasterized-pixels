@@ -83,7 +83,7 @@ namespace KeyPixels
             Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 0) * worldMatrix;
             foreach (Matrix m in map.wallposMatrix) { 
             cbB = new CreateBoundingBox(wall, m);
-            if (shots.IsCollision(ref cbB.bBox, ref mm))
+            if (shots.IsCollision(ref cbB.bBox, m))
             {
 
             }
@@ -138,7 +138,6 @@ namespace KeyPixels
                 if (colldown < 1)
                 {
                     shots.createShot(player.worldMatrix);
-                    shots.createShot(Matrix.CreateRotationY(1.4f) * player.worldMatrix);
                     colldown = 50;
                 }
             }

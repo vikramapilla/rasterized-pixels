@@ -16,6 +16,7 @@ namespace KeyPixels
         {
             public Matrix _matrix;
             public Vector3 _directionAddSpeed;
+            public CreateBoundingBox _bbox;
         };
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
@@ -54,6 +55,7 @@ namespace KeyPixels
             _Value temp = new _Value();
             temp._matrix = posMatrix;
             temp._directionAddSpeed = Vector3.Transform(directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+            temp._bbox = new CreateBoundingBox(mModel, temp._matrix);
             posModel.Add(temp);
         }
 
@@ -89,6 +91,8 @@ namespace KeyPixels
             {
                 var temp = posModel[i];
                 FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                temp._bbox.bBox.Max += temp._directionAddSpeed;
+                temp._bbox.bBox.Min += temp._directionAddSpeed;
                 posModel[i] = temp;
             }
         }
@@ -104,11 +108,13 @@ namespace KeyPixels
             {
                 var temp = posModel[i];
                 FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                temp._bbox.bBox.Max += temp._directionAddSpeed;
+                temp._bbox.bBox.Min += temp._directionAddSpeed;
                 posModel[i] = temp;
             }
         }
 
-        public bool IsCollision(ref BoundingBox _bModel, ref Matrix WorldMatrix)
+        public bool IsCollision(ref BoundingBox _bModel, Matrix WorldMatrix)
         {
             BoundingBox bBox1;
             BoundingBox bBox2;
@@ -116,21 +122,17 @@ namespace KeyPixels
             int N = posModel.Count;
             for (int i = 0; i < N; i++)
             {
-                bBox1.Max = Vector3.Transform(bbModel.bBox.Max, posModel[i]._matrix);
-                bBox1.Min = Vector3.Transform(bbModel.bBox.Min, posModel[i]._matrix);
+                bBox1.Max = posModel[i]._bbox.bBox.Max;
+                bBox1.Min = posModel[i]._bbox.bBox.Min;
 
-                for (int enemyMeshIndex = 0; enemyMeshIndex < mModel.Meshes.Count; enemyMeshIndex++)
-                {
-                    bBox2.Max = Vector3.Transform(_bModel.Max, WorldMatrix);
-                    bBox2.Min = Vector3.Transform(_bModel.Min, WorldMatrix);
-
-                    if (bBox1.Intersects(bBox2))
+               
+                    if (bBox1.Intersects(_bModel))
                     {
                         posModel.Remove(posModel[i]);
                         hit = true;
                         N--;
                     }
-                }
+                
             }
             return hit;
         }

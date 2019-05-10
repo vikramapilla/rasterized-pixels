@@ -12,34 +12,64 @@ namespace KeyPixels
 
         public CreateBoundingBox(Model model, Matrix meshTransform)
         {
-            Vector3 meshMax = new Vector3(float.MinValue);
-            Vector3 meshMin = new Vector3(float.MaxValue);
-            pVec2 = new Vector2[4];
-            
+            // Initialize minimum and maximum corners of the bounding box to max and min values
+            Vector3 min = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+            Vector3 max = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+
+            // For each mesh of the model
             foreach (ModelMesh mesh in model.Meshes)
             {
-                foreach (ModelMeshPart part in mesh.MeshParts)
+                foreach (ModelMeshPart meshPart in mesh.MeshParts)
                 {
-                    int stride = part.VertexBuffer.VertexDeclaration.VertexStride;
+                    // Vertex buffer parameters
+                    int vertexStride = meshPart.VertexBuffer.VertexDeclaration.VertexStride;
+                    int vertexBufferSize = meshPart.NumVertices * vertexStride;
 
-                    VertexPositionNormalTexture[] vertexData = new VertexPositionNormalTexture[part.NumVertices];
-                    part.VertexBuffer.GetData(part.VertexOffset * stride, vertexData, 0, part.NumVertices, stride);
+                    // Get vertex data as float
+                    float[] vertexData = new float[vertexBufferSize / sizeof(float)];
+                    meshPart.VertexBuffer.GetData<float>(vertexData);
 
-                    Vector3 vertPosition = new Vector3();
-
-                    for (int i = 0; i < vertexData.Length; i++)
+                    // Iterate through vertices (possibly) growing bounding box, all calculations are done in world space
+                    for (int i = 0; i < vertexBufferSize / sizeof(float); i += vertexStride / sizeof(float))
                     {
-                        vertPosition = vertexData[i].Position;
-
-                        meshMin = Vector3.Min(meshMin, vertPosition);
-                        meshMax = Vector3.Max(meshMax, vertPosition);
+                        Vector3 transformedPosition = Vector3.Transform(new Vector3(vertexData[i], vertexData[i + 1], vertexData[i + 2]), meshTransform);
+                        
+                        min = Vector3.Min(min, transformedPosition);
+                        max = Vector3.Max(max, transformedPosition);
                     }
                 }
-                meshMin = Vector3.Transform(meshMin, meshTransform);
-                meshMax = Vector3.Transform(meshMax, meshTransform);
             }
-            bBox = new BoundingBox(meshMin, meshMax);
-            bBoxToVec2();
+
+            // Create and return bounding box
+            bBox = new BoundingBox(min, max);
+            //Vector3 meshMax = new Vector3(float.MinValue);
+            //Vector3 meshMin = new Vector3(float.MaxValue);
+            //pVec2 = new Vector2[4];
+
+            //foreach (ModelMesh mesh in model.Meshes)
+            //{
+            //    foreach (ModelMeshPart part in mesh.MeshParts)
+            //    {
+            //        int stride = part.VertexBuffer.VertexDeclaration.VertexStride;
+
+            //        VertexPositionNormalTexture[] vertexData = new VertexPositionNormalTexture[part.NumVertices];
+            //        part.VertexBuffer.GetData(part.VertexOffset * stride, vertexData, 0, part.NumVertices, stride);
+
+            //        Vector3 vertPosition = new Vector3();
+
+            //        for (int i = 0; i < vertexData.Length; i++)
+            //        {
+            //            vertPosition = vertexData[i].Position;
+
+            //            meshMin = Vector3.Min(meshMin, vertPosition);
+            //            meshMax = Vector3.Max(meshMax, vertPosition);
+            //        }
+            //    }
+            //    meshMin = Vector3.Transform(meshMin, meshTransform);
+            //    meshMax = Vector3.Transform(meshMax, meshTransform);
+            //}
+            //bBox = new BoundingBox(meshMin, meshMax);
+            //bBoxToVec2();
         }
 
         public Vector2[] getVec2ar()
