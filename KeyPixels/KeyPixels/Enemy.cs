@@ -19,6 +19,7 @@ namespace KeyPixels
         public Matrix worldMatrix;
 
         private Vector3 enemyPosition;
+        private Vector3 target;
         
 
         public void initialize(ContentManager contentManager)
@@ -30,9 +31,13 @@ namespace KeyPixels
             worldMatrix = Matrix.CreateTranslation(enemyPosition);
         }
 
-        public void enemyChase()
+        public void enemyChase(Matrix playerPos)
         {
-
+            target = playerPos.Translation - enemyPosition;
+            target = Vector3.Normalize(target);
+            target *= new Vector3(1, 1, 1) / 100;
+            enemyPosition += target;
+            worldMatrix = Matrix.CreateTranslation(enemyPosition);
         }
 
 
