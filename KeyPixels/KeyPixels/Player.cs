@@ -5,10 +5,17 @@ using Microsoft.Xna.Framework.Content;
 
 namespace KeyPixels
 {
+    struct PlayerModel
+    {
+        public Model body;
+        public Model arms;
+        public Model legs;
+    };
+
     class Player
     {
-        public Model playerModel;
-
+        public PlayerModel playerModel;
+        
         public Matrix worldMatrix;
 
         private Vector3 playerPosition;
@@ -19,7 +26,9 @@ namespace KeyPixels
 
         public void initialize(ContentManager contentManager)
         {
-            playerModel = contentManager.Load<Model>("Models/Arms_Skelett");
+            playerModel.body = contentManager.Load<Model>("Models/Body_Tria");
+            playerModel.arms = contentManager.Load<Model>("Models/Arms_Skelett");
+            playerModel.legs = contentManager.Load<Model>("Models/Legs_Skelett");
             playerPosition = new Vector3(0, 0, 0);
         }
 
@@ -69,7 +78,9 @@ namespace KeyPixels
 
         public void Draw()
         {
-            Game1.Draw3DModel(playerModel, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
+            Game1.Draw3DModel(playerModel.body, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
+            Game1.Draw3DModel(playerModel.arms, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
+            Game1.Draw3DModel(playerModel.legs, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
         }
 
     }

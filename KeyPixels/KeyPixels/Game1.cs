@@ -22,6 +22,7 @@ namespace KeyPixels
 
         Map map;
         static Player player;
+        static Enemy enemy;
 
         CreateBoundingBox cbB;
 
@@ -53,6 +54,8 @@ namespace KeyPixels
             shots = new Shots(Content, "Models/Shot_Tria", 0.01f, new Vector3(0, 0, 1), Color.Red, 30);
             player = new Player();
             player.initialize(Content);
+            enemy = new Enemy();
+            enemy.initialize(Content);
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
             map.CreateMap();
             cbB = new CreateBoundingBox(wall, Matrix.Identity);
@@ -94,6 +97,7 @@ namespace KeyPixels
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
             player.Draw();
+            enemy.Draw();
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
@@ -113,7 +117,7 @@ namespace KeyPixels
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
 
-                    effect.DiffuseColor = Color.Blue.ToVector3();
+                    effect.DiffuseColor = Color.Crimson.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
                     
