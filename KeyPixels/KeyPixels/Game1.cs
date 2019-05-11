@@ -98,6 +98,7 @@ namespace KeyPixels
                 }
             }
             player.getPosition();
+            player.getRotation();
             enemy.enemyChase(player.worldMatrix);
             base.Update(gameTime);
         }

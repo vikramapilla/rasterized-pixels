@@ -25,7 +25,7 @@ namespace KeyPixels
 
         private float horizontalAngle = 0f;
         private float verticalAngle = 0f;
-        private float angle = 0f;
+        private static float angle = 0f;
 
 
         private float currentRotation = 0f;
@@ -44,82 +44,142 @@ namespace KeyPixels
         {
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                angle = rotationMap["North"];
                 playerPosition.Z += 0.01f;
-
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                {
-                    float reachPosition = playerPosition.Z + 0.05f;
-                    while (playerPosition.Z < reachPosition) {
-                        playerPosition.Z += 0.025f;
-                    }
-                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                angle = rotationMap["South"];
                 playerPosition.Z -= 0.01f;
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                {
-                    float reachPosition = playerPosition.Z - 0.05f;
-                    while (playerPosition.Z > reachPosition)
-                    {
-                        playerPosition.Z -= 0.025f;
-                    }
-                }
-
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                angle = rotationMap["West"];
                 playerPosition.X += 0.01f;
-
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                {
-                    float reachPosition = playerPosition.X + 0.05f;
-                    while (playerPosition.X < reachPosition)
-                    {
-                        playerPosition.X += 0.025f;
-                    }
-                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                angle = rotationMap["East"];
                 playerPosition.X -= 0.01f;
-
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
-                {
-                    float reachPosition = playerPosition.X - 0.05f;
-                    while (playerPosition.X > reachPosition)
-                    {
-                        playerPosition.X -= 0.025f;
-                    }
-                }
             }
-
-            if (Keyboard.GetState().IsKeyDown(Keys.W) && Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                angle = rotationMap["NorthWest"];
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.W) && Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                angle = rotationMap["NorthEast"];
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                angle = rotationMap["SouthWest"];
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.S) && Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                angle = rotationMap["SouthEast"];
-            }
-            System.Diagnostics.Debug.WriteLine(angle);
         }
 
 
         public void getRotation()
         {
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                if(angle > 90f)
+                {
+                    angle = -180f;
+                }
+
+                if (angle > -90f)
+                {
+                    angle -= 15f;
+                }
+                else if (angle < -90f)
+                {
+                    angle += 15f;
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                if (angle <= -90f)
+                {
+                    angle -= 15f;
+
+                    if(angle == -180f)
+                    {
+                        angle = 180f;
+                    }
+                }
+                else if (angle < 90f)
+                {
+                    angle += 15f;
+                }
+                else if (angle > 90f)
+                {
+                    angle -= 15f;
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                if (angle < 0f)
+                {
+                    angle += 15f;
+                }else if(angle > 0f)
+                {
+                    angle -= 15f;
+                }
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                if (angle >= -180f && angle != 180f)
+                {
+                    if (angle >= 0f)
+                    {
+                        angle += 15f;
+                    }
+                    else if (angle > -180f)
+                    {
+                        angle -= 15f;
+                    }
+                    else
+                    {
+                        angle = 180f;
+                    }
+                }
+                else if (angle < 180f)
+                {
+                    angle += 15f;
+                }
+
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                if (angle < 45f )
+                {
+                    angle += 15f;
+                }
+                else if (angle > 45f)
+                {
+                    angle -= 15f;
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                if (angle < -45f)
+                {
+                    angle += 15f;
+                }
+                else if (angle > -45f)
+                {
+                    angle -= 15f;
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                if (angle < 135f)
+                {
+                    angle += 15f;
+                }
+                else if (angle > 135f)
+                {
+                    angle -= 15f;
+                }
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                if (angle < -135f)
+                {
+                    angle += 15f;
+                }
+                else if (angle > -135f)
+                {
+                    angle -= 15f;
+                }
+            }
+
+            System.Diagnostics.Debug.WriteLine("Angle: {0}", angle);
 
         }
 

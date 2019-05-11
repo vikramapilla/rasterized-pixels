@@ -18,7 +18,10 @@ namespace KeyPixels
 
         private Vector3 enemyPosition;
         private Vector3 target;
-        
+
+        private float enemyAngle = 0f;
+        private float playerAngle = 0f;
+
 
         public void initialize(ContentManager contentManager)
         {
@@ -37,7 +40,16 @@ namespace KeyPixels
             target = Vector3.Normalize(target);
             target *= new Vector3(1, 1, 1) / 100;
             enemyPosition += target;
-            worldMatrix[0] = Matrix.CreateTranslation(enemyPosition);
+            playerAngle = 0;
+            if(enemyAngle < playerAngle)
+            {
+                enemyAngle += 15f;
+            }
+            else
+            {
+                enemyAngle -= 15f;
+            }
+            worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians(enemyAngle)) * Matrix.CreateTranslation(enemyPosition);
         }
 
         public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
