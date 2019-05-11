@@ -10,7 +10,6 @@ namespace KeyPixels
         private static Model mModel;
         private static List<_Value> posModel;
         private static Vector3 directionAddSpeed;
-        public ConvexHull2D ConvexHull2D;
 
         public struct _Value
         {
@@ -73,14 +72,6 @@ namespace KeyPixels
             Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
             FastCalcMono3D.SmartMatrixVec3NotY(ref directionAddSpeed, ref help, ref temp._directionAddSpeed);
             posModel.Add(temp);
-        }
-
-        private void createConvexHull(ref _Value temp)
-        {
-            Vector2[] help2 = ConvexHull2D.getConvexHull();
-            ConvexHull2D.calcMatrixToCH_2D(ref temp._matrix, ref help2);
-            temp._ConvexHull2D = new Vector2[help2.Length];
-            temp._ConvexHull2D = help2;
         }
 
         /// <summary>
@@ -173,22 +164,6 @@ namespace KeyPixels
             return ret;
         }
 
-        public bool IsCollision(Vector2[] CH1)
-        {
-            bool b = false;
-
-            for (int i = posModel.Count-1; i>0; --i)
-            {
-                bool temp = ConvexHull2D.IsCollision2D_CH(CH1, posModel[i]._ConvexHull2D);
-                if (temp)
-                {
-                    b = true;
-                    posModel.Remove(posModel[i]);
-                }
-            }
-            return b;
-        }
-
         /// <summary>
         ///     Draw will be draw the Models in the World.
         ///     viewMatrix := Matrix.CreateLookAt(,,)
@@ -224,7 +199,6 @@ namespace KeyPixels
             mModel = contentManager.Load<Model>(modelName);
             _directionSpeed.Normalize();
             directionAddSpeed = new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed);
-            ConvexHull2D = new ConvexHull2D(mModel);
         }
 
         private void ColorModel(Color c)
