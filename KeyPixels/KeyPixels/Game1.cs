@@ -50,7 +50,6 @@ namespace KeyPixels
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red, 30);
@@ -60,7 +59,6 @@ namespace KeyPixels
             enemy.initialize(Content);
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
             map.CreateMap();
-            cbB = new CreateBoundingBox(wall, Matrix.Identity);
         }
 
 
@@ -80,13 +78,24 @@ namespace KeyPixels
             getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
 
-            Matrix mm = Matrix.CreateRotationY(0) * Matrix.CreateTranslation(0, 0, 0) * worldMatrix;
-            foreach (Matrix m in map.wallposMatrix) { 
-            cbB = new CreateBoundingBox(wall, m);
-            if (shots.IsCollision(ref cbB.bBox, m))
+            foreach (Matrix m in enemy.worldMatrix)
             {
+                for (int i = 0; i < 2; ++i)
+                {
+                    cbB = new CreateBoundingBox(enemy.enemyModel._model[i], m);
+                    if (shots.IsCollision(ref cbB.bBox))
+                    {
 
+                    }
+                }
             }
+
+            foreach (Matrix m in map.wallposMatrix) { 
+                cbB = new CreateBoundingBox(wall, m);
+                if (shots.IsCollision(ref cbB.bBox))
+                {
+
+                }
             }
             player.getPosition();
             enemy.enemyChase(player.worldMatrix);
@@ -101,11 +110,18 @@ namespace KeyPixels
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
             player.Draw();
-            enemy.Draw();
+            enemy.Draw(ref viewMatrix, ref projectionMatrix);
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
             base.Draw(gameTime);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            Content.Dispose();
+
+            base.Dispose(disposing);
         }
 
         public static void Draw3DModel(Model model, Matrix worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix)
@@ -120,7 +136,6 @@ namespace KeyPixels
                     effect.World = worldMatrix;
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
-
                     effect.DiffuseColor = Color.Crimson.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
@@ -132,7 +147,8 @@ namespace KeyPixels
 
         public static Vector3 getPosition()
         {
-            colldown -= 1;
+            if(colldown>0)
+                colldown -= 1;
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 if (colldown < 1)

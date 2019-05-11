@@ -10,13 +10,14 @@ namespace KeyPixels
         private static Model mModel;
         private static List<_Value> posModel;
         private static Vector3 directionAddSpeed;
-        private static CreateBoundingBox bbModel;
+        public ConvexHull2D ConvexHull2D;
 
-        private struct _Value
+        public struct _Value
         {
             public Matrix _matrix;
             public Vector3 _directionAddSpeed;
             public CreateBoundingBox _bbox;
+            public Vector2[] _ConvexHull2D;
         };
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
@@ -74,6 +75,14 @@ namespace KeyPixels
             posModel.Add(temp);
         }
 
+        private void createConvexHull(ref _Value temp)
+        {
+            Vector2[] help2 = ConvexHull2D.getConvexHull();
+            ConvexHull2D.calcMatrixToCH_2D(ref temp._matrix, ref help2);
+            temp._ConvexHull2D = new Vector2[help2.Length];
+            temp._ConvexHull2D = help2;
+        }
+
         /// <summary>
         ///     clearAll will be remove all position Matrix.
         /// </summary>
@@ -114,60 +123,70 @@ namespace KeyPixels
             }
         }
 
-        public bool IsCollision(ref BoundingBox _bModel, Matrix WorldMatrix)
+        /// <summary>
+        /// IsCollision with a BoundingBox
+        /// </summary>
+        /// <param name="_bModel"></param>
+        /// <returns></returns>
+        /// 
+        public bool IsCollision(ref BoundingBox _bModel)
         {
-            BoundingBox bBox1;
-            BoundingBox bBox2;
             bool hit= false;
             int N = posModel.Count;
             for (int i = 0; i < N; i++)
             {
-                bBox1.Max = posModel[i]._bbox.bBox.Max;
-                bBox1.Min = posModel[i]._bbox.bBox.Min;
-
-               
-                    if (bBox1.Intersects(_bModel))
+                    if (posModel[i]._bbox.bBox.Intersects(_bModel))
                     {
                         posModel.Remove(posModel[i]);
                         hit = true;
                         N--;
                     }
-                
             }
             return hit;
         }
 
-        public bool IsCollision(ref BoundingBox _bModel, ref Matrix[] WorldMatrix, out List<int> _number)
+        public bool IsCollision(ref Model _Model, ref List<Matrix> WorldMatrix, out List<int> _number) // wird entfernt in der zukunft
         {
-            BoundingBox bBox1;
-            BoundingBox bBox2;
+            CreateBoundingBox bBox;
             bool ret = false;
             int N = posModel.Count;
             _number = new List<int>();
             for (int i = 0; i < N; i++)
             {
-                bBox1.Max = Vector3.Transform(bbModel.bBox.Max, posModel[i]._matrix);
-                bBox1.Min = Vector3.Transform(bbModel.bBox.Min, posModel[i]._matrix);
-
                 for (int enemyMeshIndex = 0; enemyMeshIndex < mModel.Meshes.Count; enemyMeshIndex++)
                 {
-                    for (int z = 0; z < WorldMatrix.Length; ++z)
+                    for (int z = 0; z < WorldMatrix.Count; ++z)
                     {
-                        bBox2.Max = Vector3.Transform(_bModel.Max, WorldMatrix[z]);
-                        bBox2.Min = Vector3.Transform(_bModel.Min, WorldMatrix[z]);
+                        bBox = new CreateBoundingBox(_Model, WorldMatrix[i]);
 
-                        if (bBox1.Intersects(bBox2))
+                        if (posModel[i]._bbox.bBox.Intersects(bBox.bBox))
                         {
                             if (!ret)
                                 ret = true;
                             posModel.Remove(posModel[i]);
+                            N--;
                             _number.Add(z);
-
                         }
                     }
                 }
             }
             return ret;
+        }
+
+        public bool IsCollision(Vector2[] CH1)
+        {
+            bool b = false;
+
+            for (int i = posModel.Count-1; i>0; --i)
+            {
+                bool temp = ConvexHull2D.IsCollision2D_CH(CH1, posModel[i]._ConvexHull2D);
+                if (temp)
+                {
+                    b = true;
+                    posModel.Remove(posModel[i]);
+                }
+            }
+            return b;
         }
 
         /// <summary>
@@ -200,13 +219,12 @@ namespace KeyPixels
         }
 
 
-
         private void helpConstruct(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
             mModel = contentManager.Load<Model>(modelName);
             _directionSpeed.Normalize();
             directionAddSpeed = new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed);
-            bbModel = new CreateBoundingBox(mModel, Matrix.Identity);
+            ConvexHull2D = new ConvexHull2D(mModel);
         }
 
         private void ColorModel(Color c)
