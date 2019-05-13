@@ -19,13 +19,13 @@ namespace KeyPixels
         
         public Matrix worldMatrix;
 
-        private Vector3 playerPosition;
+        public static Vector3 playerPosition;
 
         private Dictionary<string, float> rotationMap = new Dictionary<string, float>();
 
         private float horizontalAngle = 0f;
         private float verticalAngle = 0f;
-        private static float angle = 0f;
+        public static float angle = 0f;
 
 
         private float currentRotation = 0f;
@@ -58,6 +58,7 @@ namespace KeyPixels
             {
                 playerPosition.X -= 0.01f;
             }
+
         }
 
 
@@ -179,8 +180,11 @@ namespace KeyPixels
                 }
             }
 
-            System.Diagnostics.Debug.WriteLine("Angle: {0}", angle);
+        }
 
+        public Vector3 getCurrentPlayerPosition()
+        {
+            return playerPosition;
         }
 
         private void buildRotationMap()
