@@ -16,7 +16,7 @@ namespace KeyPixels
     class Player
     {
         public PlayerModel playerModel;
-        
+
         public Matrix worldMatrix;
 
         public static Vector3 playerPosition;
@@ -25,6 +25,7 @@ namespace KeyPixels
 
         private float horizontalAngle = 0f;
         private float verticalAngle = 0f;
+        private bool burstFlag = false;
         public static float angle = 0f;
 
 
@@ -45,28 +46,59 @@ namespace KeyPixels
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
                 playerPosition.Z += 0.01f;
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                {
+                    float reachPosition = playerPosition.Z + 0.05f;
+                    while (playerPosition.Z < reachPosition)
+                    {
+                        playerPosition.Z += 0.025f;
+                    }
+                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
                 playerPosition.Z -= 0.01f;
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                {
+                    float reachPosition = playerPosition.Z - 0.05f;
+                    while (playerPosition.Z > reachPosition)
+                    {
+                        playerPosition.Z -= 0.025f;
+                    }
+                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
                 playerPosition.X += 0.01f;
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                {
+                    float reachPosition = playerPosition.X + 0.05f;
+                    while (playerPosition.X < reachPosition)
+                    {
+                        playerPosition.X += 0.025f;
+                    }
+                }
             }
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 playerPosition.X -= 0.01f;
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                {
+                    float reachPosition = playerPosition.X - 0.05f;
+                    while (playerPosition.X > reachPosition)
+                    {
+                        playerPosition.X -= 0.025f;
+                    }
+                }
             }
 
         }
-
-
+        
         public void getRotation()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                if(angle > 90f)
+                if (angle > 90f)
                 {
                     angle = -180f;
                 }
@@ -86,7 +118,7 @@ namespace KeyPixels
                 {
                     angle -= 15f;
 
-                    if(angle == -180f)
+                    if (angle == -180f)
                     {
                         angle = 180f;
                     }
@@ -105,7 +137,8 @@ namespace KeyPixels
                 if (angle < 0f)
                 {
                     angle += 15f;
-                }else if(angle > 0f)
+                }
+                else if (angle > 0f)
                 {
                     angle -= 15f;
                 }
@@ -137,7 +170,7 @@ namespace KeyPixels
 
             if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                if (angle < 45f )
+                if (angle < 45f)
                 {
                     angle += 15f;
                 }
@@ -181,6 +214,9 @@ namespace KeyPixels
             }
 
         }
+
+
+
 
         public Vector3 getCurrentPlayerPosition()
         {
