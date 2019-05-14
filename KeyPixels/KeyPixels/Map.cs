@@ -33,6 +33,13 @@ namespace KeyPixels
             int posz;
             wallposMatrix.Clear();
             groundposMatrix.Clear();
+            /*
+             * built map from array 
+             * numbers stand for one form of the tile
+             * 0 = nothing,   1 = ground,       2 = ground + wall top,          3 = g + wall right,                 4 = g + wall bottom,            5 = g + wall left
+             * 6 = g + wall (left + top),       7 = g + wall (top + right),     8 = g + wall (right + bottom),      9 = g + wall (bottom + left)
+             * 10 = g + w (left top right),     11 = g + w (top right bottom),  12 = g + w (right bottom left),     13 = g + w (bottom left top)
+             */
             int[,] a = new int[7, 7] {
                 { 0, 0, 10, 0, 0, 0, 0 },
                 { 0, 6, 3, 0, 6, 7, 0 },
@@ -41,8 +48,9 @@ namespace KeyPixels
                 { 0, 5, 1, 1, 1, 3, 0 },
                 { 0, 9, 4, 1, 4, 8, 0 },
                 { 0, 0, 0, 12, 0, 0, 0 } };
-            posx = a.GetLength(0)/2;
+            posx = a.GetLength(0)/2;// pos = lenght/2 so that the map is as central as possible
             posz = a.GetLength(1)/2;
+
             for (int i=0;i<a.GetLength(0);i++ )
             {
                 for(int j=0;j< a.GetLength(1); j++)
@@ -51,6 +59,7 @@ namespace KeyPixels
                     if (a[j, i] == 1)
                     {
                         groundposMatrix.Add(Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2));
+                        // pos = posx/posy * 2 because the ground model is 2 units big, -i/j *2 for the right pos like array
                     }
                     else if (a[j, i] == 2)
                     {

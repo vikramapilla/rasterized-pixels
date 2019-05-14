@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace KeyPixels
 {
@@ -47,8 +48,10 @@ namespace KeyPixels
             target *= new Vector3(1, 1, 1) / 150;
             enemyPosition += target;
             playerAngle = 0;
-            getRotation();
-            worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(enemyPosition);
+            //getRotation();
+            angle = (float)Math.Atan2(target.X, target.Z);
+            //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
+            worldMatrix[0] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
         }
 
         private void getRotation()
@@ -56,7 +59,6 @@ namespace KeyPixels
             playerPosition = Player.playerPosition;
             relativePositionX = enemyPosition.X - playerPosition.X;
             relativePositionZ = enemyPosition.Z - playerPosition.Z;
-
 
             if (relativePositionX >= 0)
             {
