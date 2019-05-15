@@ -10,6 +10,7 @@ namespace KeyPixels
         GraphicsDeviceManager graphics;
         Camera camera;
         SpriteBatch spriteBatch;
+        static int numberShot;
 
         Matrix worldMatrix;
         public static Matrix viewMatrix;
@@ -52,7 +53,9 @@ namespace KeyPixels
             spriteBatch = new SpriteBatch(GraphicsDevice);
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red, 30);
+            shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1),Color.Red);
+            shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Blue);
+            numberShot = 0;
             player = new Player();
             player.initialize(Content);
             enemy = new Enemy();
@@ -154,7 +157,11 @@ namespace KeyPixels
             {
                 if (colldown < 1)
                 {
-                    shots.createShot(player.worldMatrix,0);
+                    shots.createShot(player.worldMatrix,numberShot);
+                    if (numberShot < 1 && numberShot > -1)
+                        numberShot++;
+                    else
+                        numberShot--;
                     colldown = 50;
                 }
             }
@@ -162,7 +169,6 @@ namespace KeyPixels
             {
                 shots.clearAll();
             }
-
 
             return player.worldMatrix.Translation;
         }

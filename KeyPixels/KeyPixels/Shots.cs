@@ -7,9 +7,15 @@ namespace KeyPixels
 {
     class Shots
     {
-        private static List<Model> mModel;
+        private static List<_Model> mOModel;
         private static List<List<_Value>> posModel;
-        private static List<Vector3> directionAddSpeed;
+
+        public struct _Model
+        {
+            public Model mModel;
+            public List<Vector3> mDifColor;
+            public Vector3 directionAddSpeed;
+        };
 
         public struct _Value
         {
@@ -25,27 +31,12 @@ namespace KeyPixels
             posModel.Add(new List<_Value>());
         }
 
-        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, int nStart)
+        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _difcolor)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<List<_Value>>();
             posModel.Add(new List<_Value>());
-        }
-
-        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _color)
-        {
-            helpConstruct(contentManager, modelName, _speed, _directionSpeed);
-            posModel = new List<List<_Value>>();
-            posModel.Add(new List<_Value>());
-            ColorModel(_color, 0);
-        }
-
-        public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _color, int nStart)
-        {
-            helpConstruct(contentManager, modelName, _speed, _directionSpeed);
-            posModel = new List<List<_Value>>();
-            posModel.Add(new List<_Value>());
-            ColorModel(_color, 0);
+            ColorModel(_difcolor,0);
         }
 
         public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
@@ -54,11 +45,11 @@ namespace KeyPixels
             posModel.Add(new List<_Value>());
         }
 
-        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed,Color _color)
+        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed,Color _difcolor)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel.Add(new List<_Value>());
-            ColorModel(_color, mModel.Count-1);
+            ColorModel(_difcolor,mOModel.Count-1);
         }
 
         /// <summary>
@@ -72,8 +63,8 @@ namespace KeyPixels
             {
                 _Value temp = new _Value();
                 temp._matrix = posMatrix;
-                temp._directionAddSpeed = Vector3.Transform(directionAddSpeed[numberShot], Matrix.CreateFromQuaternion(temp._matrix.Rotation));
-                temp._bbox = new CreateBoundingBox(mModel[numberShot], temp._matrix);
+                temp._directionAddSpeed = Vector3.Transform(mOModel[numberShot].directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+                temp._bbox = new CreateBoundingBox(mOModel[numberShot].mModel, temp._matrix);
                 posModel[numberShot].Add(temp);
             }
         }
@@ -91,7 +82,7 @@ namespace KeyPixels
                 _Value temp = new _Value();
                 temp._matrix = posMatrix;
                 Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
-                Vector3 help_vec = directionAddSpeed[numberShot];
+                Vector3 help_vec = mOModel[numberShot].directionAddSpeed;
                 FastCalcMono3D.SmartMatrixVec3NotY(ref help_vec, ref help, ref temp._directionAddSpeed);
                 posModel[numberShot].Add(temp);
             }
@@ -183,7 +174,7 @@ namespace KeyPixels
                 int N = posModel.Count;
                 for (int i = 0; i < N; i++)
                 {
-                    for (int enemyMeshIndex = 0; enemyMeshIndex < mModel[n].Meshes.Count; enemyMeshIndex++)
+                    for (int enemyMeshIndex = 0; enemyMeshIndex < mOModel[n].mModel.Meshes.Count; enemyMeshIndex++)
                     {
                         for (int z = 0; z < WorldMatrix.Count; ++z)
                         {
@@ -212,11 +203,11 @@ namespace KeyPixels
 
         public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
-            
             for (int n = 0; n < posModel.Count; ++n)
             {
                 int N = posModel[n].Count;
-                foreach (ModelMesh mesh in mModel[n].Meshes)
+                int neffect = 0;
+                foreach (ModelMesh mesh in mOModel[n].mModel.Meshes)
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
@@ -229,8 +220,10 @@ namespace KeyPixels
                         for (int i = 0; i < N; i++)
                         {
                             effect.World = posModel[n][i]._matrix;
+                            effect.DiffuseColor = mOModel[n].mDifColor[neffect];
                             mesh.Draw();
                         }
+                        neffect++;
                     }
                 }
             }
@@ -239,25 +232,26 @@ namespace KeyPixels
 
         private void helpConstruct(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
-            if(mModel==null)
-                mModel = new List<Model>();
-            mModel.Add(contentManager.Load<Model>(modelName));
-            _directionSpeed.Normalize();
-            if(directionAddSpeed==null)
-                directionAddSpeed = new List<Vector3>();
-            directionAddSpeed.Add(new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed));
+            if(mOModel==null)
+                mOModel = new List<_Model>();
+            _Model temp = new _Model();
+            temp.mModel=(contentManager.Load<Model>(modelName));
+            temp.mDifColor = new List<Vector3>();
+            foreach (ModelMesh mesh in temp.mModel.Meshes)
+                foreach (BasicEffect effect in mesh.Effects)
+                    temp.mDifColor.Add(effect.DiffuseColor);
+            
+
+            temp.directionAddSpeed = new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed);
+            mOModel.Add(temp);
         }
 
-        private void ColorModel(Color c, int number)
+        private void ColorModel(Color c,int num)
         {
-            foreach (ModelMesh mesh in mModel[number].Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.DiffuseColor = c.ToVector3();
-                    effect.Alpha = 1f;
-                }
-            }
+            var temp = mOModel[num];
+            for(int i=0; i< temp.mDifColor.Count;++i)
+                temp.mDifColor[i] = c.ToVector3();
+            mOModel[num] = temp;
         }
 
     }
