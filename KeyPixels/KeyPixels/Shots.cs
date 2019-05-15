@@ -22,18 +22,21 @@ namespace KeyPixels
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<List<_Value>>();
+            posModel.Add(new List<_Value>());
         }
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, int nStart)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<List<_Value>>();
+            posModel.Add(new List<_Value>());
         }
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _color)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<List<_Value>>();
+            posModel.Add(new List<_Value>());
             ColorModel(_color, 0);
         }
 
@@ -41,17 +44,20 @@ namespace KeyPixels
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<List<_Value>>();
+            posModel.Add(new List<_Value>());
             ColorModel(_color, 0);
         }
 
         public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
+            posModel.Add(new List<_Value>());
         }
 
         public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed,Color _color)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
+            posModel.Add(new List<_Value>());
             ColorModel(_color, mModel.Count-1);
         }
 
@@ -62,17 +68,14 @@ namespace KeyPixels
 
         public void createShot(Matrix posMatrix,int numberShot)
         {
-            _Value temp = new _Value();
-            temp._matrix = posMatrix;
-            temp._directionAddSpeed = Vector3.Transform(directionAddSpeed[numberShot], Matrix.CreateFromQuaternion(temp._matrix.Rotation));
-            temp._bbox = new CreateBoundingBox(mModel[numberShot], temp._matrix);
-            if (posModel.Count-1 < numberShot)
+            if (numberShot < posModel.Count && numberShot>=0)
             {
-                posModel.Add(new List<_Value>());
+                _Value temp = new _Value();
+                temp._matrix = posMatrix;
+                temp._directionAddSpeed = Vector3.Transform(directionAddSpeed[numberShot], Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+                temp._bbox = new CreateBoundingBox(mModel[numberShot], temp._matrix);
                 posModel[numberShot].Add(temp);
             }
-            else
-                  posModel[numberShot].Add(temp);
         }
 
 
@@ -83,24 +86,26 @@ namespace KeyPixels
 
         public void createShotnotY(Matrix posMatrix, int numberShot)
         {
-            _Value temp = new _Value();
-            temp._matrix = posMatrix;
-            Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
-            Vector3 help_vec = directionAddSpeed[numberShot];
-            FastCalcMono3D.SmartMatrixVec3NotY(ref help_vec, ref help, ref temp._directionAddSpeed);
-            if (posModel.Count < numberShot)
+            if (numberShot < posModel.Count && numberShot >= 0)
             {
-                posModel.Add(new List<_Value>());
-                posModel[0].Add(temp);
-            }
+                _Value temp = new _Value();
+                temp._matrix = posMatrix;
+                Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
+                Vector3 help_vec = directionAddSpeed[numberShot];
+                FastCalcMono3D.SmartMatrixVec3NotY(ref help_vec, ref help, ref temp._directionAddSpeed);
                 posModel[numberShot].Add(temp);
+            }
         }
 
         /// <summary>
         ///     clearAll will be remove all position Matrix.
         /// </summary>
 
-        public void clearAll() { posModel.Clear(); }
+        public void clearAll()
+        {
+            for(int i=0;i<posModel.Count;++i)
+                posModel[i].Clear();
+        }
 
         /// <summary>
         ///     updateShotsPos will be change all position Matrix with seperate Speed vector.
@@ -114,8 +119,7 @@ namespace KeyPixels
                 for (int i = 0; i < N; i++)
                 {
                     var temp = posModel[n][i];
-                    Vector3 help_vec = directionAddSpeed[n];
-                    FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                    temp._matrix.Translation += temp._directionAddSpeed;
                     temp._bbox.bBox.Max += temp._directionAddSpeed;
                     temp._bbox.bBox.Min += temp._directionAddSpeed;
                     posModel[n][i] = temp;
