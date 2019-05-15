@@ -203,6 +203,8 @@ namespace KeyPixels
 
         public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
+            Vector3 DifC = new Vector3();
+            bool firstStep = true;
             for (int n = 0; n < posModel.Count; ++n)
             {
                 int N = posModel[n].Count;
@@ -211,12 +213,15 @@ namespace KeyPixels
                 {
                     foreach (BasicEffect effect in mesh.Effects)
                     {
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
-
-                        effect.View = viewMatrix;
-                        effect.Projection = projectionMatrix;
-
+                        if (firstStep)
+                        {
+                            effect.EnableDefaultLighting();
+                            effect.PreferPerPixelLighting = true;
+                            effect.View = viewMatrix;
+                            effect.Projection = projectionMatrix;
+                            DifC = effect.DiffuseColor;
+                            firstStep = false;
+                        }
                         for (int i = 0; i < N; i++)
                         {
                             effect.World = posModel[n][i]._matrix;
@@ -225,6 +230,13 @@ namespace KeyPixels
                         }
                         neffect++;
                     }
+                }
+            }
+            foreach (ModelMesh mesh in mOModel[0].mModel.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.DiffuseColor = DifC;
                 }
             }
         }
@@ -237,10 +249,10 @@ namespace KeyPixels
             _Model temp = new _Model();
             temp.mModel=(contentManager.Load<Model>(modelName));
             temp.mDifColor = new List<Vector3>();
+
             foreach (ModelMesh mesh in temp.mModel.Meshes)
                 foreach (BasicEffect effect in mesh.Effects)
                     temp.mDifColor.Add(effect.DiffuseColor);
-            
 
             temp.directionAddSpeed = new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed);
             mOModel.Add(temp);
@@ -249,7 +261,7 @@ namespace KeyPixels
         private void ColorModel(Color c,int num)
         {
             var temp = mOModel[num];
-            for(int i=0; i< temp.mDifColor.Count;++i)
+            for (int i=0; i< temp.mDifColor.Count;++i)
                 temp.mDifColor[i] = c.ToVector3();
             mOModel[num] = temp;
         }
