@@ -7,42 +7,52 @@ namespace KeyPixels
 {
     class Shots
     {
-        private static Model mModel;
-        private static List<_Value> posModel;
-        private static Vector3 directionAddSpeed;
+        private static List<Model> mModel;
+        private static List<List<_Value>> posModel;
+        private static List<Vector3> directionAddSpeed;
 
         public struct _Value
         {
             public Matrix _matrix;
             public Vector3 _directionAddSpeed;
             public CreateBoundingBox _bbox;
-            public Vector2[] _ConvexHull2D;
         };
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
-            posModel = new List<_Value>();
+            posModel = new List<List<_Value>>();
         }
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, int nStart)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
-            posModel = new List<_Value>(nStart);
+            posModel = new List<List<_Value>>();
         }
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _color)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
-            posModel = new List<_Value>();
-            ColorModel(_color);
+            posModel = new List<List<_Value>>();
+            ColorModel(_color, 0);
         }
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _color, int nStart)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
-            posModel = new List<_Value>(nStart);
-            ColorModel(_color);
+            posModel = new List<List<_Value>>();
+            ColorModel(_color, 0);
+        }
+
+        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
+        {
+            helpConstruct(contentManager, modelName, _speed, _directionSpeed);
+        }
+
+        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed,Color _color)
+        {
+            helpConstruct(contentManager, modelName, _speed, _directionSpeed);
+            ColorModel(_color, mModel.Count-1);
         }
 
         /// <summary>
@@ -50,13 +60,19 @@ namespace KeyPixels
         ///     E.g. posMatrix := Player Matrix (+ Translate Shot position)
         /// </summary>
 
-        public void createShot(Matrix posMatrix)
+        public void createShot(Matrix posMatrix,int numberShot)
         {
             _Value temp = new _Value();
             temp._matrix = posMatrix;
-            temp._directionAddSpeed = Vector3.Transform(directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
-            temp._bbox = new CreateBoundingBox(mModel, temp._matrix);
-            posModel.Add(temp);
+            temp._directionAddSpeed = Vector3.Transform(directionAddSpeed[numberShot], Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+            temp._bbox = new CreateBoundingBox(mModel[numberShot], temp._matrix);
+            if (posModel.Count-1 < numberShot)
+            {
+                posModel.Add(new List<_Value>());
+                posModel[numberShot].Add(temp);
+            }
+            else
+                  posModel[numberShot].Add(temp);
         }
 
 
@@ -65,13 +81,19 @@ namespace KeyPixels
         ///     E.g. posMatrix := Player Matrix (+ Translate Shot position)
         /// </summary>
 
-        public void createShotnotY(Matrix posMatrix)
+        public void createShotnotY(Matrix posMatrix, int numberShot)
         {
             _Value temp = new _Value();
             temp._matrix = posMatrix;
             Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
-            FastCalcMono3D.SmartMatrixVec3NotY(ref directionAddSpeed, ref help, ref temp._directionAddSpeed);
-            posModel.Add(temp);
+            Vector3 help_vec = directionAddSpeed[numberShot];
+            FastCalcMono3D.SmartMatrixVec3NotY(ref help_vec, ref help, ref temp._directionAddSpeed);
+            if (posModel.Count < numberShot)
+            {
+                posModel.Add(new List<_Value>());
+                posModel[0].Add(temp);
+            }
+                posModel[numberShot].Add(temp);
         }
 
         /// <summary>
@@ -86,14 +108,18 @@ namespace KeyPixels
 
         public void updateShotsPos(GameTime tm)
         {
-            int N = posModel.Count;
-            for (int i = 0; i < N; i++)
+            for (int n = 0; n < posModel.Count; ++n)
             {
-                var temp = posModel[i];
-                FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
-                temp._bbox.bBox.Max += temp._directionAddSpeed;
-                temp._bbox.bBox.Min += temp._directionAddSpeed;
-                posModel[i] = temp;
+                int N = posModel[n].Count;
+                for (int i = 0; i < N; i++)
+                {
+                    var temp = posModel[n][i];
+                    Vector3 help_vec = directionAddSpeed[n];
+                    FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                    temp._bbox.bBox.Max += temp._directionAddSpeed;
+                    temp._bbox.bBox.Min += temp._directionAddSpeed;
+                    posModel[n][i] = temp;
+                }
             }
         }
 
@@ -103,14 +129,17 @@ namespace KeyPixels
 
         public void updateShotsPosnotY(GameTime tm)
         {
-            int N = posModel.Count;
-            for (int i = 0; i < N; i++)
+            for (int n = 0; n < posModel.Count; ++n)
             {
-                var temp = posModel[i];
-                FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
-                temp._bbox.bBox.Max += temp._directionAddSpeed;
-                temp._bbox.bBox.Min += temp._directionAddSpeed;
-                posModel[i] = temp;
+                int N = posModel[n].Count;
+                for (int i = 0; i < N; i++)
+                {
+                    var temp = posModel[n][i];
+                    FastCalcMono3D.SmartMatrixAddTransnotY(ref temp._matrix, ref temp._directionAddSpeed);
+                    temp._bbox.bBox.Max += temp._directionAddSpeed;
+                    temp._bbox.bBox.Min += temp._directionAddSpeed;
+                    posModel[n][i] = temp;
+                }
             }
         }
 
@@ -122,16 +151,19 @@ namespace KeyPixels
         /// 
         public bool IsCollision(ref BoundingBox _bModel)
         {
-            bool hit= false;
-            int N = posModel.Count;
-            for (int i = 0; i < N; i++)
-            {
-                    if (posModel[i]._bbox.bBox.Intersects(_bModel))
+            bool hit = false;
+            for (int n = 0; n < posModel.Count; ++n)
+            { 
+                int N = posModel[n].Count;
+                for (int i = 0; i < N; i++)
+                {
+                    if (posModel[n][i]._bbox.bBox.Intersects(_bModel))
                     {
-                        posModel.Remove(posModel[i]);
+                        posModel[n].Remove(posModel[n][i]);
                         hit = true;
                         N--;
                     }
+                }
             }
             return hit;
         }
@@ -140,23 +172,27 @@ namespace KeyPixels
         {
             CreateBoundingBox bBox;
             bool ret = false;
-            int N = posModel.Count;
             _number = new List<int>();
-            for (int i = 0; i < N; i++)
-            {
-                for (int enemyMeshIndex = 0; enemyMeshIndex < mModel.Meshes.Count; enemyMeshIndex++)
-                {
-                    for (int z = 0; z < WorldMatrix.Count; ++z)
-                    {
-                        bBox = new CreateBoundingBox(_Model, WorldMatrix[i]);
 
-                        if (posModel[i]._bbox.bBox.Intersects(bBox.bBox))
+            for (int n = 0; n < posModel.Count; ++n)
+            {
+                int N = posModel.Count;
+                for (int i = 0; i < N; i++)
+                {
+                    for (int enemyMeshIndex = 0; enemyMeshIndex < mModel[n].Meshes.Count; enemyMeshIndex++)
+                    {
+                        for (int z = 0; z < WorldMatrix.Count; ++z)
                         {
-                            if (!ret)
-                                ret = true;
-                            posModel.Remove(posModel[i]);
-                            N--;
-                            _number.Add(z);
+                            bBox = new CreateBoundingBox(_Model, WorldMatrix[i]);
+
+                            if (posModel[n][i]._bbox.bBox.Intersects(bBox.bBox))
+                            {
+                                if (!ret)
+                                    ret = true;
+                                posModel[n].Remove(posModel[n][i]);
+                                N--;
+                                _number.Add(z);
+                            }
                         }
                     }
                 }
@@ -172,22 +208,25 @@ namespace KeyPixels
 
         public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
-            int N = posModel.Count;
-
-            foreach (ModelMesh mesh in mModel.Meshes)
+            
+            for (int n = 0; n < posModel.Count; ++n)
             {
-                foreach (BasicEffect effect in mesh.Effects)
+                int N = posModel[n].Count;
+                foreach (ModelMesh mesh in mModel[n].Meshes)
                 {
-                    effect.EnableDefaultLighting();
-                    effect.PreferPerPixelLighting = true;
-
-                    effect.View = viewMatrix;
-                    effect.Projection = projectionMatrix;
-
-                    for (int i = 0; i < N; i++)
+                    foreach (BasicEffect effect in mesh.Effects)
                     {
-                        effect.World = posModel[i]._matrix;
-                        mesh.Draw();
+                        effect.EnableDefaultLighting();
+                        effect.PreferPerPixelLighting = true;
+
+                        effect.View = viewMatrix;
+                        effect.Projection = projectionMatrix;
+
+                        for (int i = 0; i < N; i++)
+                        {
+                            effect.World = posModel[n][i]._matrix;
+                            mesh.Draw();
+                        }
                     }
                 }
             }
@@ -196,14 +235,18 @@ namespace KeyPixels
 
         private void helpConstruct(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
-            mModel = contentManager.Load<Model>(modelName);
+            if(mModel==null)
+                mModel = new List<Model>();
+            mModel.Add(contentManager.Load<Model>(modelName));
             _directionSpeed.Normalize();
-            directionAddSpeed = new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed);
+            if(directionAddSpeed==null)
+                directionAddSpeed = new List<Vector3>();
+            directionAddSpeed.Add(new Vector3(_directionSpeed.X * _speed, _directionSpeed.Y * _speed, _directionSpeed.Z * _speed));
         }
 
-        private void ColorModel(Color c)
+        private void ColorModel(Color c, int number)
         {
-            foreach (ModelMesh mesh in mModel.Meshes)
+            foreach (ModelMesh mesh in mModel[number].Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
                 {

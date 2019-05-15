@@ -154,7 +154,7 @@ namespace KeyPixels
             {
                 if (colldown < 1)
                 {
-                    shots.createShot(player.worldMatrix);
+                    shots.createShot(player.worldMatrix,0);
                     colldown = 50;
                 }
             }
