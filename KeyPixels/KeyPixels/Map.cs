@@ -17,6 +17,7 @@ namespace KeyPixels
         public List<Matrix> wallposMatrix;
         List<Matrix> groundposMatrix;
         List<Array> mapList;
+        QuadTree<BoundingBox> QTree;
         public Map(Model ground,Model wall, Matrix viewMatrix, Matrix projectionMatrix)
         {
             _ground = ground;
@@ -25,6 +26,7 @@ namespace KeyPixels
             _projectionMatrix = projectionMatrix;
             wallposMatrix = new List<Matrix>();
             groundposMatrix = new List<Matrix>();
+            QTree = new QuadTree<BoundingBox>(new Vector2(-10,-10),new Vector2(10,10),1);
             
         }
         public void CreateMap()
@@ -150,7 +152,12 @@ namespace KeyPixels
                     
                 }
             }
-            
+            foreach (Matrix m in wallposMatrix)
+            {
+                CreateBoundingBox CBB = new CreateBoundingBox(_wall, m);
+                QTree.insertData(CBB.bBox, new Vector2(CBB.bBox.Min.X, CBB.bBox.Min.Z), new Vector2(CBB.bBox.Max.X, CBB.bBox.Max.Z));
+            }
+
         }
 
         public void Draw()
