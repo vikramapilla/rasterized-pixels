@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace KeyPixels
 {
@@ -26,6 +27,7 @@ namespace KeyPixels
         static Enemy enemy;
 
         CreateBoundingBox cbB;
+        List<BoundingBox> collision_return;
         static int colldown;
 
         public static Vector3 playerPosition = Vector3.Zero;
@@ -93,13 +95,11 @@ namespace KeyPixels
                 }
             }
 
-            foreach (Matrix m in map.wallposMatrix) { 
-                cbB = new CreateBoundingBox(wall, m);
-                if (shots.IsCollision(ref cbB.bBox))
-                {
+            if (shots.IsCollision(ref map.QTree))
+            {
 
-                }
             }
+
             player.getPosition();
             player.getRotation();
             enemy.enemyChase(player.worldMatrix);

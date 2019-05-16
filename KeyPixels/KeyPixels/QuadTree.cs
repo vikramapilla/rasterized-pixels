@@ -43,9 +43,9 @@ namespace KeyPixels
                 bool seek = true;
                 for (int i = 0; i < temp.Count; ++i)
                 {
-                    for (int x = 0; x < ret_temp.Count; ++x)
+                    for (int x = 0; x < ret_temp.Count && seek; ++x)
                     {
-                        if (ret_temp[x].GetHashCode() == temp[i].GetHashCode())
+                        if (ret_temp[x].ToString() == temp[i].ToString())
                             seek = false;
                     }
                     if (seek)
@@ -63,10 +63,10 @@ namespace KeyPixels
             {
                 if (temp.child[i].min.X < vec.X && temp.child[i].min.Y < vec.Y &&
                     temp.child[i].max.X > vec.X && temp.child[i].max.Y > vec.Y)
-                    ret_temp.AddRange(_seekData(temp.child[i], vec));
+                        ret_temp.AddRange(_seekData(temp.child[i], vec));
+                
             }
-            for (int i = 0; i < temp.data.Count; ++i)
-                ret_temp.Add(temp.data[i]);
+            ret_temp.AddRange(temp.data);
             return ret_temp;
         }
 
@@ -80,8 +80,8 @@ namespace KeyPixels
             List<T> ret_temp = new List<T>();
             for (int i = 0; i < temp.child.Count; ++i)
                 ret_temp.AddRange(_seekAllData(temp.child[i]));
-            for (int i = 0; i < temp.data.Count; ++i)
-                ret_temp.Add(temp.data[i]);
+
+            ret_temp.AddRange(temp.data);
             return ret_temp;
         }
 
@@ -93,7 +93,6 @@ namespace KeyPixels
 
         private void _insertData(ref Node temp, T _data, Vector2 _min, Vector2 _max, float _minDelta)
         {
-            int z;
             int i = 0;
             float midlX = temp.min.X + (MathHelper.Distance(temp.min.X, temp.max.X) / 2);
             float midlY = temp.min.Y + (MathHelper.Distance(temp.min.Y, temp.max.Y) / 2);
@@ -113,9 +112,6 @@ namespace KeyPixels
                 {
                     if (i < 4)
                     {
-                        if (i == 2)
-                            z = 0;
-
                         temp.child.Add(new Node());
                         float minX = temp.min.X+ (MathHelper.Distance(temp.min.X, temp.max.X)/2);
                         float maxX = temp.max.X;

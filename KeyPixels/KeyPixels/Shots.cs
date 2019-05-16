@@ -163,36 +163,67 @@ namespace KeyPixels
             return hit;
         }
 
-        public bool IsCollision(ref Model _Model, ref List<Matrix> WorldMatrix, out List<int> _number) // wird entfernt in der zukunft
+        /// <summary>
+        /// IsCollision with a QuadTree
+        /// </summary>
+        /// <param name="_QTree"></param>
+        /// <returns></returns>
+
+        public bool IsCollision(ref QuadTree<BoundingBox> _QTree)
         {
-            CreateBoundingBox bBox;
-            bool ret = false;
-            _number = new List<int>();
-
-            for (int n = 0; n < posModel.Count; ++n)
+            bool hit = false;
+            for (int n = posModel.Count - 1; n > -1; --n)
             {
-                int N = posModel.Count;
-                for (int i = 0; i < N; i++)
+                int N = posModel[n].Count;
+                for (int i = N - 1; i > -1; --i)
                 {
-                    for (int enemyMeshIndex = 0; enemyMeshIndex < mOModel[n].mModel.Meshes.Count; enemyMeshIndex++)
+                    List<BoundingBox> temp = _QTree.seekData(new Vector2(posModel[n][i]._bbox.bBox.Min.X, posModel[n][i]._bbox.bBox.Min.Z),
+                        new Vector2(posModel[n][i]._bbox.bBox.Max.X, posModel[n][i]._bbox.bBox.Max.Z));
+                    for (int u = 0; u < temp.Count && i < N; ++u)
                     {
-                        for (int z = 0; z < WorldMatrix.Count; ++z)
+                        if (posModel[n][i]._bbox.bBox.Intersects(temp[u]))
                         {
-                            bBox = new CreateBoundingBox(_Model, WorldMatrix[i]);
-
-                            if (posModel[n][i]._bbox.bBox.Intersects(bBox.bBox))
-                            {
-                                if (!ret)
-                                    ret = true;
-                                posModel[n].Remove(posModel[n][i]);
-                                N--;
-                                _number.Add(z);
-                            }
+                            posModel[n].Remove(posModel[n][i]);
+                            hit = true;
+                            N--;
                         }
                     }
                 }
             }
-            return ret;
+            return hit;
+        }
+
+        /// <summary>
+        /// IsCollision with a QuadTree and return List Collision
+        /// </summary>
+        /// <param name="_QTree"></param>
+        /// <param name="_ret_collision"></param>
+        /// <returns></returns>
+
+        public bool IsCollision(ref QuadTree<BoundingBox> _QTree, out List<BoundingBox> _ret_collision)
+        {
+            _ret_collision = new List<BoundingBox>();
+            bool hit = false;
+            for (int n = posModel.Count-1; n >-1; --n)
+            {
+                int N = posModel[n].Count;
+                for (int i = N-1; i >-1; --i)
+                {
+                    List<BoundingBox> temp = _QTree.seekData(new Vector2(posModel[n][i]._bbox.bBox.Min.X, posModel[n][i]._bbox.bBox.Min.Z),
+                        new Vector2(posModel[n][i]._bbox.bBox.Max.X, posModel[n][i]._bbox.bBox.Max.Z));
+                    for (int u = 0; u < temp.Count && i < N; ++u)
+                    {
+                        if (posModel[n][i]._bbox.bBox.Intersects(temp[u]))
+                        {
+                            posModel[n].Remove(posModel[n][i]);
+                            _ret_collision.Add(temp[u]);
+                            hit = true;
+                            N--;
+                        }
+                    }
+                }
+            }
+            return hit;
         }
 
         /// <summary>

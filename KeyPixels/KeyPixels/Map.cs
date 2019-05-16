@@ -17,7 +17,7 @@ namespace KeyPixels
         public List<Matrix> wallposMatrix;
         List<Matrix> groundposMatrix;
         List<Array> mapList;
-        QuadTree<BoundingBox> QTree;
+        public QuadTree<BoundingBox> QTree;
         public Map(Model ground,Model wall, Matrix viewMatrix, Matrix projectionMatrix)
         {
             _ground = ground;
