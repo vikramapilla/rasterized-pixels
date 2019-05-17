@@ -22,15 +22,11 @@ namespace KeyPixels
         public static Vector3 playerPosition;
 
         private Dictionary<string, float> rotationMap = new Dictionary<string, float>();
-
-        private float horizontalAngle = 0f;
-        private float verticalAngle = 0f;
+        
         private bool burstFlag = false;
         public static float angle = 0f;
-
-
-        private float currentRotation = 0f;
-        private float desiredRotation = 0f;
+        
+        private int burstCounter = 0;
 
         public void initialize(ContentManager contentManager)
         {
@@ -43,57 +39,137 @@ namespace KeyPixels
 
         public void getPosition()
         {
+            if (!burstFlag)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                {
+                    if (burstCounter == 0)
+                    {
+                        burstCounter = 7;
+                        burstFlag = true;
+                    }
+                }
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.LeftControl))
+            {
+                burstFlag = false;
+            }
+
+
+            if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                if (burstCounter > 0)
+                {
+                    playerPosition.Z += 0.15f;
+                    playerPosition.X += 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.Z += 0.01f;
+                    playerPosition.X += 0.01f;
+                }
+            }
+            else
+            if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.W))
+            {
+                if (burstCounter > 0)
+                {
+                    playerPosition.Z += 0.15f;
+                    playerPosition.X -= 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.Z += 0.01f;
+                    playerPosition.X -= 0.01f;
+                }
+            }
+            else
+            if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                if (burstCounter > 0)
+                {
+                    playerPosition.Z -= 0.15f;
+                    playerPosition.X += 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.Z -= 0.01f;
+                    playerPosition.X += 0.01f;
+                }
+            }
+            else
+            if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                if (burstCounter > 0)
+                {
+                    playerPosition.Z -= 0.15f;
+                    playerPosition.X -= 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.Z -= 0.01f;
+                    playerPosition.X -= 0.01f;
+                }
+            }
+            else
             if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                playerPosition.Z += 0.01f;
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                if (burstCounter > 0)
                 {
-                    float reachPosition = playerPosition.Z + 0.05f;
-                    while (playerPosition.Z < reachPosition)
-                    {
-                        playerPosition.Z += 0.025f;
-                    }
+                    playerPosition.Z += 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.Z += 0.01f;
                 }
             }
+            else
             if (Keyboard.GetState().IsKeyDown(Keys.S))
             {
-                playerPosition.Z -= 0.01f;
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                if (burstCounter > 0)
                 {
-                    float reachPosition = playerPosition.Z - 0.05f;
-                    while (playerPosition.Z > reachPosition)
-                    {
-                        playerPosition.Z -= 0.025f;
-                    }
+                    playerPosition.Z -= 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.Z -= 0.01f;
                 }
             }
+            else
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
-                playerPosition.X += 0.01f;
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                if (burstCounter > 0)
                 {
-                    float reachPosition = playerPosition.X + 0.05f;
-                    while (playerPosition.X < reachPosition)
-                    {
-                        playerPosition.X += 0.025f;
-                    }
+                    playerPosition.X += 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.X += 0.01f;
                 }
             }
+            else
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
-                playerPosition.X -= 0.01f;
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                if (burstCounter > 0)
                 {
-                    float reachPosition = playerPosition.X - 0.05f;
-                    while (playerPosition.X > reachPosition)
-                    {
-                        playerPosition.X -= 0.025f;
-                    }
+                    playerPosition.X -= 0.15f;
+                    burstCounter--;
+                }
+                else
+                {
+                    playerPosition.X -= 0.01f;
                 }
             }
 
         }
-        
+
         public void getRotation()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.D))
