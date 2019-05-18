@@ -18,7 +18,6 @@ namespace KeyPixels
         private float minDelta;
         private static bool insert;
         private static float deltaX, deltaY;
-        private static List<Vector2> _list;
 
         public QuadTree(Vector2 _min, Vector2 _max, float _minDelta)
         {
@@ -32,74 +31,43 @@ namespace KeyPixels
 
         public List<T> seekData(Vector2 _min, Vector2 _max)
         {
-            Vector2 _vek = _min;
-            _list = new List<Vector2>();
-
             deltaX = MathHelper.Distance(root.min.X, root.max.X);
             deltaY = MathHelper.Distance(root.min.Y, root.max.Y);
-            return _seekData(root, ref _vek, _max);
+            return _seekData(root,_min , _max);
         }
 
-        private List<T> _seekData(Node temp, ref Vector2 vec, Vector2 _max)
+        private List<T> _seekData(Node temp, Vector2 _min, Vector2 _max)
         {
-            bool[] b_help = new bool[4];
-            for (int i = 0; i < 4; ++i)
-                b_help[i] = false;
-
             List<T> ret_temp = new List<T>();
-            for (int i = 0; i < temp.child.Count; ++i)
+            if (_min.X < temp.min.X && _min.Y < temp.min.Y && _max.X > temp.max.X && _max.Y > temp.max.Y)
+                return _seekAllData(temp);
+            else
             {
-                if (temp.child[i].min.X < vec.X && temp.child[i].min.Y < vec.Y &&
-                    temp.child[i].max.X > vec.X && temp.child[i].max.Y > vec.Y && !b_help[i])
+                BoundingBox seekBox = new BoundingBox();
+                seekBox.Min = new Vector3(_min.X, _min.Y, 0);
+                seekBox.Max = new Vector3(_max.X, _max.Y, 0);
+
+                for (int i = 0; i < temp.child.Count; ++i)
                 {
-                    deltaX = MathHelper.Distance(temp.child[i].min.X, temp.child[i].max.X);
-                    deltaY = MathHelper.Distance(temp.child[i].min.Y, temp.child[i].max.Y);
-                    ret_temp.AddRange(_seekData(temp.child[i], ref vec, _max));
-                    b_help[i] = true;
-                    i = -1;
+                    BoundingBox helpBox = new BoundingBox();
+                    helpBox.Min = new Vector3(temp.child[i].min.X, temp.child[i].min.Y, 0);
+                    helpBox.Max = new Vector3(temp.child[i].max.X, temp.child[i].max.Y, 0);
+
+                    if (helpBox.Intersects(seekBox))
+                    {
+                        deltaX = MathHelper.Distance(temp.child[i].min.X, temp.child[i].max.X);
+                        deltaY = MathHelper.Distance(temp.child[i].min.Y, temp.child[i].max.Y);
+                            ret_temp.AddRange(_seekData(temp.child[i], _min, _max));
+                    }
                 }
+
+                Vector2 midl = new Vector2(temp.min.X + (MathHelper.Distance(temp.min.X, temp.max.X) / 2),
+                    temp.min.Y + (MathHelper.Distance(temp.min.Y, temp.max.Y) / 2));
+                if ((_min.X + deltaX > midl.X && _min.X - deltaX < midl.X) || (_min.Y + deltaY > midl.Y && _min.Y - deltaY < midl.Y))
+                    ret_temp.AddRange(temp.data);
+
+                return ret_temp;
             }
-            float midlX = temp.min.X + (MathHelper.Distance(temp.min.X, temp.max.X) / 2),
-                midlY = temp.min.Y + (MathHelper.Distance(temp.min.Y, temp.max.Y) / 2);
-            if ((vec.X + deltaX > midlX && vec.X - deltaX < midlX) || (vec.Y + deltaY > midlY && vec.Y - deltaY < midlY))
-            {
-                ret_temp.AddRange(temp.data);
-                bool b1 = vec.X + midlX * 2 > temp.max.X && vec.X + midlX * 2 < _max.X;
-                bool b2 = vec.Y + midlX * 2 > temp.max.Y && vec.Y + midlY * 2 < _max.Y;
-                if (b1)
-                {
-                    bool seek = true;
-                    for (int s = 0; s < _list.Count; ++s)
-                        if (_list[s].X == vec.X + midlX * 2 && _list[s].Y == vec.Y)
-                            seek = false;
-                    if (seek)
-                        _list.Add(new Vector2(vec.X + midlX * 2, vec.Y));
-                }
-                if (b2)
-                {
-                    bool seek = true;
-                    for (int s = 0; s < _list.Count; ++s)
-                        if (_list[s].X == vec.X && _list[s].Y == vec.Y + midlY * 2)
-                            seek = false;
-                    if (seek)
-                        _list.Add(new Vector2(vec.X, vec.Y + midlY * 2));
-                }
-                if (b1 && b2)
-                {
-                    bool seek = true;
-                    for (int s = 0; s < _list.Count; ++s)
-                        if (_list[s].X == vec.X + midlX * 2 && _list[s].Y == vec.Y + midlY * 2)
-                            seek = false;
-                    if (seek)
-                        _list.Add(new Vector2(vec.X + midlX * 2, vec.Y + midlY * 2));
-                }
-            }
-            if (_list.Count > 0)
-            {
-                vec = _list[0];
-                _list.Remove(vec);
-            }
-            return ret_temp;
         }
 
         public List<T> seekAllData()
