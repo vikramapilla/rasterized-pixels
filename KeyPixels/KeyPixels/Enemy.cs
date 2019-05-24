@@ -37,21 +37,27 @@ namespace KeyPixels
             enemyModel._model.Add(contentManager.Load<Model>("Models/Arms_Skelett"));
             enemyModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett"));
             worldMatrix = new List<Matrix>();
-            enemyPosition = new Vector3(2, 0, 0);
+            enemyPosition = new Vector3(2,0,0);
             worldMatrix.Add(Matrix.CreateTranslation(enemyPosition));
         }
 
         public void enemyChase(Matrix playerPos)
         {
-            target = playerPos.Translation - enemyPosition;
-            target = Vector3.Normalize(target);
-            target *= new Vector3(1, 1, 1) / 150;
-            enemyPosition += target;
-            playerAngle = 0;
-            //getRotation();
-            angle = (float)Math.Atan2(target.X, target.Z);
-            //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
-            worldMatrix[0] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
+            
+            for (int i = 0;i<worldMatrix.Count;i++)
+            {
+                Matrix m = worldMatrix[i];
+                target = playerPos.Translation - m.Translation;
+                target = Vector3.Normalize(target);
+                target *= new Vector3(1, 1, 1) / 150;
+                enemyPosition = m.Translation + target;
+                playerAngle = 0;
+                //getRotation();
+                angle = (float)Math.Atan2(target.X, target.Z);
+                //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
+                worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
+                
+            }
         }
 
         private void getRotation()

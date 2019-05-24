@@ -23,6 +23,7 @@ namespace KeyPixels
         static Shots shots;
 
         Map map;
+        Spawning sp;
         static Player player;
         static Enemy enemy;
 
@@ -60,10 +61,11 @@ namespace KeyPixels
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
-            enemy = new Enemy();
-            enemy.initialize(Content);
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
             map.CreateMap();
+            sp = new Spawning(map.getmapList());
+            enemy =  sp.GetEnemy();
+            enemy.initialize(Content);
         }
 
 
@@ -82,7 +84,7 @@ namespace KeyPixels
             shots.updateShotsPos(gameTime);
             getPosition();
             worldMatrix = Matrix.CreateTranslation(playerPosition);
-
+            sp.SpawnEnemy();
             foreach (Matrix m in enemy.worldMatrix)
             {
                 for (int i = 0; i < 2; ++i)
@@ -102,10 +104,14 @@ namespace KeyPixels
 
             player.getPosition();
             player.getRotation();
-            enemy.enemyChase(player.worldMatrix);
+            sp.GetEnemy().enemyChase(player.worldMatrix);
+
+            if (colldown > 0)
+                colldown -= 1;
             base.Update(gameTime);
         }
 
+        
 
         protected override void Draw(GameTime gameTime)
         {
@@ -151,8 +157,7 @@ namespace KeyPixels
 
         public static Vector3 getPosition()
         {
-            if(colldown>0)
-                colldown -= 1;
+
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 if (colldown < 1)
@@ -172,6 +177,7 @@ namespace KeyPixels
 
             return player.worldMatrix.Translation;
         }
+        
 
     }
 }

@@ -16,7 +16,7 @@ namespace KeyPixels
         Matrix _projectionMatrix;
         public List<Matrix> wallposMatrix;
         List<Matrix> groundposMatrix;
-        List<Array> mapList;
+        List<int[,]> mapList;
         public QuadTree<BoundingBox> QTree;
         public Map(Model ground,Model wall, Matrix viewMatrix, Matrix projectionMatrix)
         {
@@ -27,7 +27,20 @@ namespace KeyPixels
             wallposMatrix = new List<Matrix>();
             groundposMatrix = new List<Matrix>();
             QTree = new QuadTree<BoundingBox>(new Vector2(-10,-10),new Vector2(10,10),1);
-            
+            mapList = new List<int[,]>();
+            int[,] a = new int[7, 7] {
+                { 0, 0, 10, 0, 0, 0, 0 },
+                { 0, 6, 3, 0, 6, 7, 0 },
+                { 0, 5, 1, 2, 1, 3, 0 },
+                { 13, 1, 1, 4, 1, 1, 11 },
+                { 0, 5, 3, 0, 5, 3, 0 },
+                { 0, 9, 4, 2, 4, 8, 0 },
+                { 0, 0, 0, 12, 0, 0, 0 } };
+            mapList.Add(a);
+        }
+        public List<int[,]> getmapList()
+        {
+            return mapList;
         }
         public void CreateMap()
         {
@@ -42,14 +55,15 @@ namespace KeyPixels
              * 6 = g + wall (left + top),       7 = g + wall (top + right),     8 = g + wall (right + bottom),      9 = g + wall (bottom + left)
              * 10 = g + w (left top right),     11 = g + w (top right bottom),  12 = g + w (right bottom left),     13 = g + w (bottom left top)
              */
-            int[,] a = new int[7, 7] {
-                { 0, 0, 10, 0, 0, 0, 0 },
-                { 0, 6, 3, 0, 6, 7, 0 },
-                { 0, 5, 1, 2, 1, 3, 0 },
-                { 13, 1, 1, 4, 1, 1, 11 },
-                { 0, 5, 3, 0, 5, 3, 0 },
-                { 0, 9, 4, 2, 4, 8, 0 },
-                { 0, 0, 0, 12, 0, 0, 0 } };
+            int[,] a = mapList[0];
+            //int[,] a = new int[7, 7] {
+            //    { 0, 0, 10, 0, 0, 0, 0 },
+            //    { 0, 6, 3, 0, 6, 7, 0 },
+            //    { 0, 5, 1, 2, 1, 3, 0 },
+            //    { 13, 1, 1, 4, 1, 1, 11 },
+            //    { 0, 5, 3, 0, 5, 3, 0 },
+            //    { 0, 9, 4, 2, 4, 8, 0 },
+            //    { 0, 0, 0, 12, 0, 0, 0 } };
             posx = a.GetLength(0)/2;// pos = lenght/2 so that the map is as central as possible
             posz = a.GetLength(1)/2;
 
@@ -121,7 +135,6 @@ namespace KeyPixels
                         wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
                         wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 + 1, 0, posz * 2 - j * 2));
                         wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
-
                     }
                     else if (a[j, i] == 11)
                     {
@@ -129,7 +142,6 @@ namespace KeyPixels
                         wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 + 1));
                         wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(0)) * Matrix.CreateTranslation(posx * 2 - i * 2, 0, posz * 2 - j * 2 - 1));
                         wallposMatrix.Add(Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(posx * 2 - i * 2 - 1, 0, posz * 2 - j * 2));
-
                     }
                     else if (a[j, i] == 12)
                     {
@@ -159,6 +171,8 @@ namespace KeyPixels
             }
 
         }
+                    
+
 
         public void Draw()
 
