@@ -58,7 +58,10 @@ namespace KeyPixels
                 worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
                 
             }
+            
         }
+        
+        
 
         private void getRotation()
         {
@@ -108,9 +111,109 @@ namespace KeyPixels
             System.Diagnostics.Debug.WriteLine("{0}, {1}", relativePositionX, relativePositionZ);
         }
 
+        public bool IsCollision(ref QuadTree<BoundingBox> _QTree, Shots shots, Player player)
+        {
+            bool hit = false;
+            int N = worldMatrix.Count;
+            List<BoundingBox> box = new List<BoundingBox>();
+            for (int n = N - 1; n > -1; --n)
+            {
+                
+                for (int i = 0; i < 2; i++)
+                {
+                    CreateBoundingBox cbB = new CreateBoundingBox(enemyModel._model[i], worldMatrix[n]);
+                    if (shots.IsCollision(ref cbB.bBox))
+                    {
+                        worldMatrix.Remove(worldMatrix[n]);//disapear
+                        //hit = true;
+                        N--;
+                        break;
+                    }
+                    List<BoundingBox> temp = _QTree.seekData(new Vector2(cbB.bBox.Min.X, cbB.bBox.Min.Z),
+                            new Vector2(cbB.bBox.Max.X, cbB.bBox.Max.Z));
+                    if (i == 1) continue;
+                    for (int u = 0; u < temp.Count && n < N; ++u)
+                    {
+                        if (cbB.bBox.Intersects(temp[u]))
+                        {
+                            target = player.worldMatrix.Translation - worldMatrix[n].Translation;
+                            target = Vector3.Normalize(target);
+                            target *= new Vector3(1, 1, 1) / 150;
+                            worldMatrix[n]= Matrix.CreateTranslation(worldMatrix[n].Translation - target*new Vector3(1,0,0));
+                            if (cbB.bBox.Intersects(temp[u]))
+                            {
+                                worldMatrix[n] = Matrix.CreateTranslation(worldMatrix[n].Translation - target * new Vector3(0, 0, 1));
+                                if (cbB.bBox.Intersects(temp[u]))
+                                {
+                                }
+                                else worldMatrix[n] = Matrix.CreateTranslation(worldMatrix[n].Translation + target * new Vector3(1, 0, 0));
+                                    
+                            }
+                            else worldMatrix[n] = Matrix.CreateTranslation(worldMatrix[n].Translation + target * new Vector3(0, 0, 1));
+
+                            //hit = true;
+                            break;
+                        }
+                    }
+                    if (box.Count == 0)
+                    {
+                        box.Add(cbB.bBox);
+                    }
+                    else
+                    {
+                        for (int e = 0; e < box.Count; e++)
+                        {
+                            if (cbB.bBox.Intersects(box[e]))
+                            {
+                                worldMatrix[n] = Matrix.CreateTranslation(worldMatrix[n].Translation - target);
+                                break;
+                            }
+                        }
+                        box.Add(cbB.bBox);
+                    }
+                }
+            }
+            
+                CreateBoundingBox cbBbody = new CreateBoundingBox(player.playerModel.body, player.worldMatrix);
+                CreateBoundingBox cbBarm = new CreateBoundingBox(player.playerModel.arms, player.worldMatrix);
+            for (int i=0;i<box.Count;i++)
+            {
+                if (cbBarm.bBox.Intersects(box[i]) || cbBbody.bBox.Intersects(box[i]))
+                {
+                    hit = true;
+                }
+            }
+
+            return hit;
+        }
+        public bool IsCollision(Matrix playerPos)
+        {
+            for (int n =0; n < worldMatrix.Count; n++)
+            {
+                for (int i = 0; i < 2; i++)
+                {
+                    CreateBoundingBox cbB = new CreateBoundingBox(enemyModel._model[i], worldMatrix[n]);
+                    for (int k = 0; k < worldMatrix.Count; k++)
+                    {
+                        if (k == n) { continue; }
+                        CreateBoundingBox cbB2 = new CreateBoundingBox(enemyModel._model[i], worldMatrix[k]);
+                        if (cbB.bBox.Intersects(cbB2.bBox))
+                        {
+                            //target = playerPos.Translation - worldMatrix[n].Translation;
+                            //target = Vector3.Normalize(target);
+                            //target *= new Vector3(1, 1, 1) / 150;
+                            worldMatrix[k] = Matrix.CreateTranslation(worldMatrix[k].Translation - target);
+                        }
+
+                    }
+                }
+            }
+
+            return false;
+        }
 
 
-        public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
+            public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
             for (int z = 0; z < enemyModel._model.Count; ++z)
             {

@@ -66,6 +66,7 @@ namespace KeyPixels
                                 enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
                                 n++;
                                 spawnrate = 100;
+                                
                                 break;
                             }
                         }
