@@ -89,20 +89,27 @@ namespace KeyPixels
             // TODO: Add your update logic here
             shots.updateShotsPos(gameTime);
             getPosition();
-            worldMatrix = Matrix.CreateTranslation(playerPosition);
             sp.SpawnEnemy();
-            foreach (Matrix m in enemy.worldMatrix)
+            //foreach (Matrix m in enemy.worldMatrix)
+            //{
+            //    for (int i = 0; i < 2; ++i)
+            //    {
+            //        cbB = new CreateBoundingBox(enemy.enemyModel._model[i], m);
+            //        if (shots.IsCollision(ref cbB.bBox))
+            //        {
+
+            //        }
+            //    }
+            //}
+
+            if (sp.GetEnemy().IsCollision(ref map.QTree, shots, player))
             {
-                for (int i = 0; i < 2; ++i)
-                {
-                    cbB = new CreateBoundingBox(enemy.enemyModel._model[i], m);
-                    if (shots.IsCollision(ref cbB.bBox))
-                    {
-
-                    }
-                }
+                //Exit();
             }
+            //if (sp.GetEnemy().IsCollision(player.worldMatrix))
+            //{
 
+            //}
             if (shots.IsCollision(ref map.QTree))
             {
 
