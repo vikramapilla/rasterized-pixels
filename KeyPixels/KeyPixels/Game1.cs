@@ -20,12 +20,15 @@ namespace KeyPixels
         Model playerModel;
         Model ground;
         Model wall;
+        Model particle;
+        bool flag = true;
         static Shots shots;
 
         Map map;
         Spawning sp;
         static Player player;
         static Enemy enemy;
+        ParticleEngine ParticleEngine;
 
         CreateBoundingBox cbB;
         List<BoundingBox> collision_return;
@@ -56,6 +59,7 @@ namespace KeyPixels
             spriteBatch = new SpriteBatch(GraphicsDevice);
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
+            particle = Content.Load<Model>("Models/Shot_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1),Color.Red);
             shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Blue);
             numberShot = 0;
@@ -66,6 +70,8 @@ namespace KeyPixels
             sp = new Spawning(map.getmapList());
             enemy =  sp.GetEnemy();
             enemy.initialize(Content);
+
+            ParticleEngine = new ParticleEngine(particle, Vector3.Zero);
         }
 
 
@@ -109,6 +115,14 @@ namespace KeyPixels
             if (colldown > 0)
                 colldown -= 1;
             base.Update(gameTime);
+
+            ParticleEngine.EmitterLocation = Vector3.Zero;
+            if (flag)
+            {
+                ParticleEngine.Update();
+                flag = true;
+            }
+
         }
 
         
@@ -124,6 +138,7 @@ namespace KeyPixels
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
+            ParticleEngine.Draw();
             base.Draw(gameTime);
         }
 

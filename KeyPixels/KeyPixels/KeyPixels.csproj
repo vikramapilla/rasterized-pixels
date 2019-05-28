@@ -42,6 +42,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Camera.cs" />
+    <Compile Include="Particle.cs" />
+    <Compile Include="ParticleEngine.cs" />
     <Compile Include="Spawning.cs" />
     <Compile Include="CreateBoundingBox.cs" />
     <Compile Include="Enemy.cs" />
