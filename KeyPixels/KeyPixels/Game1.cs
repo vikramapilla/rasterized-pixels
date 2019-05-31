@@ -116,7 +116,7 @@ namespace KeyPixels
 
             player.getPosition();
             player.getRotation();
-            sp.GetEnemy().enemyChase(player.worldMatrix);
+            sp.GetEnemy().enemyChase(player, ref map.QTree);
 
             if (colldown > 0)
                 colldown -= 1;
@@ -125,7 +125,7 @@ namespace KeyPixels
 
         }
 
-        
+       
 
         protected override void Draw(GameTime gameTime)
         {

@@ -66,7 +66,7 @@ namespace KeyPixels
             //    { 0, 0, 0, 12, 0, 0, 0 } };
             posx = a.GetLength(0)/2;// pos = lenght/2 so that the map is as central as possible
             posz = a.GetLength(1)/2;
-
+            
             for (int i=0;i<a.GetLength(0);i++ )
             {
                 for(int j=0;j< a.GetLength(1); j++)
