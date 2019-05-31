@@ -28,7 +28,6 @@ namespace KeyPixels
         Spawning sp;
         static Player player;
         static Enemy enemy;
-        ParticleEngine ParticleEngine;
 
         CreateBoundingBox cbB;
         List<BoundingBox> collision_return;
@@ -61,6 +60,7 @@ namespace KeyPixels
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
             particle = Content.Load<Model>("Models/Shot_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1),Color.Red);
+            shots.initialize(Content);
             shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Blue);
             numberShot = 0;
             player = new Player();
@@ -71,7 +71,6 @@ namespace KeyPixels
             enemy =  sp.GetEnemy();
             enemy.initialize(Content);
 
-            ParticleEngine = new ParticleEngine(particle, Vector3.Zero);
         }
 
 
@@ -123,12 +122,6 @@ namespace KeyPixels
                 colldown -= 1;
             base.Update(gameTime);
 
-            ParticleEngine.EmitterLocation = Vector3.Zero;
-            if (flag)
-            {
-                ParticleEngine.Update();
-                flag = true;
-            }
 
         }
 
@@ -145,7 +138,6 @@ namespace KeyPixels
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
-            ParticleEngine.Draw();
             base.Draw(gameTime);
         }
 
@@ -168,7 +160,7 @@ namespace KeyPixels
                     effect.World = worldMatrix;
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
-                    effect.DiffuseColor = Color.Crimson.ToVector3();
+                    effect.DiffuseColor = Color.MidnightBlue.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
                     

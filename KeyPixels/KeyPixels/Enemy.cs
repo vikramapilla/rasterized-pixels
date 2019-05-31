@@ -16,6 +16,8 @@ namespace KeyPixels
     {
         public EnemyModel enemyModel;
         public Player player;
+        Model particle;
+        List<ParticleEngine> ParticleEngines;
 
         public List<Matrix> worldMatrix;
 
@@ -24,8 +26,6 @@ namespace KeyPixels
         private Vector3 target;
 
         private float angle = 0f;
-        private float enemyAngle = 0f;
-        private float playerAngle = 0f;
         private float relativePositionX = 0f;
         private float relativePositionZ = 0f;
 
@@ -36,9 +36,11 @@ namespace KeyPixels
             enemyModel._model.Add(contentManager.Load<Model>("Models/Body_Tria"));
             enemyModel._model.Add(contentManager.Load<Model>("Models/Arms_Skelett"));
             enemyModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett"));
+            particle = contentManager.Load<Model>("Models/Shot_Tria");
             worldMatrix = new List<Matrix>();
             enemyPosition = new Vector3(2,0,0);
             worldMatrix.Add(Matrix.CreateTranslation(enemyPosition));
+            ParticleEngines = new List<ParticleEngine>();
         }
 
         public void enemyChase(Matrix playerPos)
@@ -51,7 +53,6 @@ namespace KeyPixels
                 target = Vector3.Normalize(target);
                 target *= new Vector3(1, 1, 1) / 150;
                 enemyPosition = m.Translation + target;
-                playerAngle = 0;
                 //getRotation();
                 angle = (float)Math.Atan2(target.X, target.Z);
                 //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
@@ -124,6 +125,8 @@ namespace KeyPixels
                     CreateBoundingBox cbB = new CreateBoundingBox(enemyModel._model[i], worldMatrix[n]);
                     if (shots.IsCollision(ref cbB.bBox))
                     {
+                        Vector3 enemyDisappearPosition = worldMatrix[n].Translation;
+                        ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, "Enemy"));
                         worldMatrix.Remove(worldMatrix[n]);//disapear
                         //hit = true;
                         N--;
@@ -215,6 +218,12 @@ namespace KeyPixels
 
             public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
+
+            for (int i = 0; i < ParticleEngines.Count; i++)
+            {
+                ParticleEngines[i].Update();
+                ParticleEngines[i].Draw();
+            }
             for (int z = 0; z < enemyModel._model.Count; ++z)
             {
                 foreach (ModelMesh mesh in enemyModel._model[z].Meshes)
@@ -224,9 +233,9 @@ namespace KeyPixels
                         effect.EnableDefaultLighting();
                         effect.PreferPerPixelLighting = true;
 
+                        effect.DiffuseColor = Color.Crimson.ToVector3();
                         effect.View = viewMatrix;
                         effect.Projection = projectionMatrix;
-
                         for (int i = 0; i < worldMatrix.Count; i++)
                         {
                             effect.World = worldMatrix[i];

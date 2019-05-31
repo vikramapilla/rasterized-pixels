@@ -10,6 +10,9 @@ namespace KeyPixels
         private static List<_Model> mOModel;
         private static List<List<_Value>> posModel;
 
+        List<ParticleEngine> ParticleEngines;
+        Model particle;
+
         public struct _Model
         {
             public Model mModel;
@@ -38,8 +41,12 @@ namespace KeyPixels
             posModel.Add(new List<_Value>());
             ColorModel(_difcolor,0);
         }
-
-        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
+        public void initialize(ContentManager contentManager)
+        {
+            particle = contentManager.Load<Model>("Models/Shot_Tria");
+            ParticleEngines = new List<ParticleEngine>();
+        }
+            public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel.Add(new List<_Value>());
@@ -183,6 +190,8 @@ namespace KeyPixels
                     {
                         if (posModel[n][i]._bbox.bBox.Intersects(temp[u]))
                         {
+                            Vector3 shotDisappearPosition = posModel[n][i]._matrix.Translation;
+                            ParticleEngines.Add(new ParticleEngine(particle, shotDisappearPosition, "Wall"));
                             posModel[n].Remove(posModel[n][i]);
                             hit = true;
                             N--;
@@ -234,6 +243,12 @@ namespace KeyPixels
 
         public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
+
+            for (int i = 0; i < ParticleEngines.Count; i++)
+            {
+                ParticleEngines[i].Update();
+                ParticleEngines[i].Draw();
+            }
             Vector3 DifC = new Vector3();
             bool firstStep = true;
             for (int n = 0; n < posModel.Count; ++n)
