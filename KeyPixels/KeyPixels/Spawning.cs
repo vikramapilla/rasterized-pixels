@@ -25,12 +25,20 @@ namespace KeyPixels
             //elist = new List<Enemy>();
             n = 0;
         }
+
+        public void clearEnemy()
+        {
+            n = 0;
+            enemy.worldMatrix.Clear();
+            spawnrate = -1;
+        }
+
         public Enemy GetEnemy()
         {
             return enemy;
         }
         //public void minusnumber() { n--; }
-        public void SpawnEnemy()
+        public void SpawnEnemy(int index)
         {
             int posx;
             int posz;
@@ -41,7 +49,7 @@ namespace KeyPixels
              * 6 = g + wall (left + top),       7 = g + wall (top + right),     8 = g + wall (right + bottom),      9 = g + wall (bottom + left)
              * 10 = g + w (left top right),     11 = g + w (top right bottom),  12 = g + w (right bottom left),     13 = g + w (bottom left top)
              */
-            int[,] a = _mapList[0];
+            int[,] a = _mapList[index];
             posx = a.GetLength(0) / 2;// pos = lenght/2 so that the map is as central as possible
             posz = a.GetLength(1) / 2;
             Random r = new Random();
@@ -56,18 +64,27 @@ namespace KeyPixels
                     if ((Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > 2)|| (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < -2)||
                         (Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > -2)|| (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < 2))
                     {
-                        int count = enemy.worldMatrix.Count;
-
-                        for (int l = 0; l < count; l++)
+                        if (n==0)
                         {
-                            if ((enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > 2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2)||
-                                (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > -2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2))
+                            enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            n++;
+                            spawnrate = 100;
+                        }
+                        else
+                        {
+                            int count = enemy.worldMatrix.Count;
+
+                            for (int l = 0; l < count; l++)
                             {
-                                enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                                n++;
-                                spawnrate = 100;
-                                
-                                break;
+                                if ((enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > 2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2) ||
+                                    (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > -2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2))
+                                {
+                                    enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    n++;
+                                    spawnrate = 100;
+
+                                    break;
+                                }
                             }
                         }
                         //if (!elist.Any())

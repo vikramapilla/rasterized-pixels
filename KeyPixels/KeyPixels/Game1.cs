@@ -25,6 +25,9 @@ namespace KeyPixels
         static Shots shots;
 
         Map map;
+        private bool mapFlag = false;
+        int mapindex;
+
         Spawning sp;
         static Player player;
         static Enemy enemy;
@@ -48,6 +51,7 @@ namespace KeyPixels
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
             colldown = 0;
+            mapindex = 0;
 
             base.Initialize();
         }
@@ -66,7 +70,7 @@ namespace KeyPixels
             player = new Player();
             player.initialize(Content);
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
-            map.CreateMap();
+            map.CreateMap(0);
             sp = new Spawning(map.getmapList());
             enemy =  sp.GetEnemy();
             enemy.initialize(Content);
@@ -85,10 +89,40 @@ namespace KeyPixels
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if (!mapFlag)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.D1))
+                {
+                    mapindex = 0;
+                    map.CreateMap(mapindex);
+                    sp.clearEnemy();
+                    sp = new Spawning(map.getmapList());
+                    mapFlag = true;
+                    shots.clearAll();
+                    sp.GetEnemy().initialize(Content);
+
+                }
+                else if (Keyboard.GetState().IsKeyDown(Keys.D2))
+                {
+                    mapindex = 1;
+                    map.CreateMap(mapindex);
+                    sp.clearEnemy();
+                    sp = new Spawning(map.getmapList());
+                    mapFlag = true;
+                    shots.clearAll();
+                    sp.GetEnemy().initialize(Content);
+                }
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.D1)&& Keyboard.GetState().IsKeyUp(Keys.D2))
+            {
+                mapFlag = false;
+            }
+
             // TODO: Add your update logic here
+            sp.SpawnEnemy(mapindex);
             shots.updateShotsPos(gameTime);
             getPosition();
-            sp.SpawnEnemy();
+            
             
 
             if (sp.GetEnemy().IsCollision(shots))
@@ -121,7 +155,7 @@ namespace KeyPixels
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
             player.Draw();
-            enemy.Draw(ref viewMatrix, ref projectionMatrix);
+            sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
             //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();

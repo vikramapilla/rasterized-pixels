@@ -26,7 +26,7 @@ namespace KeyPixels
             _projectionMatrix = projectionMatrix;
             wallposMatrix = new List<Matrix>();
             groundposMatrix = new List<Matrix>();
-            QTree = new QuadTree<BoundingBox>(new Vector2(-10,-10),new Vector2(10,10),1);
+            
             mapList = new List<int[,]>();
             int[,] a = new int[7, 7] {
                 { 0, 0, 10, 0, 0, 0, 0 },
@@ -37,17 +37,27 @@ namespace KeyPixels
                 { 0, 9, 4, 2, 4, 8, 0 },
                 { 0, 0, 0, 12, 0, 0, 0 } };
             mapList.Add(a);
+            int[,] b = new int[7, 7] {
+                { 0, 0, 0, 0, 0, 0, 0 },
+                { 0, 6, 2, 2, 2, 7, 0 },
+                { 0, 5, 1, 1, 1, 3, 0 },
+                { 0, 5, 1, 1, 1, 3, 0 },
+                { 0, 5, 1, 1, 1, 3, 0 },
+                { 0, 9, 4, 4, 4, 8, 0 },
+                { 0, 0, 0, 0, 0, 0, 0 } };
+            mapList.Add(b);
         }
         public List<int[,]> getmapList()
         {
             return mapList;
         }
-        public void CreateMap()
+        public void CreateMap(int index)
         {
             int posx;
             int posz;
             wallposMatrix.Clear();
             groundposMatrix.Clear();
+            QTree = new QuadTree<BoundingBox>(new Vector2(-10, -10), new Vector2(10, 10), 1);
             /*
              * built map from array 
              * numbers stand for one form of the tile
@@ -55,7 +65,7 @@ namespace KeyPixels
              * 6 = g + wall (left + top),       7 = g + wall (top + right),     8 = g + wall (right + bottom),      9 = g + wall (bottom + left)
              * 10 = g + w (left top right),     11 = g + w (top right bottom),  12 = g + w (right bottom left),     13 = g + w (bottom left top)
              */
-            int[,] a = mapList[0];
+            int[,] a = mapList[index];
             //int[,] a = new int[7, 7] {
             //    { 0, 0, 10, 0, 0, 0, 0 },
             //    { 0, 6, 3, 0, 6, 7, 0 },
