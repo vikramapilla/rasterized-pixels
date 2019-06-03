@@ -89,26 +89,12 @@ namespace KeyPixels
             shots.updateShotsPos(gameTime);
             getPosition();
             sp.SpawnEnemy();
-            //foreach (Matrix m in enemy.worldMatrix)
-            //{
-            //    for (int i = 0; i < 2; ++i)
-            //    {
-            //        cbB = new CreateBoundingBox(enemy.enemyModel._model[i], m);
-            //        if (shots.IsCollision(ref cbB.bBox))
-            //        {
+            
 
-            //        }
-            //    }
-            //}
-
-            if (sp.GetEnemy().IsCollision(ref map.QTree, shots, player))
+            if (sp.GetEnemy().IsCollision(shots))
             {
-                //Exit();
-            }
-            //if (sp.GetEnemy().IsCollision(player.worldMatrix))
-            //{
 
-            //}
+            }
             if (shots.IsCollision(ref map.QTree))
             {
 
@@ -116,6 +102,7 @@ namespace KeyPixels
 
             player.getPosition();
             player.getRotation();
+            sp.GetEnemy().clearList();
             sp.GetEnemy().enemyChase(player, ref map.QTree);
 
             if (colldown > 0)
