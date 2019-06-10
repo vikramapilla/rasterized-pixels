@@ -63,9 +63,20 @@ namespace KeyPixels
         private Particle GenerateWallParticle()
         {
             Vector3 position = EmitterLocation;
-            Vector3 velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
-                0.01f * (float)(random.NextDouble() * 2 - 1),
-                0.01f * (float)(random.NextDouble() * 2 - 1));
+            Vector3 velocity;
+            if (EmitterRotation%180 == 0)
+            {
+                velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
+                    0.01f * (float)(random.NextDouble() * 2 - 1),
+                   0);
+            }
+            else
+            {
+
+                velocity = new Vector3(0,
+                    0.01f * (float)(random.NextDouble() * 2 - 1),
+                    0.01f * (float)(random.NextDouble() * 2 - 1));
+            }
             float angle = EmitterRotation;
             float angularVelocity = 0.1f * (float)(random.NextDouble() * 2);
             Color color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
