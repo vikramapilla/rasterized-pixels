@@ -169,6 +169,12 @@ namespace KeyPixels
             }
 
         }
+        
+
+        public float getCurrentRotation()
+        {
+            return angle;
+        }
 
         public void getRotation()
         {

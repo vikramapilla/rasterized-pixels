@@ -12,14 +12,17 @@ namespace KeyPixels
 
         private Random random;
         public Vector3 EmitterLocation { get; set; }
+        public float EmitterRotation { get; set; }
         private List<Particle> particles;
         private Model model;
         private int TTE; //TimeToEmit
         private string ParticleType;
+        
 
-        public ParticleEngine(Model model, Vector3 location, String particleType)
+        public ParticleEngine(Model model, Vector3 location, float rotation, String particleType)
         {
             EmitterLocation = location;
+            EmitterRotation = rotation;
             this.model = model;
             random = new Random();
             this.particles = new List<Particle>();
@@ -60,10 +63,10 @@ namespace KeyPixels
         private Particle GenerateWallParticle()
         {
             Vector3 position = EmitterLocation;
-            Vector3 velocity = new Vector3(0.01f * (float)(0 * 3 - 1),
-                0.01f * (float)(random.NextDouble() * 3 - 1),
-                0.01f * (float)(random.NextDouble() * 3 - 1));
-            float angle = 0f;
+            Vector3 velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
+                0.01f * (float)(random.NextDouble() * 2 - 1),
+                0.01f * (float)(random.NextDouble() * 2 - 1));
+            float angle = EmitterRotation;
             float angularVelocity = 0.1f * (float)(random.NextDouble() * 2);
             Color color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             float size = (float)random.NextDouble();

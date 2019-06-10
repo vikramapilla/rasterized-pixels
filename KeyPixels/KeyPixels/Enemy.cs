@@ -164,7 +164,7 @@ namespace KeyPixels
                     if (shots.IsCollision(ref cbB.bBox))// test if shot hits enemy
                     {
                         Vector3 enemyDisappearPosition = worldMatrix[n].Translation;
-                        ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, "Enemy"));
+                        ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f,  "Enemy"));
                         worldMatrix.Remove(worldMatrix[n]);//disapear
                         hit = true;
                         N--;

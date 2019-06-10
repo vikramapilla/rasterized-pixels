@@ -60,6 +60,7 @@ namespace KeyPixels
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
             particle = Content.Load<Model>("Models/Shot_Tria");
@@ -156,7 +157,7 @@ namespace KeyPixels
             shots.Draw(ref viewMatrix, ref projectionMatrix);
             player.Draw();
             sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
-            //Draw3DModel(ground, worldMatrix, viewMatrix, projectionMatrix);
+            //Draw3DModel(playerModel, Matrix.CreateTranslation(0, 0, 2.69999f), viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
             base.Draw(gameTime);

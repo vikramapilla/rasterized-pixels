@@ -43,6 +43,7 @@ namespace KeyPixels
 
         public void Draw()
         {
+            //worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Angle)) * Matrix.CreateTranslation(Position);
             worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(Angle)) * Matrix.CreateTranslation(Position);
             Game1.Draw3DModel(Model, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
         }

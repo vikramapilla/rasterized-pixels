@@ -13,6 +13,8 @@ namespace KeyPixels
         List<ParticleEngine> ParticleEngines;
         Model particle;
 
+        private Player player = new Player();
+
         public struct _Model
         {
             public Model mModel;
@@ -25,6 +27,7 @@ namespace KeyPixels
             public Matrix _matrix;
             public Vector3 _directionAddSpeed;
             public CreateBoundingBox _bbox;
+            public float _shotAngle;
         };
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
@@ -72,7 +75,9 @@ namespace KeyPixels
                 temp._matrix = posMatrix;
                 temp._directionAddSpeed = Vector3.Transform(mOModel[numberShot].directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
                 temp._bbox = new CreateBoundingBox(mOModel[numberShot].mModel, temp._matrix);
+                temp._shotAngle = player.getCurrentRotation();
                 posModel[numberShot].Add(temp);
+                //System.Diagnostics.Debug.WriteLine("Shot: {0}", temp._shotAngle);
             }
         }
 
@@ -88,6 +93,7 @@ namespace KeyPixels
             {
                 _Value temp = new _Value();
                 temp._matrix = posMatrix;
+                temp._shotAngle = player.getCurrentRotation();
                 Matrix help = Matrix.CreateFromQuaternion(temp._matrix.Rotation);
                 Vector3 help_vec = mOModel[numberShot].directionAddSpeed;
                 FastCalcMono3D.SmartMatrixVec3NotY(ref help_vec, ref help, ref temp._directionAddSpeed);
@@ -191,7 +197,9 @@ namespace KeyPixels
                         if (posModel[n][i]._bbox.bBox.Intersects(temp[u]))
                         {
                             Vector3 shotDisappearPosition = posModel[n][i]._matrix.Translation;
-                            ParticleEngines.Add(new ParticleEngine(particle, shotDisappearPosition, "Wall"));
+                            float shotDisappearRotation = posModel[n][i]._shotAngle;
+                            //System.Diagnostics.Debug.WriteLine(shotDisappearRotation);
+                            ParticleEngines.Add(new ParticleEngine(particle, shotDisappearPosition, shotDisappearRotation, "Wall"));
                             posModel[n].Remove(posModel[n][i]);
                             hit = true;
                             N--;
