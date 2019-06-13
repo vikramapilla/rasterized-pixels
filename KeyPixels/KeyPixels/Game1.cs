@@ -92,9 +92,9 @@ namespace KeyPixels
 
             if (!mapFlag)
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.D1))
+                if (Keyboard.GetState().IsKeyDown(Keys.D1)&&mapindex!=0)
                 {
-                    mapindex = 0;
+                    mapindex -= 1;
                     map.CreateMap(mapindex);
                     sp.clearEnemy();
                     sp = new Spawning(map.getmapList());
@@ -103,9 +103,9 @@ namespace KeyPixels
                     sp.GetEnemy().initialize(Content);
 
                 }
-                else if (Keyboard.GetState().IsKeyDown(Keys.D2))
+                else if (Keyboard.GetState().IsKeyDown(Keys.D2)&&mapindex!=4)
                 {
-                    mapindex = 1;
+                    mapindex += 1;
                     map.CreateMap(mapindex);
                     sp.clearEnemy();
                     sp = new Spawning(map.getmapList());
