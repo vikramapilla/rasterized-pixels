@@ -37,7 +37,7 @@ namespace KeyPixels
             buildRotationMap();
         }
 
-        public void getPosition()
+        public void getPosition(ref QuadTree<BoundingBox> _QTree)
         {
             if (!burstFlag)
             {
@@ -60,14 +60,31 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z += 0.15f;
                     playerPosition.X += 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
+                    
                 }
                 else
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z += 0.01f;
                     playerPosition.X += 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
             }
             else
@@ -75,14 +92,30 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z += 0.15f;
                     playerPosition.X -= 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
                 else
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z += 0.01f;
                     playerPosition.X -= 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
             }
             else
@@ -90,14 +123,30 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z -= 0.15f;
                     playerPosition.X += 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
                 else
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z -= 0.01f;
                     playerPosition.X += 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
             }
             else
@@ -105,14 +154,30 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z -= 0.15f;
                     playerPosition.X -= 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
                 else
                 {
+                    float tempZ = playerPosition.Z;
+                    float tempX = playerPosition.X;
                     playerPosition.Z -= 0.01f;
                     playerPosition.X -= 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                        playerPosition.X = tempX;
+                    }
                 }
             }
             else
@@ -120,12 +185,24 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempZ = playerPosition.Z;
                     playerPosition.Z += 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                    }
                 }
                 else
                 {
+                    float tempZ = playerPosition.Z;
                     playerPosition.Z += 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                    }
                 }
             }
             else
@@ -133,12 +210,24 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempZ = playerPosition.Z;
                     playerPosition.Z -= 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                    }
                 }
                 else
                 {
+                    float tempZ = playerPosition.Z;
                     playerPosition.Z -= 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.Z = tempZ;
+                    }
                 }
             }
             else
@@ -146,12 +235,24 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempX = playerPosition.X;
                     playerPosition.X += 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.X = tempX;
+                    }
                 }
                 else
                 {
+                    float tempX = playerPosition.X;
                     playerPosition.X += 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.X = tempX;
+                    }
                 }
             }
             else
@@ -159,12 +260,24 @@ namespace KeyPixels
             {
                 if (burstCounter > 0)
                 {
+                    float tempX = playerPosition.X;
                     playerPosition.X -= 0.15f;
                     burstCounter--;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.X = tempX;
+                    }
                 }
                 else
                 {
+                    float tempX = playerPosition.X;
                     playerPosition.X -= 0.01f;
+
+                    if (IsCollision(ref _QTree) == true)
+                    {
+                        playerPosition.X = tempX;
+                    }
                 }
             }
 
@@ -317,6 +430,36 @@ namespace KeyPixels
             rotationMap.Add("SouthEast", -135);
         }
 
+        public bool IsCollision(ref QuadTree<BoundingBox> _QTree)
+        {
+            bool hit = false;
+            for (int i = 0; i < 2; i++)
+            {
+                CreateBoundingBox cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateTranslation(playerPosition));
+                CreateBoundingBox cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
+                List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
+                new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
+
+                for (int u = 0; u < temp.Count; ++u)
+                {
+                    if (cbBbody.bBox.Intersects(temp[u]))//test if playerbody hits map
+                    {
+                        hit = true;
+                    }
+                }
+                temp = _QTree.seekData(new Vector2(cbBarm.bBox.Min.X, cbBarm.bBox.Min.Z),
+                new Vector2(cbBarm.bBox.Max.X, cbBarm.bBox.Max.Z));
+
+                for (int u = 0; u < temp.Count; ++u)
+                {
+                    if (cbBarm.bBox.Intersects(temp[u]))//test if playerarm hits map
+                    {
+                        hit = true;
+                    }
+                }
+            }
+            return hit;
+        }
 
         public void Draw()
         {

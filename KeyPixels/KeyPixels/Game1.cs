@@ -135,7 +135,7 @@ namespace KeyPixels
 
             }
 
-            player.getPosition();
+            player.getPosition(ref map.QTree);
             player.getRotation();
             sp.GetEnemy().clearList();
             sp.GetEnemy().enemyChase(player, ref map.QTree);
