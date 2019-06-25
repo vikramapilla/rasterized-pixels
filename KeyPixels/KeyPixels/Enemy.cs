@@ -54,39 +54,39 @@ namespace KeyPixels
             {
                 Matrix m = worldMatrix[i];
                 Vector3 tar = playerPos.worldMatrix.Translation - m.Translation;
-                tar = Vector3.Normalize(tar);
-                target = tar * new Vector3(1, 1, 1) / 150;
+                tar = Vector3.Normalize(tar) / 150;
+                target = tar * new Vector3(1, 1, 1);
                 enemyPosition = m.Translation + target;
                 //getRotation();
                 angle = (float)Math.Atan2(target.X, target.Z);
                 //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
-
+                Console.WriteLine(target);
                 worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
                 if (IsCollision(playerPos, ref map, i) == true)
                 {
-                    worldMatrix[i] = m;
-                    
-                    //target = tar * new Vector3(1, 1, 0) / 150;
-                    ////enemyPosition = m.Translation + target;
-                    //angle = (float)Math.Atan2(target.X, target.Z);
-                    //worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                    //worldMatrix[i] = m;
+                    target = tar* new Vector3(1, 1, 0) ;
+                    Console.WriteLine("mist0" + target);
+                    //enemyPosition = m.Translation + target;
+                    angle = (float)Math.Atan2(target.X, target.Z);
+                    worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                    if (IsCollision(playerPos, ref map, i) == true)
+                    {
+                        //worldMatrix[i] = m;
+                        target = tar * new Vector3(0, 1, 1);
+                        Console.WriteLine("mist1" + target);
+                        //enemyPosition = m.Translation + target;
+                        angle = (float)Math.Atan2(target.X, target.Z);
+                        worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                        if (IsCollision(playerPos, ref map, i) == true)
+                        {
+                            worldMatrix[i] = m;
+                            Console.WriteLine("mist2");
+                        }
 
-                    //if (IsCollision(playerPos, ref map, i) == true)
-                    //{
-                    //    worldMatrix[i] = m;
 
-                    //    target = tar * new Vector3(0, 1, 1) / 150;
-                    //    //enemyPosition = m.Translation + target;
-                    //    angle = (float)Math.Atan2(target.X, target.Z);
-                    //    worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                    }
 
-                    //    if (IsCollision(playerPos, ref map, i) == true)
-                    //    {
-                    //        worldMatrix[i] = m;
-
-                    //    }
-                        
-                    //}
                 }
                 
             }
@@ -187,69 +187,85 @@ namespace KeyPixels
             for (int i = 0; i < 2; i++)
             {
                 CreateBoundingBox cbB = new CreateBoundingBox(enemyModel._model[i], worldMatrix[index]);
-                if (i == 0)
+                if (bodylist.Count <= index)
                 {
-                    if (bodylist.Count == 0)
+                    
+                    if (i == 0)
                     {
-                        bodylist.Add(cbB.bBox);
-                    }
-                    else
-                    {
-                        for (int e = 0; e < bodylist.Count; e++)
+                        if (bodylist.Count == 0)
                         {
-                            if (cbB.bBox.Intersects(bodylist[e]))//test if enemy hit enemybody
+                            bodylist.Add(cbB.bBox);
+                        }
+                        else
+                        {
+                            for (int e = 0; e < bodylist.Count; e++)
                             {
+                                if (cbB.bBox.Intersects(bodylist[e]))//test if enemy hit enemybody
+                                {
 
-                                hit = true;
-                                break;
+                                    hit = true;
+                                    break;
+                                }
                             }
-                        }
-                        if (hit == true)
-                        {
-                            cbB.bBox.Max -= target;
-                            cbB.bBox.Min -= target;
-                        }
-                        bodylist.Add(cbB.bBox);
-                    }
-                }
-                if (i == 1)
-                {
-                    if (armlist.Count == 0)
-                    {
-                        armlist.Add(cbB.bBox);
-                    }
-                    else
-                    {
-                        for (int e = 0; e < armlist.Count; e++)
-                        {
-                            if (cbB.bBox.Intersects(armlist[e]))//test if enemy hit enemyarm
+                            if (hit == true)
                             {
-
-                                hit = true;
-                                break;
+                                cbB.bBox.Max -= target;
+                                cbB.bBox.Min -= target;
                             }
+                            bodylist.Add(cbB.bBox);
                         }
-                        if (hit == true)
-                        {
-                            cbB.bBox.Max -= target;
-                            cbB.bBox.Min -= target;
-                        }
-                        armlist.Add(cbB.bBox);
                     }
-                }
-                if (hit == true) return true;
+                    if (i == 1)
+                    {
+                        if (armlist.Count == 0)
+                        {
+                            armlist.Add(cbB.bBox);
+                        }
+                        else
+                        {
+                            for (int e = 0; e < armlist.Count; e++)
+                            {
+                                if (cbB.bBox.Intersects(armlist[e]))//test if enemy hit enemyarm
+                                {
 
-                List<BoundingBox> temp = _QTree.seekData(new Vector2(cbB.bBox.Min.X, cbB.bBox.Min.Z),
-                new Vector2(cbB.bBox.Max.X, cbB.bBox.Max.Z));
+                                    hit = true;
+                                    break;
+                                }
+                            }
+                            if (hit == true)
+                            {
+                                cbB.bBox.Max -= target;
+                                cbB.bBox.Min -= target;
+                            }
+                            armlist.Add(cbB.bBox);
+                        }
+                    }
+                    if (hit == true) return true;
+                }
+                CreateBoundingBox cbBn = new CreateBoundingBox(enemyModel._model[i], Matrix.CreateTranslation( worldMatrix[index].Translation));
+                CreateBoundingBox cbBr = new CreateBoundingBox(enemyModel._model[i], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(worldMatrix[index].Translation));
+                //CreateBoundingBox cbBr = new CreateBoundingBox(enemyModel._model[i], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * worldMatrix[index]);
+                List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBn.bBox.Min.X, cbBn.bBox.Min.Z),
+                new Vector2(cbBn.bBox.Max.X, cbBn.bBox.Max.Z));
                 
                 for (int u = 0; u < temp.Count ; ++u)
                 {
-                    if (cbB.bBox.Intersects(temp[u]))//test if enemy hits map
+                    if (cbBn.bBox.Intersects(temp[u]))//test if enemy hits map
                     {
                         return true;
                     }
                 }
-                
+                temp = _QTree.seekData(new Vector2(cbBr.bBox.Min.X, cbBr.bBox.Min.Z),
+                new Vector2(cbBr.bBox.Max.X, cbBr.bBox.Max.Z));
+
+                for (int u = 0; u < temp.Count; ++u)
+                {
+                    if (cbBr.bBox.Intersects(temp[u]))//test if enemy hits map
+                    {
+                        return true;
+                    }
+                }
+
                 CreateBoundingBox cbBbody = new CreateBoundingBox(player.playerModel.body, player.worldMatrix);
                 CreateBoundingBox cbBarm = new CreateBoundingBox(player.playerModel.arms, player.worldMatrix);
                 for (int n = 0; n < 2; n++)

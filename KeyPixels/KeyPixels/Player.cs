@@ -435,8 +435,10 @@ namespace KeyPixels
             bool hit = false;
             for (int i = 0; i < 2; i++)
             {
-                CreateBoundingBox cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateTranslation(playerPosition));
-                CreateBoundingBox cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
+                CreateBoundingBox cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle)* Matrix.CreateTranslation(playerPosition));//
+                CreateBoundingBox cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(playerPosition));
+                CreateBoundingBox cbBarm2 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
+
                 List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
                 new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
 
@@ -453,6 +455,16 @@ namespace KeyPixels
                 for (int u = 0; u < temp.Count; ++u)
                 {
                     if (cbBarm.bBox.Intersects(temp[u]))//test if playerarm hits map
+                    {
+                        hit = true;
+                    }
+                }
+                temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
+                new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
+
+                for (int u = 0; u < temp.Count; ++u)
+                {
+                    if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
                     {
                         hit = true;
                     }
