@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
+using System;
 
 namespace KeyPixels
 {
@@ -21,6 +22,11 @@ namespace KeyPixels
 
         public static Vector3 playerPosition;
 
+        public CreateBoundingBox cbBbody;
+        public CreateBoundingBox cbBarm;
+        public CreateBoundingBox cbBarm2;
+        public CreateBoundingBox cbBarm3;
+
         private Dictionary<string, float> rotationMap = new Dictionary<string, float>();
         
         private bool burstFlag = false;
@@ -34,6 +40,10 @@ namespace KeyPixels
             playerModel.arms = contentManager.Load<Model>("Models/Arms_Skelett");
             playerModel.legs = contentManager.Load<Model>("Models/Legs_Skelett");
             playerPosition = new Vector3(0, 0, 0);
+            cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
+            cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
+            cbBarm2 = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(playerPosition));
+            cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
             buildRotationMap();
         }
 
@@ -66,7 +76,7 @@ namespace KeyPixels
                     playerPosition.X += 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.15f,0,0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -80,7 +90,7 @@ namespace KeyPixels
                     playerPosition.Z += 0.01f;
                     playerPosition.X += 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.01f, 0, 0.01f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -98,7 +108,7 @@ namespace KeyPixels
                     playerPosition.X -= 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, 0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -111,7 +121,7 @@ namespace KeyPixels
                     playerPosition.Z += 0.01f;
                     playerPosition.X -= 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, 0.01f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -129,7 +139,7 @@ namespace KeyPixels
                     playerPosition.X += 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.15f, 0, -0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -142,7 +152,7 @@ namespace KeyPixels
                     playerPosition.Z -= 0.01f;
                     playerPosition.X += 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.01f, 0, -0.01f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -160,7 +170,7 @@ namespace KeyPixels
                     playerPosition.X -= 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, -0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -173,7 +183,7 @@ namespace KeyPixels
                     playerPosition.Z -= 0.01f;
                     playerPosition.X -= 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, -0.01f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
@@ -189,7 +199,7 @@ namespace KeyPixels
                     playerPosition.Z += 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0, 0, 0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                     }
@@ -199,7 +209,7 @@ namespace KeyPixels
                     float tempZ = playerPosition.Z;
                     playerPosition.Z += 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0, 0, 0.01f)) == true)
                     {
                         playerPosition.Z = tempZ;
                     }
@@ -214,7 +224,7 @@ namespace KeyPixels
                     playerPosition.Z -= 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0, 0, -0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                     }
@@ -224,7 +234,7 @@ namespace KeyPixels
                     float tempZ = playerPosition.Z;
                     playerPosition.Z -= 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0, 0, -0.01f)) == true)
                     {
                         playerPosition.Z = tempZ;
                     }
@@ -239,7 +249,7 @@ namespace KeyPixels
                     playerPosition.X += 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.15f, 0, 0)) == true)
                     {
                         playerPosition.X = tempX;
                     }
@@ -249,7 +259,7 @@ namespace KeyPixels
                     float tempX = playerPosition.X;
                     playerPosition.X += 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.01f, 0, 0)) == true)
                     {
                         playerPosition.X = tempX;
                     }
@@ -264,7 +274,7 @@ namespace KeyPixels
                     playerPosition.X -= 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, 0)) == true)
                     {
                         playerPosition.X = tempX;
                     }
@@ -274,7 +284,7 @@ namespace KeyPixels
                     float tempX = playerPosition.X;
                     playerPosition.X -= 0.01f;
 
-                    if (IsCollision(ref _QTree) == true)
+                    if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, 0)) == true)
                     {
                         playerPosition.X = tempX;
                     }
@@ -430,34 +440,28 @@ namespace KeyPixels
             rotationMap.Add("SouthEast", -135);
         }
 
-        public bool IsCollision(ref QuadTree<BoundingBox> _QTree)
+        public bool IsCollision(ref QuadTree<BoundingBox> _QTree,Vector3 target)
         {
             bool hit = false;
-            for (int i = 0; i < 2; i++)
-            {
-                CreateBoundingBox cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle)* Matrix.CreateTranslation(playerPosition));//
-                CreateBoundingBox cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(playerPosition));
-                CreateBoundingBox cbBarm2 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
+            
+                cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle)* Matrix.CreateTranslation(playerPosition));
+                cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
 
-                List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
+            cbBarm2.bBox.Max += target;
+            cbBarm2.bBox.Min += target;
+            cbBarm3.bBox.Max += target;
+            cbBarm3.bBox.Min += target;
+
+            List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
                 new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
 
                 for (int u = 0; u < temp.Count; ++u)
                 {
                     if (cbBbody.bBox.Intersects(temp[u]))//test if playerbody hits map
                     {
-                        hit = true;
-                    }
+                    //return true;
+                    hit = true;
                 }
-                temp = _QTree.seekData(new Vector2(cbBarm.bBox.Min.X, cbBarm.bBox.Min.Z),
-                new Vector2(cbBarm.bBox.Max.X, cbBarm.bBox.Max.Z));
-
-                for (int u = 0; u < temp.Count; ++u)
-                {
-                    if (cbBarm.bBox.Intersects(temp[u]))//test if playerarm hits map
-                    {
-                        hit = true;
-                    }
                 }
                 temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
                 new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
@@ -466,9 +470,28 @@ namespace KeyPixels
                 {
                     if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
                     {
-                        hit = true;
-                    }
+                    //return true;
+                    hit = true;
                 }
+                }
+                temp = _QTree.seekData(new Vector2(cbBarm3.bBox.Min.X, cbBarm3.bBox.Min.Z),
+                new Vector2(cbBarm3.bBox.Max.X, cbBarm3.bBox.Max.Z));
+
+
+            for (int u = 0; u < temp.Count; ++u)
+            {
+                if (cbBarm3.bBox.Intersects(temp[u]))//test if playerarm hits map
+                {
+                    //return true;
+                    hit = true;
+                }
+            }
+            if (hit == true)
+            {
+                cbBarm2.bBox.Max -= target;
+                cbBarm2.bBox.Min -= target;
+                cbBarm3.bBox.Max -= target;
+                cbBarm3.bBox.Min -= target;
             }
             return hit;
         }

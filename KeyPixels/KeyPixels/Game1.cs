@@ -123,8 +123,9 @@ namespace KeyPixels
             sp.SpawnEnemy(mapindex);
             shots.updateShotsPos(gameTime);
             getPosition();
-            
-            
+
+            player.getPosition(ref map.QTree);
+            player.getRotation();
 
             if (sp.GetEnemy().IsCollision(shots))
             {
@@ -135,9 +136,8 @@ namespace KeyPixels
 
             }
 
-            player.getPosition(ref map.QTree);
-            player.getRotation();
-            sp.GetEnemy().clearList();
+            
+            //sp.GetEnemy().clearList();
             sp.GetEnemy().enemyChase(player, ref map.QTree);
 
             if (colldown > 0)

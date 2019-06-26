@@ -30,6 +30,8 @@ namespace KeyPixels
         {
             n = 0;
             enemy.worldMatrix.Clear();
+            enemy.armlist1.Clear();
+            enemy.armlist2.Clear();
             spawnrate = -1;
         }
 
@@ -55,7 +57,7 @@ namespace KeyPixels
             Random r = new Random();
             int i = r.Next(0,a.GetLength(0));
             int j = r.Next(0, a.GetLength(1));
-            if (n< 8&& spawnrate<0) {
+            if (n< 30&& spawnrate<0) {
                 
                 if (a[j, i] != 0)
                 {
@@ -67,8 +69,12 @@ namespace KeyPixels
                         if (n==0)
                         {
                             enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            CreateBoundingBox cbBn = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            CreateBoundingBox cbBr = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            enemy.armlist1.Add(cbBn.bBox);
+                            enemy.armlist2.Add(cbBr.bBox);
                             n++;
-                            spawnrate = 100;
+                            spawnrate = 50;
                         }
                         else
                         {
@@ -80,8 +86,12 @@ namespace KeyPixels
                                     (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > -2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2))
                                 {
                                     enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    CreateBoundingBox cbBn = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    CreateBoundingBox cbBr = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    enemy.armlist1.Add(cbBn.bBox);
+                                    enemy.armlist2.Add(cbBr.bBox);
                                     n++;
-                                    spawnrate = 100;
+                                    spawnrate = 50;
 
                                     break;
                                 }
