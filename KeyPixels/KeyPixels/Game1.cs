@@ -1,3 +1,4 @@
+using KeyPixels.UI;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,6 +12,8 @@ namespace KeyPixels
         GraphicsDeviceManager graphics;
         Camera camera;
         SpriteBatch spriteBatch;
+        Vector2 DesiredResolution;
+
         static int numberShot;
 
         Matrix worldMatrix;
@@ -38,6 +41,11 @@ namespace KeyPixels
 
         public static Vector3 playerPosition = Vector3.Zero;
 
+
+
+        StartMenu testMenu;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -48,6 +56,7 @@ namespace KeyPixels
 
         protected override void Initialize()
         {
+            DesiredResolution = new Vector2(1366, 768);
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
             colldown = 0;
@@ -75,6 +84,9 @@ namespace KeyPixels
             sp = new Spawning(map.getmapList());
             enemy =  sp.GetEnemy();
             enemy.initialize(Content);
+            MouseCursor.FromTexture2D(Content.Load<Texture2D>("UI/mouse_cursor"), 0, 0);
+            testMenu = new StartMenu();
+            testMenu.LoadContent(Content);
 
         }
 
@@ -144,7 +156,7 @@ namespace KeyPixels
                 colldown -= 1;
             base.Update(gameTime);
 
-
+            //testMenu.Update(gameTime);
         }
 
        
@@ -152,6 +164,10 @@ namespace KeyPixels
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.SlateGray);
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+
 
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
@@ -161,6 +177,16 @@ namespace KeyPixels
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
             base.Draw(gameTime);
+
+
+            float scaleX = (float) GraphicsDevice.Viewport.Width / DesiredResolution.X;
+            float scaleY = (float) GraphicsDevice.Viewport.Height / DesiredResolution.Y;
+            Matrix matrix = Matrix.CreateScale(scaleX, scaleY, 0.0f);
+            
+            spriteBatch.Begin(transformMatrix: matrix);
+            //testMenu.Draw(gameTime, spriteBatch);
+            spriteBatch.End();
+
         }
 
         protected override void Dispose(bool disposing)
