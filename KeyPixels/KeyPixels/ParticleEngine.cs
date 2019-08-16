@@ -103,35 +103,39 @@ namespace KeyPixels
 
         public void Update()
         {
-            if (TTE >= 0)
+            if (Game1.isGamePlaying)
             {
-                int total = 25;
 
-                for (int i = 0; i < total; i++)
+                if (TTE >= 0)
                 {
-                    particles.Add(GenerateNewParticle());
+                    int total = 25;
+
+                    for (int i = 0; i < total; i++)
+                    {
+                        particles.Add(GenerateNewParticle());
+                    }
+
+                    for (int particle = 0; particle < particles.Count; particle++)
+                    {
+                        particles[particle].Update();
+                        if (particles[particle].TTL <= 0)
+                        {
+                            particles.RemoveAt(particle);
+                            particle--;
+                        }
+                    }
+
                 }
-
-                for (int particle = 0; particle < particles.Count; particle++)
+                else
                 {
-                    particles[particle].Update();
-                    if (particles[particle].TTL <= 0)
+                    for (int particle = 0; particle < particles.Count; particle++)
                     {
                         particles.RemoveAt(particle);
                         particle--;
                     }
                 }
-
+                TTE--;
             }
-            else
-            {
-                for (int particle = 0; particle < particles.Count; particle++)
-                {
-                    particles.RemoveAt(particle);
-                    particle--;
-                }
-            }
-            TTE--;
         }
 
 

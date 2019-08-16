@@ -33,6 +33,8 @@ namespace KeyPixels
         public static float angle = 0f;
         
         private int burstCounter = 0;
+        public int shotsCounter { get; set; }
+        public int healthCounter { get; set; }
 
         public void initialize(ContentManager contentManager)
         {
@@ -45,6 +47,8 @@ namespace KeyPixels
             cbBarm2 = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(playerPosition));
             cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
             buildRotationMap();
+            shotsCounter = 10;
+            healthCounter = 5;
         }
 
         public void getPosition(ref QuadTree<BoundingBox> _QTree)

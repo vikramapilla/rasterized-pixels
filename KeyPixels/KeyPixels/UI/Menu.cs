@@ -12,48 +12,85 @@ namespace KeyPixels.UI
     class Menu : Component
     {
 
-        List<Button> ButtonList = new List<Button>();
-        Texture2D MenuBackground;
-        Texture2D MenuCursor;
-        Vector2 CursorPosition;
+        public List<Button> ButtonList = new List<Button>();
+        Texture2D MenuBackgroundActive;
+        Texture2D MenuBackground1;
+        Texture2D MenuBackground2;
+        bool menuFlag;
+        public int buttonIndex { get; set; }
 
+        private float timer = 0.1f;
+        private const float TIMER = 0.5f;
 
-        public void addBackground(Texture2D _background)
+        public void addBackground(Texture2D _background1, Texture2D _background2)
         {
-            MenuBackground = _background;
+            MenuBackground1 = _background1;
+            MenuBackground2 = _background2;
+            MenuBackgroundActive = MenuBackground1;
         }
-
-        public void addCursor(Texture2D _cursor)
-        {
-            MenuCursor= _cursor;
-            CursorPosition = Vector2.Zero;
-        }
-
+        
         public void addButton(Button _button)
         {
             ButtonList.Add(_button);
         }
 
+        private void makeMenuBackgroundBlink()
+        {
+            if (menuFlag)
+            {
+                MenuBackgroundActive = MenuBackground2;
+                menuFlag = false;
+            }
+            else
+            {
+                MenuBackgroundActive = MenuBackground1;
+                menuFlag = true;
+
+            }
+        }
+
+        private bool isMenuBlink(GameTime gameTime)
+        {
+            float timeElapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            timer -= timeElapsed;
+
+            if(timer < 0)
+            {
+                timer = TIMER;
+                return true;
+            }
+
+            return false;
+        }
+
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(MenuBackground, Vector2.Zero, Color.White);
+            spriteBatch.Draw(MenuBackgroundActive, Vector2.Zero, Color.White);
             foreach (Button button in ButtonList)
             {
                 button.Draw(gameTime, spriteBatch);
             }
-            spriteBatch.Draw(MenuCursor, CursorPosition, Color.White);
         }
 
         public override void Update(GameTime gameTime)
         {
+            throw new NotImplementedException();
+        }
 
-            CursorPosition.X = Mouse.GetState().X;
-            CursorPosition.Y = Mouse.GetState().Y;
-
-            foreach (Button button in ButtonList)
+        public void Update(GameTime gameTime, int buttonID)
+        {
+            if (isMenuBlink(gameTime))
             {
-                button.Update(gameTime);
+                makeMenuBackgroundBlink();
             }
+
+            for (int i = 0; i < ButtonList.Count; i++)
+            {
+                ButtonList[i].Update(gameTime, buttonIndex, i);
+            }
+
+
+
 
         }
     }

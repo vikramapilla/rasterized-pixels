@@ -18,8 +18,8 @@ namespace KeyPixels.UI
         bool isHovered { get; set; }
         bool isClicked { get; set; }
 
-        private MouseState PreviousMouseState;
-        private MouseState CurrentMouseState = Mouse.GetState();
+        private int buttonIndex;
+        private int buttonListID;
 
         public Button(Texture2D _buttonTexture, Texture2D _buttonHoverTexture, Vector2 _buttonPosition)
         {
@@ -32,27 +32,25 @@ namespace KeyPixels.UI
             isClicked = false;
         }
 
+        public void changeButtonTexture(Texture2D _buttonTexture, Texture2D _buttonHoverTexture)
+        {
+            ButtonTexture = _buttonTexture;
+            ButtonRegularTexture = _buttonTexture;
+            ButtonHoverTexture = _buttonHoverTexture;
+        }
+
         bool isButtonHovered()
         {
-            PreviousMouseState = CurrentMouseState;
-            CurrentMouseState = Mouse.GetState();
-
-            if (ButtonRectangle.Contains(CurrentMouseState.X, CurrentMouseState.Y))
+            if(buttonListID == buttonIndex)
             {
                 return true;
             }
-
             return false;
         }
 
 
         bool isButtonClicked()
         {
-            if (isButtonHovered() && CurrentMouseState.LeftButton == ButtonState.Released && PreviousMouseState.LeftButton == ButtonState.Pressed)
-            {
-                return true;
-            }
-
             return false;
         }
 
@@ -70,6 +68,13 @@ namespace KeyPixels.UI
 
         public override void Update(GameTime _gameTime)
         {
+            updateTexture();
+        }
+
+        public void Update(GameTime _gameTime, int _buttonIndex, int _buttonListID)
+        {
+            this.buttonIndex = _buttonIndex;
+            this.buttonListID = _buttonListID;
             updateTexture();
         }
 
