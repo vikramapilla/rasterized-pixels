@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Mapchange.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="Camera.cs" />

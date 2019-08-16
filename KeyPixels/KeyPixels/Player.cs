@@ -292,7 +292,38 @@ namespace KeyPixels
             }
 
         }
-        
+
+        public void teleport()
+        {
+            playerPosition.X = 0;
+            playerPosition.Z = -4;
+
+        }
+
+        public void teleportback()
+        {
+            playerPosition.Y = 0;
+            angle = 0;
+        }
+
+        public void teleportup(float speed)
+        {
+            playerPosition.Y+=0.05f;
+            angle += speed;
+        }
+
+        public void teleportdown(float speed)
+        {
+            playerPosition.Y -= 0.05f;
+            angle += speed;
+        }
+
+        public void resetbbox()
+        {
+            cbBarm2 = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(playerPosition));
+            cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
+        }
+
 
         public float getCurrentRotation()
         {

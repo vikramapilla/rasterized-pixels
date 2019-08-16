@@ -24,12 +24,16 @@ namespace KeyPixels
         Model ground;
         Model wall;
         Model particle;
+
+        Model portal;
+
         bool flag = true;
         static Shots shots;
-
+        
         Map map;
         private bool mapFlag = false;
-        int mapindex;
+        public int mapindex;
+        Mapchange change;
 
         Spawning sp;
         static Player player;
@@ -40,8 +44,7 @@ namespace KeyPixels
         static int colldown;
 
         public static Vector3 playerPosition = Vector3.Zero;
-
-
+        
 
         StartMenu testMenu;
 
@@ -62,6 +65,8 @@ namespace KeyPixels
             colldown = 0;
             mapindex = 0;
 
+            change = new Mapchange();
+
             base.Initialize();
         }
 
@@ -70,8 +75,8 @@ namespace KeyPixels
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerModel = Content.Load<Model>("Models/Body_Tria");
-            ground = Content.Load<Model>("Models/Ground_Tria");
-            wall = Content.Load<Model>("Models/Wall_Long_Tria");
+            ground = Content.Load<Model>("Models/Ground_Tex");
+            wall = Content.Load<Model>("Models/Wall_Long_Tex");
             particle = Content.Load<Model>("Models/Shot_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1),Color.Red);
             shots.initialize(Content);
@@ -88,6 +93,8 @@ namespace KeyPixels
             testMenu = new StartMenu();
             testMenu.LoadContent(Content);
 
+            portal = Content.Load<Model>("Models/Portal2_Tria");
+
         }
 
 
@@ -101,6 +108,11 @@ namespace KeyPixels
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
+
+            if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
+            {
+                change.update(ref sp,ref mapindex , ref player, ref map, ref shots,Content);
+            }
 
             if (!mapFlag)
             {
@@ -178,6 +190,11 @@ namespace KeyPixels
             map.Draw();
             base.Draw(gameTime);
 
+            if (sp.GetEnemy().worldMatrix.Count==0)
+            {
+                Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
+                testModel(portal, m, viewMatrix, projectionMatrix);
+            }
 
             float scaleX = (float) GraphicsDevice.Viewport.Width / DesiredResolution.X;
             float scaleY = (float) GraphicsDevice.Viewport.Height / DesiredResolution.Y;
@@ -216,7 +233,26 @@ namespace KeyPixels
                 mesh.Draw();
             }
         }
+        public static void testModel(Model model, Matrix worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
 
+                    effect.World = worldMatrix;
+                    effect.View = _viewMatrix;
+                    effect.Projection = _projectionMatrix;
+                    effect.DiffuseColor = Color.MediumPurple.ToVector3();
+                    //                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.Alpha = 1.0f;
+
+                }
+                mesh.Draw();
+            }
+        }
         public static Vector3 getPosition()
         {
 

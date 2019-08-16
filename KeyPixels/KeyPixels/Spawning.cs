@@ -57,7 +57,7 @@ namespace KeyPixels
             Random r = new Random();
             int i = r.Next(0,a.GetLength(0));
             int j = r.Next(0, a.GetLength(1));
-            if (n< 30&& spawnrate<0) {
+            if (n< 3&& spawnrate<0) {
                 
                 if (a[j, i] != 0)
                 {
