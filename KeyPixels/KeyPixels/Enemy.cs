@@ -338,11 +338,10 @@ namespace KeyPixels
                     {
                         effect.EnableDefaultLighting();
                         effect.PreferPerPixelLighting = true;
-
-                        effect.DiffuseColor = Color.Crimson.ToVector3();
+                        
                         effect.View = viewMatrix;
                         effect.Projection = projectionMatrix;
-                        effect.DiffuseColor = Color.Crimson.ToVector3();
+                        effect.DiffuseColor = Color.MediumBlue.ToVector3();
 
                         for (int i = 0; i < worldMatrix.Count; i++)
                         {

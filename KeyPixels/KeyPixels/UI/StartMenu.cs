@@ -6,22 +6,25 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace KeyPixels.UI
 {
-    class StartMenu: Component
+    class StartMenu : Component
     {
         Menu menu;
+        public Texture2D resumeButtonTexture, resumeButtonTextureHover;
+        bool downButtonFlag = false;
+        bool upButtonFlag = false;
 
         public void LoadContent(ContentManager Content)
         {
             menu = new Menu();
-            
-            menu.addBackground(Content.Load<Texture2D>("UI/Backgrounds/start_menu_background"));
 
-            menu.addCursor(Content.Load<Texture2D>("UI/mouse_cursor"));
+            menu.addBackground(Content.Load<Texture2D>("UI/Backgrounds/start_menu_background"),
+                Content.Load<Texture2D>("UI/Backgrounds/start_menu_background_1"));
 
-            menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/play_button"), 
+            menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/play_button"),
                 Content.Load<Texture2D>("UI/Buttons/play_button_hover"), new Vector2(103, 250)));
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/options_button"),
@@ -32,6 +35,10 @@ namespace KeyPixels.UI
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/exit_button"),
                 Content.Load<Texture2D>("UI/Buttons/exit_button_hover"), new Vector2(103, 510)));
+
+            resumeButtonTexture = Content.Load<Texture2D>("UI/Buttons/resume_button");
+            resumeButtonTextureHover = Content.Load<Texture2D>("UI/Buttons/resume_button_hover");
+            
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -39,9 +46,51 @@ namespace KeyPixels.UI
             menu.Draw(gameTime, spriteBatch);
         }
 
+        public int getButtonIndex()
+        {
+            return menu.buttonIndex;
+        }
+
         public override void Update(GameTime gameTime)
         {
-            menu.Update(gameTime);
+            if (!downButtonFlag)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Down))
+                {
+                    menu.buttonIndex++;
+                    menu.buttonIndex %= 4;
+                    downButtonFlag = true;
+                }
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.Down))
+            {
+                downButtonFlag = false;
+            }
+
+            if (!upButtonFlag)
+            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Up))
+                {
+                    menu.buttonIndex--;
+
+                    if(menu.buttonIndex < 0)
+                        menu.buttonIndex += 4;
+
+                    menu.buttonIndex %= 4;
+                    upButtonFlag = true;
+                }
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.Up))
+            {
+                upButtonFlag = false;
+            }
+
+            if (Game1.isGameStarted)
+            {
+                menu.ButtonList[0].changeButtonTexture(resumeButtonTexture, resumeButtonTextureHover);
+            }
+
+            menu.Update(gameTime, menu.buttonIndex);
         }
     }
 }

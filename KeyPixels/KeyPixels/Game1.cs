@@ -44,11 +44,20 @@ namespace KeyPixels
 
 
         StartMenu testMenu;
+        bool startMenuFlag = true;
+        public static bool isGameStarted = false;
+        public static bool isGamePlaying = false;
 
+
+        HUD gameHUD;
+        CutScenes cutScenes;
+        int sceneIndex;
+        public static bool isScenePlaying = false;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
             camera = new Camera(graphics);
         }
@@ -61,7 +70,7 @@ namespace KeyPixels
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
             colldown = 0;
             mapindex = 0;
-
+            sceneIndex = 0;
             base.Initialize();
         }
 
@@ -73,7 +82,7 @@ namespace KeyPixels
             ground = Content.Load<Model>("Models/Ground_Tria");
             wall = Content.Load<Model>("Models/Wall_Long_Tria");
             particle = Content.Load<Model>("Models/Shot_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1),Color.Red);
+            shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
             shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Blue);
             numberShot = 0;
@@ -82,12 +91,15 @@ namespace KeyPixels
             map = new Map(ground, wall, viewMatrix, projectionMatrix);
             map.CreateMap(0);
             sp = new Spawning(map.getmapList());
-            enemy =  sp.GetEnemy();
+            enemy = sp.GetEnemy();
             enemy.initialize(Content);
             MouseCursor.FromTexture2D(Content.Load<Texture2D>("UI/mouse_cursor"), 0, 0);
             testMenu = new StartMenu();
             testMenu.LoadContent(Content);
-
+            gameHUD = new HUD();
+            gameHUD.LoadContent(Content);
+            cutScenes = new CutScenes();
+            cutScenes.LoadContent(Content);
         }
 
 
@@ -99,71 +111,103 @@ namespace KeyPixels
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || )
+            //    Exit();
+
+            if (testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
                 Exit();
-
-            if (!mapFlag)
+            }
+            else if (testMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.D1)&&mapindex!=0)
+                startMenuFlag = false;
+                isGamePlaying = true;
+                isGameStarted = true;
+                isScenePlaying = true;
+            }
+
+            if (startMenuFlag)
+                testMenu.Update(gameTime);
+
+            if (isGamePlaying && isScenePlaying)
+            {
+                cutScenes.Update(gameTime, sceneIndex);
+            }
+
+            if (isGamePlaying && !isScenePlaying)
+            {
+                if (!mapFlag)
                 {
-                    mapindex -= 1;
-                    map.CreateMap(mapindex);
-                    sp.clearEnemy();
-                    sp = new Spawning(map.getmapList());
-                    mapFlag = true;
-                    shots.clearAll();
-                    sp.GetEnemy().initialize(Content);
+                    if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
+                    {
+                        mapindex -= 1;
+                        map.CreateMap(mapindex);
+                        sp.clearEnemy();
+                        sp = new Spawning(map.getmapList());
+                        mapFlag = true;
+                        shots.clearAll();
+                        sp.GetEnemy().initialize(Content);
+
+                    }
+                    else if (Keyboard.GetState().IsKeyDown(Keys.D2) && mapindex != 4)
+                    {
+                        mapindex += 1;
+                        map.CreateMap(mapindex);
+                        sp.clearEnemy();
+                        sp = new Spawning(map.getmapList());
+                        mapFlag = true;
+                        shots.clearAll();
+                        sp.GetEnemy().initialize(Content);
+                    }
+                }
+                if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
+                {
+                    mapFlag = false;
+                }
+
+                // TODO: Add your update logic here
+                sp.SpawnEnemy(mapindex);
+                shots.updateShotsPos(gameTime);
+                getPosition();
+
+                player.getPosition(ref map.QTree);
+                player.getRotation();
+
+                if (sp.GetEnemy().IsCollision(shots))
+                {
 
                 }
-                else if (Keyboard.GetState().IsKeyDown(Keys.D2)&&mapindex!=4)
+                if (shots.IsCollision(ref map.QTree))
                 {
-                    mapindex += 1;
-                    map.CreateMap(mapindex);
-                    sp.clearEnemy();
-                    sp = new Spawning(map.getmapList());
-                    mapFlag = true;
-                    shots.clearAll();
-                    sp.GetEnemy().initialize(Content);
+
                 }
-            }
-            if (Keyboard.GetState().IsKeyUp(Keys.D1)&& Keyboard.GetState().IsKeyUp(Keys.D2))
-            {
-                mapFlag = false;
-            }
 
-            // TODO: Add your update logic here
-            sp.SpawnEnemy(mapindex);
-            shots.updateShotsPos(gameTime);
-            getPosition();
 
-            player.getPosition(ref map.QTree);
-            player.getRotation();
+                //sp.GetEnemy().clearList();
+                sp.GetEnemy().enemyChase(player, ref map.QTree);
 
-            if (sp.GetEnemy().IsCollision(shots))
-            {
+                if (colldown > 0)
+                    colldown -= 1;
+                base.Update(gameTime);
 
-            }
-            if (shots.IsCollision(ref map.QTree))
-            {
+                if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                {
+                    isGamePlaying = false;
+                    startMenuFlag = true;
+                }
+
+                gameHUD.Update(gameTime);
 
             }
 
-            
-            //sp.GetEnemy().clearList();
-            sp.GetEnemy().enemyChase(player, ref map.QTree);
-
-            if (colldown > 0)
-                colldown -= 1;
-            base.Update(gameTime);
-
-            //testMenu.Update(gameTime);
         }
 
-       
+
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.SlateGray);
+            GraphicsDevice.Clear(Color.Teal);
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
@@ -179,12 +223,23 @@ namespace KeyPixels
             base.Draw(gameTime);
 
 
-            float scaleX = (float) GraphicsDevice.Viewport.Width / DesiredResolution.X;
-            float scaleY = (float) GraphicsDevice.Viewport.Height / DesiredResolution.Y;
+            float scaleX = (float)GraphicsDevice.Viewport.Width / DesiredResolution.X;
+            float scaleY = (float)GraphicsDevice.Viewport.Height / DesiredResolution.Y;
             Matrix matrix = Matrix.CreateScale(scaleX, scaleY, 0.0f);
-            
+
             spriteBatch.Begin(transformMatrix: matrix);
-            //testMenu.Draw(gameTime, spriteBatch);
+            if (startMenuFlag)
+                testMenu.Draw(gameTime, spriteBatch);
+
+            if (!startMenuFlag)
+                gameHUD.Draw(gameTime, spriteBatch);
+
+
+            if (isGamePlaying && isScenePlaying)
+            {
+                cutScenes.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
+            }
+
             spriteBatch.End();
 
         }
@@ -211,7 +266,7 @@ namespace KeyPixels
                     effect.DiffuseColor = Color.MidnightBlue.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
-                    
+
                 }
                 mesh.Draw();
             }
@@ -219,12 +274,13 @@ namespace KeyPixels
 
         public static Vector3 getPosition()
         {
-
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
                 if (colldown < 1)
                 {
-                    shots.createShot(player.worldMatrix,numberShot);
+                    shots.createShot(player.worldMatrix, numberShot);
+                    if (player.shotsCounter > 0)
+                        player.shotsCounter--;
                     if (numberShot < 1 && numberShot > -1)
                         numberShot++;
                     else
@@ -232,14 +288,13 @@ namespace KeyPixels
                     colldown = 50;
                 }
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.C))
-            {
-                shots.clearAll();
-            }
-
             return player.worldMatrix.Translation;
         }
-        
+
+        public static int numberOfShots()
+        {
+            return player.shotsCounter;
+        }
 
     }
 }
