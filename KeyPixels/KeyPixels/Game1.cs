@@ -29,7 +29,7 @@ namespace KeyPixels
 
         bool flag = true;
         static Shots shots;
-        
+
         Map map;
         private bool mapFlag = false;
         public int mapindex;
@@ -44,7 +44,7 @@ namespace KeyPixels
         static int colldown;
 
         public static Vector3 playerPosition = Vector3.Zero;
-        
+
 
         StartMenu testMenu;
         bool startMenuFlag = true;
@@ -140,20 +140,15 @@ namespace KeyPixels
                 testMenu.Update(gameTime);
 
             if (isGamePlaying && isScenePlaying)
-            if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
-            {
-                change.update(ref sp,ref mapindex , ref player, ref map, ref shots,Content);
-            }
-
-            if (!mapFlag)
             {
                 cutScenes.Update(gameTime, sceneIndex);
             }
-
             if (isGamePlaying && !isScenePlaying)
             {
                 if (!mapFlag)
                 {
+                    //Changes when the game is playing goes here
+
                     if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
                     {
                         mapindex -= 1;
@@ -174,6 +169,10 @@ namespace KeyPixels
                         mapFlag = true;
                         shots.clearAll();
                         sp.GetEnemy().initialize(Content);
+                    }
+                    if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
+                    {
+                        change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
                     }
                 }
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
@@ -237,7 +236,7 @@ namespace KeyPixels
             map.Draw();
             base.Draw(gameTime);
 
-            if (sp.GetEnemy().worldMatrix.Count==0)
+            if (sp.GetEnemy().worldMatrix.Count == 0)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 testModel(portal, m, viewMatrix, projectionMatrix);
