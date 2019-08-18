@@ -17,9 +17,7 @@ namespace KeyPixels.UI
 
         int healthCount;
         int shotsCount;
-
-        int healthXStartPoint = 120;
-        int shotsStartPoint = 650;
+        
 
         List<Rectangle> healthBar = new List<Rectangle>();
         List<Rectangle> shotsBar = new List<Rectangle>();
@@ -31,12 +29,12 @@ namespace KeyPixels.UI
 
             for (int i = 0; i < 5; i++)
             {
-                healthBar.Add(new Rectangle(120 + (i * 35), 85, HUDPoint.Width, HUDPoint.Height));
+                healthBar.Add(new Rectangle(160 + (i * 48), 128, HUDPoint.Width, HUDPoint.Height));
             }
 
             for (int i = 0; i < 10; i++)
             {
-                shotsBar.Add(new Rectangle(50, 650 - (i * 20), HUDPoint.Width, HUDPoint.Height));
+                shotsBar.Add(new Rectangle(66, 915 - (i * 26), HUDPoint.Width, HUDPoint.Height));
             }
 
         }

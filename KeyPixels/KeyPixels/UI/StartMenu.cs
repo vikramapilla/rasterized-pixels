@@ -25,16 +25,16 @@ namespace KeyPixels.UI
                 Content.Load<Texture2D>("UI/Backgrounds/start_menu_background_1"));
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/play_button"),
-                Content.Load<Texture2D>("UI/Buttons/play_button_hover"), new Vector2(103, 250)));
+                Content.Load<Texture2D>("UI/Buttons/play_button_hover"), new Vector2(150, 375)));
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/options_button"),
-                Content.Load<Texture2D>("UI/Buttons/options_button_hover"), new Vector2(103, 340)));
+                Content.Load<Texture2D>("UI/Buttons/options_button_hover"), new Vector2(150, 510)));
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/credits_button"),
-                Content.Load<Texture2D>("UI/Buttons/credits_button_hover"), new Vector2(103, 420)));
+                Content.Load<Texture2D>("UI/Buttons/credits_button_hover"), new Vector2(150, 645)));
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/exit_button"),
-                Content.Load<Texture2D>("UI/Buttons/exit_button_hover"), new Vector2(103, 510)));
+                Content.Load<Texture2D>("UI/Buttons/exit_button_hover"), new Vector2(150, 780)));
 
             resumeButtonTexture = Content.Load<Texture2D>("UI/Buttons/resume_button");
             resumeButtonTextureHover = Content.Load<Texture2D>("UI/Buttons/resume_button_hover");
