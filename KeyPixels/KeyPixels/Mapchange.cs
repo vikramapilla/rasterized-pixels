@@ -58,6 +58,7 @@ namespace KeyPixels
                 down = false;
                 turnSpeed = 0;
                 player.resetbbox();
+                Game1.isTeleportPlaying = false;
             }
 
         }

@@ -38,9 +38,9 @@ namespace KeyPixels
 
         public void initialize(ContentManager contentManager)
         {
-            playerModel.body = contentManager.Load<Model>("Models/Body_Tria");
-            playerModel.arms = contentManager.Load<Model>("Models/Arms_Skelett");
-            playerModel.legs = contentManager.Load<Model>("Models/Legs_Skelett");
+            playerModel.body = contentManager.Load<Model>("Models/Body_Tria_Kenny");
+            playerModel.arms = contentManager.Load<Model>("Models/Arms_Skelett_Tex");
+            playerModel.legs = contentManager.Load<Model>("Models/Legs_Skelett_Walk");
             playerPosition = new Vector3(0, 0, 0);
             cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
             cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));

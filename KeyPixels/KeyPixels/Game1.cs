@@ -50,7 +50,7 @@ namespace KeyPixels
         bool startMenuFlag = true;
         public static bool isGameStarted = false;
         public static bool isGamePlaying = false;
-
+        public static bool isTeleportPlaying = false;
 
         HUD gameHUD;
         CutScenes cutScenes;
@@ -63,6 +63,8 @@ namespace KeyPixels
             //graphics.IsFullScreen = true;
             Content.RootDirectory = "Content";
             camera = new Camera(graphics);
+
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
         }
 
 
@@ -142,8 +144,24 @@ namespace KeyPixels
             {
                 cutScenes.Update(gameTime, sceneIndex);
             }
-            if (isGamePlaying && !isScenePlaying)
+            if (isGamePlaying && isTeleportPlaying)
             {
+                change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
+            }
+
+            if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
+            {
+                if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
+                {
+                    //change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
+                    Vector3 tele_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, -4);//distans to the Teleporter
+
+                    if ((tele_dis.X<0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f))
+                    {
+                        isTeleportPlaying = true;
+                    }
+                }
+
                 if (!mapFlag)
                 {
                     //Changes when the game is playing goes here
@@ -169,10 +187,7 @@ namespace KeyPixels
                         shots.clearAll();
                         sp.GetEnemy().initialize(Content);
                     }
-                    if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
-                    {
-                        change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
-                    }
+                    
                 }
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
                 {
@@ -235,7 +250,7 @@ namespace KeyPixels
             map.Draw();
             base.Draw(gameTime);
 
-            if (sp.GetEnemy().worldMatrix.Count == 0)
+            if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 testModel(portal, m, viewMatrix, projectionMatrix);
@@ -281,7 +296,7 @@ namespace KeyPixels
                     effect.World = worldMatrix;
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
-                    effect.DiffuseColor = Color.MidnightBlue.ToVector3();
+                    //effect.DiffuseColor = Color.MidnightBlue.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
 
@@ -301,7 +316,7 @@ namespace KeyPixels
                     effect.World = worldMatrix;
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
-                    effect.DiffuseColor = Color.MediumPurple.ToVector3();
+                    effect.DiffuseColor = Color.DarkMagenta.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
 

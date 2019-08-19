@@ -23,7 +23,7 @@ namespace KeyPixels
             _mapList = mapList;
             enemy = new Enemy();
             //elist = new List<Enemy>();
-            n = 0;
+            n = 1;
         }
 
         public void clearEnemy()
@@ -51,13 +51,15 @@ namespace KeyPixels
              * 6 = g + wall (left + top),       7 = g + wall (top + right),     8 = g + wall (right + bottom),      9 = g + wall (bottom + left)
              * 10 = g + w (left top right),     11 = g + w (top right bottom),  12 = g + w (right bottom left),     13 = g + w (bottom left top)
              */
-            int[,] a = _mapList[index];
-            posx = a.GetLength(0) / 2;// pos = lenght/2 so that the map is as central as possible
-            posz = a.GetLength(1) / 2;
-            Random r = new Random();
-            int i = r.Next(0,a.GetLength(0));
-            int j = r.Next(0, a.GetLength(1));
+            
             if (n< 3&& spawnrate<0) {
+
+                int[,] a = _mapList[index];
+                posx = a.GetLength(0) / 2;// pos = lenght/2 so that the map is as central as possible
+                posz = a.GetLength(1) / 2;
+                Random r = new Random();
+                int i = r.Next(0,a.GetLength(0));
+                int j = r.Next(0, a.GetLength(1));
                 
                 if (a[j, i] != 0)
                 {
