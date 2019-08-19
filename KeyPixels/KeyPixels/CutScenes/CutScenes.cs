@@ -20,14 +20,23 @@ namespace KeyPixels
         List<Texture2D> JennyScale = new List<Texture2D>();
         List<Texture2D> BossEnemy = new List<Texture2D>();
         List<Texture2D> BossEnemyScale = new List<Texture2D>();
+        List<Texture2D> Kenny = new List<Texture2D>();
+        List<Texture2D> KennyScale = new List<Texture2D>();
 
-        String[] textArray = { "Somewhere in the future", "Time: around 6029 A.D", "Place: High Beam, 5th Dimension",
-                                ". . . . . . . .", ". . . . . . . .", ". . . . . . . .",
+        String[] textArray = { "Somewhere in the future", "Time: around 6029 A.D", "Place: High Beam, 5th Dimension", //2
+                                ". . . . . . . .", ". . . . . . . .", ". . . . . . . .", //5
                                 "Jenny: Where am I?", "Jenny: I do not remember anything!",
-                                "Jenny: Kenny!", "Jenny: What happened to Kenny?", "Jenny: Where is he?",
-                                ". . . . . . . .", ". . . . . . . .", ". . . . . . . .",
-                                "Boss Enemy: Oh Jenny, poor Jenny!", "Boss Enemy: Don't you see the mastery of this wonderful place!",
-                                "Boss Enemy: Kenny is safe, in this limited 3rd dimension!"
+                                "Jenny: Kenny!", "Jenny: What happened to Kenny?", "Jenny: Where is he?", //10
+                                ". . . . . . . .", ". . . . . . . .", ". . . . . . . .", //13
+                                "Boss Enemy: Oh Jenny, poor Jenny!", "Boss Enemy: Don't you see that you are in the future!",
+                                "Boss Enemy: I locked you here in the 5th Dimension", "Boss Enemy: Who can save you?", //17
+                                "Jenny: My friend Kenny will!", //18
+                                "Boss Enemy: That is exactly the name I wanted to hear", "Boss Enemy: Let me make his death call", //20
+                                "Somewhere now", "Time: around 2019 A.D", "Place: No Beam, 3rd Dimension", //23
+                                ". . . . . . . .", ". . . . . . . .", ". . . . . . . .", //26
+                                "Kenny: Huh? I got a message!", "Kenny: Who is this? Boss Enemy?",  "Kenny: Who is Boss Enemy?", //29
+                                "Kenny: \"I locked your friend Jenny\"", "Kenny: \"If you want to save her, come to me!\"",//31
+                                "Kenny: \"The key to the door is everything you need.\"","Kenny: I gotta save Jenny, now!" //33
         };
         String text = "";
         Queue<char> stringQueue = new Queue<char>();
@@ -44,6 +53,7 @@ namespace KeyPixels
 
         private float timer = 1f;
         private float animationTimer = 1f;
+        private float keyTimer = 0f;
         private const float TIMER = 1f;
 
         int jennyIndex = 0;
@@ -53,6 +63,10 @@ namespace KeyPixels
         int bossEnemyIndex = 0;
         int bossEnemyScaleIndex = 0;
         bool bossEnemyScene = false;
+
+        int kennyIndex = 0;
+        int kennyScaleIndex = 0;
+        bool kennyScene = false;
 
         public void LoadContent(ContentManager Content)
         {
@@ -86,6 +100,18 @@ namespace KeyPixels
             BossEnemyScale.Add(Content.Load<Texture2D>("CutScenes/BossEnemy/Scale/scale4"));
             BossEnemyScale.Add(Content.Load<Texture2D>("CutScenes/BossEnemy/Scale/scale5"));
 
+            Kenny.Add(Content.Load<Texture2D>("CutScenes/Kenny/normal"));
+            Kenny.Add(Content.Load<Texture2D>("CutScenes/Kenny/blink"));
+            Kenny.Add(Content.Load<Texture2D>("CutScenes/Kenny/surprised"));
+            Kenny.Add(Content.Load<Texture2D>("CutScenes/Kenny/blink_surprised"));
+
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale"));
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale0"));
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale1"));
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale2"));
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale3"));
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale4"));
+            KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale5"));
         }
 
         private void makeEpilogue(GameTime gameTime)
@@ -111,13 +137,47 @@ namespace KeyPixels
                 bossEnemyScene = true;
                 isScale = true;
             }
-
+            if (textIndex == 18)
+            {
+                jennyScene = true;
+                bossEnemyScene = false;
+            }
+            if (textIndex == 19)
+            {
+                jennyScene = false;
+                bossEnemyScene = true;
+            }
+            if (textIndex == 21)
+            {
+                bossEnemyScene = false;
+                isDialog = false;
+            }
+            if (textIndex == 24)
+            {
+                isScale = true;
+                isDialog = true;
+                kennyScene = true;
+            }
+            if (textIndex == 27)
+            {
+                isScale = false;
+                kennyScene = true;
+            }
             if (stringQueue.Count == 0 && textIndex == textArray.Length)
             {
                 Game1.isScenePlaying = false;
                 isDialog = false;
             }
-
+            if (Keyboard.GetState().IsKeyDown(Keys.N))
+            {
+                keyTimer += 0.05f;
+                if (keyTimer > 7f)
+                    textIndex = textArray.Length;
+            }
+            else if(Keyboard.GetState().IsKeyUp(Keys.N))
+            {
+                keyTimer = 0f;
+            }
         }
 
 
@@ -222,6 +282,22 @@ namespace KeyPixels
                 if (isHoldAnimation(gameTime, 0.35f))
                     bossEnemyIndex = random.Next(0, 3);
                 spriteBatch.Draw(BossEnemy[bossEnemyIndex], Vector2.Zero, Color.White);
+            }
+            if (isScale && kennyScene)
+            {
+                if (kennyScaleIndex <= 6)
+                    spriteBatch.Draw(KennyScale[kennyScaleIndex], Vector2.Zero, Color.White);
+                else
+                    isScale = false;
+
+                if (isHoldAnimation(gameTime, 0.5f))
+                    kennyScaleIndex++;
+            }
+            if (!isScale && kennyScene)
+            {
+                if (isHoldAnimation(gameTime, 0.35f))
+                    kennyIndex = random.Next(0, 3);
+                spriteBatch.Draw(Kenny[kennyIndex], Vector2.Zero, Color.White);
             }
             if (isDialog)
                 spriteBatch.Draw(DialogBackground, Vector2.Zero, Color.White);
