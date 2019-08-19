@@ -68,7 +68,7 @@ namespace KeyPixels
 
         protected override void Initialize()
         {
-            DesiredResolution = new Vector2(1366, 768);
+            DesiredResolution = new Vector2(1920, 1080);
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
             colldown = 0;
@@ -99,7 +99,6 @@ namespace KeyPixels
             sp = new Spawning(map.getmapList());
             enemy = sp.GetEnemy();
             enemy.initialize(Content);
-            MouseCursor.FromTexture2D(Content.Load<Texture2D>("UI/mouse_cursor"), 0, 0);
             testMenu = new StartMenu();
             testMenu.LoadContent(Content);
             gameHUD = new HUD();

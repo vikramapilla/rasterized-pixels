@@ -258,7 +258,7 @@ namespace KeyPixels
                     effect.View = _viewMatrix;
                     effect.World = world;
                     effect.Projection = _projectionMatrix;
-                    effect.DiffuseColor = Color.DarkSlateGray.ToVector3();
+                    //effect.DiffuseColor = Color.DarkSlateGray.ToVector3();
                     effect.Alpha = 1.0f;
                 }
                 meshn.Draw();
