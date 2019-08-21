@@ -200,6 +200,7 @@ namespace KeyPixels
                             float shotDisappearRotation = posModel[n][i]._shotAngle;
                             //System.Diagnostics.Debug.WriteLine(shotDisappearRotation);
                             ParticleEngines.Add(new ParticleEngine(particle, shotDisappearPosition, shotDisappearRotation, "Wall"));
+                            Game1.soundManager.wallShotEffect();
                             posModel[n].Remove(posModel[n][i]);
                             hit = true;
                             N--;

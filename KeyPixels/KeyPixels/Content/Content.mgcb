@@ -747,6 +747,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:CutScenes/Kenny/Scale/scale2.png
+
 #begin Models/Arms_Skelett_Tex.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -862,7 +863,6 @@
 /processorParam:TextureFormat=Color
 /build:CutScenes/Kenny/surprised.png
 
-
 #begin Models/Body_Tria_Kenny.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -919,4 +919,52 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/Legs_Skelett_Walk.fbx
+
+#begin Audio/typing_0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/typing_0.wav
+
+#begin Audio/menu_bgm.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/menu_bgm.mp3
+
+#begin Audio/Shooting/shot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/shot.wav
+
+#begin Audio/Shooting/wall_shot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/wall_shot.wav
+
+#begin Audio/Player/map_change.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/map_change.wav
+
+#begin Audio/Player/burst_move.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/burst_move.wav
+
+#begin Audio/Shooting/enemy_shot.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/enemy_shot.wav
+
+#begin Audio/Player/portal.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/portal.wav
 

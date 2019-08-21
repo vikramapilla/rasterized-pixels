@@ -68,6 +68,9 @@ namespace KeyPixels
         int kennyScaleIndex = 0;
         bool kennyScene = false;
 
+        int prevTextIndex = 0;
+        bool isTypingEffect = false;
+
         public void LoadContent(ContentManager Content)
         {
             font = Content.Load<SpriteFont>("Fonts/Dialog");
@@ -125,6 +128,17 @@ namespace KeyPixels
                 textInQueue = true;
             }
             animateText(gameTime);
+            
+            if(prevTextIndex == textIndex && !isTypingEffect && textIndex < 3)
+            {
+                isTypingEffect = true;
+                Game1.soundManager.typingEffect();
+            }
+            else if(prevTextIndex != textIndex)
+            {
+                prevTextIndex = textIndex;
+                isTypingEffect = false;
+            }
             if (textIndex == 3)
             {
                 isScale = true;
@@ -151,6 +165,16 @@ namespace KeyPixels
             {
                 bossEnemyScene = false;
                 isDialog = false;
+            }
+            if (prevTextIndex == textIndex && !isTypingEffect && textIndex > 20 && textIndex < 24)
+            {
+                isTypingEffect = true;
+                Game1.soundManager.typingEffect();
+            }
+            else if (prevTextIndex != textIndex)
+            {
+                prevTextIndex = textIndex;
+                isTypingEffect = false;
             }
             if (textIndex == 24)
             {
@@ -250,7 +274,7 @@ namespace KeyPixels
             {
                 position = dialogPosition;
             }
-            spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.White);
+            spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.Black);
             if (isScale && jennyScene)
             {
                 if (jennyScaleIndex <= 6)

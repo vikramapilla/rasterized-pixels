@@ -26,6 +26,7 @@ namespace KeyPixels
         Model particle;
 
         Model portal;
+        ParticleEngine portalParticle;
 
         bool flag = true;
         static Shots shots;
@@ -56,6 +57,9 @@ namespace KeyPixels
         CutScenes cutScenes;
         int sceneIndex;
         public static bool isScenePlaying = false;
+
+        public static SoundManager soundManager;
+
 
         public Game1()
         {
@@ -107,8 +111,11 @@ namespace KeyPixels
             gameHUD.LoadContent(Content);
             cutScenes = new CutScenes();
             cutScenes.LoadContent(Content);
-
+            soundManager = new SoundManager();
+            soundManager.LoadContent(Content);
             portal = Content.Load<Model>("Models/Portal2_Tria");
+            portalParticle = new ParticleEngine(portal, new Vector3(0, 0, -4), 0, "Wall");
+            soundManager.menuBackgroundMusicPlay();
 
         }
 
@@ -135,10 +142,13 @@ namespace KeyPixels
                 isGamePlaying = true;
                 isGameStarted = true;
                 isScenePlaying = true;
+                soundManager.menuBackgroundMusicStop();
             }
 
             if (startMenuFlag)
+            {
                 testMenu.Update(gameTime);
+            }
 
             if (isGamePlaying && isScenePlaying)
             {
@@ -159,6 +169,8 @@ namespace KeyPixels
                     if ((tele_dis.X<0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f))
                     {
                         isTeleportPlaying = true;
+                        soundManager.mapChangeEffect();
+                        soundManager.portalEffectStop();
                     }
                 }
 
@@ -223,6 +235,7 @@ namespace KeyPixels
                 {
                     isGamePlaying = false;
                     startMenuFlag = true;
+                    soundManager.menuBackgroundMusicPlay();
                 }
 
                 gameHUD.Update(gameTime);
@@ -253,6 +266,9 @@ namespace KeyPixels
             if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
+                portalParticle.Update();
+                portalParticle.Draw();
+                soundManager.portalEffectPlay();
                 testModel(portal, m, viewMatrix, projectionMatrix);
             }
 
@@ -331,6 +347,7 @@ namespace KeyPixels
                 if (colldown < 1)
                 {
                     shots.createShot(player.worldMatrix, numberShot);
+                    soundManager.shotEffect();
                     if (player.shotsCounter > 0)
                         player.shotsCounter--;
                     if (numberShot < 1 && numberShot > -1)

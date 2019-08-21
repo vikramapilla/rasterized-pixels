@@ -57,6 +57,7 @@ namespace KeyPixels
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 {
+                    Game1.soundManager.burstEffect();
                     if (burstCounter == 0)
                     {
                         burstCounter = 7;
