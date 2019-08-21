@@ -57,11 +57,11 @@ namespace KeyPixels
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 {
-                    Game1.soundManager.burstEffect();
                     if (burstCounter == 0)
                     {
                         burstCounter = 7;
                         burstFlag = true;
+                        Game1.soundManager.burstEffect();
                     }
                 }
             }
