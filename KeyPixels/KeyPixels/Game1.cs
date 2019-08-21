@@ -113,7 +113,7 @@ namespace KeyPixels
             cutScenes.LoadContent(Content);
             soundManager = new SoundManager();
             soundManager.LoadContent(Content);
-            portal = Content.Load<Model>("Models/Portal2_Tria");
+            portal = Content.Load<Model>("Models/Portal_Tex");
             portalParticle = new ParticleEngine(portal, new Vector3(0, 0, -4), 0, "Wall");
             soundManager.menuBackgroundMusicPlay();
 
