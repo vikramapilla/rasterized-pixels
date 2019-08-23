@@ -33,6 +33,9 @@ namespace KeyPixels
 
         Map map;
         private bool mapFlag = false;
+        public static bool morebullets = false;
+
+
         public int mapindex;
         Mapchange change;
 
@@ -114,7 +117,7 @@ namespace KeyPixels
             cutScenes.LoadContent(Content);
             soundManager = new SoundManager();
             soundManager.LoadContent(Content);
-            portal = Content.Load<Model>("Models/Portal_Tex");
+            portal = Content.Load<Model>("Models/Pickup");
             portalParticle = new ParticleEngine(portal, new Vector3(0, 0, -4), 0, "Wall");
             soundManager.menuBackgroundMusicPlay();
 
@@ -176,7 +179,6 @@ namespace KeyPixels
                         telecolldown = 50;
                     }
                 }
-
                 if (!mapFlag)
                 {
                     //Changes when the game is playing goes here
@@ -213,7 +215,7 @@ namespace KeyPixels
                 sp.SpawnEnemy(mapindex);
                 shots.updateShotsPos(gameTime);
                 getPosition();
-
+                
                 player.getPosition(ref map.QTree);
                 player.getRotation();
 
@@ -358,6 +360,7 @@ namespace KeyPixels
                     else
                         numberShot--;
                     colldown = 50;
+                    if (morebullets==true) { colldown = 25; }
                 }
             }
             return player.worldMatrix.Translation;

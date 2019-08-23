@@ -13,6 +13,10 @@ namespace KeyPixels
         List<ParticleEngine> ParticleEngines;
         Model particle;
 
+        public float speed=0.05f;
+        public bool piercing=false;
+
+
         private Player player = new Player();
 
         public struct _Model
@@ -73,7 +77,8 @@ namespace KeyPixels
             {
                 _Value temp = new _Value();
                 temp._matrix = posMatrix;
-                temp._directionAddSpeed = Vector3.Transform(mOModel[numberShot].directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+                Vector3 directionAddSpeed = new Vector3(new Vector3(0, 0, 1).X * speed, new Vector3(0, 0, 1).Y * speed, new Vector3(0, 0, 1).Z * speed);
+                temp._directionAddSpeed = Vector3.Transform(directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));//mOModel[numberShot].directionAddSpeed
                 temp._bbox = new CreateBoundingBox(mOModel[numberShot].mModel, temp._matrix);
                 temp._shotAngle = player.getCurrentRotation();
                 posModel[numberShot].Add(temp);
@@ -167,9 +172,12 @@ namespace KeyPixels
                 {
                     if (posModel[n][i]._bbox.bBox.Intersects(_bModel))
                     {
-                        posModel[n].Remove(posModel[n][i]);
                         hit = true;
-                        N--;
+                        if (piercing == false)
+                        {
+                            posModel[n].Remove(posModel[n][i]);
+                            N--;
+                        }
                     }
                 }
             }
