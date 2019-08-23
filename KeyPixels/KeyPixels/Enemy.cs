@@ -36,9 +36,9 @@ namespace KeyPixels
         {
             enemyModel._model = new List<Model>();
             player = new Player();
-            enemyModel._model.Add(contentManager.Load<Model>("Models/Body_Tria"));
-            enemyModel._model.Add(contentManager.Load<Model>("Models/Arms_Skelett"));
-            enemyModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett"));
+            enemyModel._model.Add(contentManager.Load<Model>("Models/Body_Enemy"));
+            enemyModel._model.Add(contentManager.Load<Model>("Models/Arms_Skelett_Tex"));
+            enemyModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett_Walk"));
             particle = contentManager.Load<Model>("Models/Shot_Tria");
             worldMatrix = new List<Matrix>();
             enemyPosition = new Vector3(2,0,0);
@@ -342,7 +342,7 @@ namespace KeyPixels
                         
                         effect.View = viewMatrix;
                         effect.Projection = projectionMatrix;
-                        effect.DiffuseColor = Color.MediumBlue.ToVector3();
+                        //effect.DiffuseColor = Color.MediumBlue.ToVector3();
 
                         for (int i = 0; i < worldMatrix.Count; i++)
                         {

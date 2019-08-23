@@ -43,6 +43,7 @@ namespace KeyPixels
         CreateBoundingBox cbB;
         List<BoundingBox> collision_return;
         static int colldown;
+        static int telecolldown;
 
         public static Vector3 playerPosition = Vector3.Zero;
 
@@ -79,7 +80,7 @@ namespace KeyPixels
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
             colldown = 0;
             mapindex = 0;
-
+            telecolldown = 50;
             change = new Mapchange();
 
             sceneIndex = 0;
@@ -165,12 +166,14 @@ namespace KeyPixels
                 {
                     //change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
                     Vector3 tele_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, -4);//distans to the Teleporter
+                    telecolldown--;
 
-                    if ((tele_dis.X<0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f))
+                    if ((tele_dis.X<0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f) && telecolldown < 1)
                     {
                         isTeleportPlaying = true;
                         soundManager.mapChangeEffect();
                         soundManager.portalEffectStop();
+                        telecolldown = 50;
                     }
                 }
 

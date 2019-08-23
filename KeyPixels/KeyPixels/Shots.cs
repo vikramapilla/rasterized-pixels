@@ -49,7 +49,7 @@ namespace KeyPixels
             particle = contentManager.Load<Model>("Models/Shot_Tria");
             ParticleEngines = new List<ParticleEngine>();
         }
-            public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
+        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel.Add(new List<_Value>());
