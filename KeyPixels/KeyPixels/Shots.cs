@@ -14,7 +14,7 @@ namespace KeyPixels
         Model particle;
 
         public float speed=0.05f;
-        public bool piercing=false;
+        public static bool piercing=false;
 
 
         private Player player = new Player();

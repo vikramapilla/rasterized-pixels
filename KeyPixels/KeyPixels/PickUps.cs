@@ -9,7 +9,7 @@ namespace KeyPixels
 {
     public class PickUps: Component
     {
-        Model PickUpModel;
+        Model[] PickUpModel = new Model[6];
         Model PlayerModel;
         CreateBoundingBox CBBPickUP, CBBPlayer;
 
@@ -20,7 +20,8 @@ namespace KeyPixels
         Random random;
 
         int mapIndex;
-        int enemyCounter;
+        int pickUpIndex;
+        int pickedUpIndex;
 
         float posX, posZ;
 
@@ -32,8 +33,13 @@ namespace KeyPixels
 
         public void LoadContent(ContentManager Content)
         {
-            PickUpModel = Content.Load<Model>("Models/Pickup");
             PlayerModel = Content.Load<Model>("Models/Legs_Skelett");
+            PickUpModel[0] = Content.Load<Model>("Models/Pickup_Bazooka");
+            PickUpModel[1] = Content.Load<Model>("Models/Pickup_Burst");
+            PickUpModel[2] = Content.Load<Model>("Models/Pickup_Cooldown");
+            PickUpModel[3] = Content.Load<Model>("Models/Pickup_Double");
+            PickUpModel[4] = Content.Load<Model>("Models/Pickup_Piercing");
+            PickUpModel[5] = Content.Load<Model>("Models/Pickup_Health");
         }
 
         public void initialize()
@@ -51,15 +57,44 @@ namespace KeyPixels
 
             if (isCollision())
             {
+                activatePower();
                 timer = TIMER;
-                generatePickUp();
             }
+
             if (isTime())
             {
                 generatePickUp();
             }
 
 
+        }
+
+        private void activatePower()
+        {
+            if (pickedUpIndex == 1)
+            {
+                Player.activateBurst();
+                System.Diagnostics.Debug.WriteLine("Burst Up");
+            }
+            else if (pickedUpIndex == 2)
+            {
+                Game1.morebullets = true;
+                Shots.piercing = false;
+            }
+            else if (pickedUpIndex == 3)
+            {
+                Shots.piercing = false;
+                Game1.morebullets = false;
+            }
+            else if (pickedUpIndex == 4)
+            {
+                Shots.piercing = true;
+                Game1.morebullets = false;
+            }
+            else if (pickedUpIndex == 5)
+            {
+                Player.activateHealth();
+            }
         }
 
         private bool isCollision()
@@ -71,7 +106,7 @@ namespace KeyPixels
                 if (CBBPickUP.bBox.Intersects(CBBPlayer.bBox))
                 {
                     isPickUp = false;
-                    System.Diagnostics.Debug.WriteLine("Collided");
+                    pickedUpIndex = pickUpIndex;
                     return true;
                 }
             }
@@ -83,15 +118,11 @@ namespace KeyPixels
         private bool isTime()
         {
             timer -= 0.05f;
-            if (timer < random.Next(0, 5))
+            if (timer < random.Next(0, 2))
             {
                 timer = TIMER;
-                System.Diagnostics.Debug.WriteLine("Time Up");
                 return true;
             }
-
-
-
             return false;
         }
 
@@ -102,6 +133,13 @@ namespace KeyPixels
 
             int i = random.Next(0, currentMap.GetLength(0));
             int j = random.Next(0, currentMap.GetLength(1));
+
+            while(currentMap[j, i] == 0)
+            {
+                i = random.Next(0, currentMap.GetLength(0));
+                j = random.Next(0, currentMap.GetLength(1));
+            }
+
             if (currentMap[j, i] != 0)
             {
                 posX = currentMap.GetLength(0) / 2;
@@ -110,21 +148,25 @@ namespace KeyPixels
                 posX = posX * 2 - i * 2;
                 posZ = posZ * 2 - j * 2;
 
+                pickUpIndex = random.Next(1, 2);
                 pickUpLocation = new Vector3(posX, 0, posZ);
 
                 pickUpWorldMatrix = Matrix.CreateTranslation(pickUpLocation);
 
-                CBBPickUP = new CreateBoundingBox(PickUpModel, Matrix.CreateTranslation(pickUpLocation));
+                CBBPickUP = new CreateBoundingBox(PickUpModel[pickUpIndex], Matrix.CreateTranslation(pickUpLocation));
 
                 isPickUp = true;
-                System.Diagnostics.Debug.WriteLine("New Pick Up");
+                System.Diagnostics.Debug.WriteLine("New Pick Up; {0}", pickUpIndex);
             }
         }
 
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            Game1.Draw3DModel(PickUpModel, pickUpWorldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
+            if (isPickUp)
+            {
+                Game1.Draw3DModel(PickUpModel[pickUpIndex], pickUpWorldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
+            }
         }
     }
 }

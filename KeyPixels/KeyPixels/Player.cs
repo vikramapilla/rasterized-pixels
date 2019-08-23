@@ -28,13 +28,14 @@ namespace KeyPixels
         public CreateBoundingBox cbBarm3;
 
         private Dictionary<string, float> rotationMap = new Dictionary<string, float>();
-        
+
         private bool burstFlag = false;
         public static float angle = 0f;
-        
+
         private int burstCounter = 0;
+        private static int numberOfBursts = 0;
         public int shotsCounter { get; set; }
-        public int healthCounter { get; set; }
+        public static int healthCounter { get; set; }
 
         public void initialize(ContentManager contentManager)
         {
@@ -48,7 +49,19 @@ namespace KeyPixels
             cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
             buildRotationMap();
             shotsCounter = 10;
-            healthCounter = 5;
+            healthCounter = 10;
+        }
+
+        public static void activateHealth()
+        {
+            healthCounter += 3;
+            if (healthCounter > 10)
+                healthCounter = 10;
+        }
+
+        public static void activateBurst()
+        {
+            numberOfBursts = 3;
         }
 
         public void getPosition(ref QuadTree<BoundingBox> _QTree)
@@ -57,16 +70,21 @@ namespace KeyPixels
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                 {
-                    if (burstCounter == 0)
+                    if (numberOfBursts > 0)
                     {
-                        burstCounter = 7;
-                        burstFlag = true;
-                        Game1.soundManager.burstEffect();
+                        if (burstCounter == 0)
+                        {
+                            burstCounter = 7;
+                            burstFlag = true;
+                            Game1.soundManager.burstEffect();
+                        }
                     }
                 }
             }
             if (Keyboard.GetState().IsKeyUp(Keys.LeftControl))
             {
+                if (burstFlag)
+                    numberOfBursts--;
                 burstFlag = false;
             }
 
@@ -81,12 +99,12 @@ namespace KeyPixels
                     playerPosition.X += 0.15f;
                     burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(0.15f,0,0.15f)) == true)
+                    if (IsCollision(ref _QTree, new Vector3(0.15f, 0, 0.15f)) == true)
                     {
                         playerPosition.Z = tempZ;
                         playerPosition.X = tempX;
                     }
-                    
+
                 }
                 else
                 {
@@ -313,7 +331,7 @@ namespace KeyPixels
 
         public void teleportup(float speed)
         {
-            playerPosition.Y+=0.05f;
+            playerPosition.Y += 0.05f;
             angle += speed;
         }
 
@@ -476,12 +494,12 @@ namespace KeyPixels
             rotationMap.Add("SouthEast", -135);
         }
 
-        public bool IsCollision(ref QuadTree<BoundingBox> _QTree,Vector3 target)
+        public bool IsCollision(ref QuadTree<BoundingBox> _QTree, Vector3 target)
         {
             bool hit = false;
-            
-                cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle)* Matrix.CreateTranslation(playerPosition));
-                cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
+
+            cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
+            cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
 
             cbBarm2.bBox.Max += target;
             cbBarm2.bBox.Min += target;
@@ -491,27 +509,27 @@ namespace KeyPixels
             List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
                 new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
 
-                for (int u = 0; u < temp.Count; ++u)
+            for (int u = 0; u < temp.Count; ++u)
+            {
+                if (cbBbody.bBox.Intersects(temp[u]))//test if playerbody hits map
                 {
-                    if (cbBbody.bBox.Intersects(temp[u]))//test if playerbody hits map
-                    {
                     //return true;
                     hit = true;
                 }
-                }
-                temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
-                new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
+            }
+            temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
+            new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
 
-                for (int u = 0; u < temp.Count; ++u)
+            for (int u = 0; u < temp.Count; ++u)
+            {
+                if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
                 {
-                    if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
-                    {
                     //return true;
                     hit = true;
                 }
-                }
-                temp = _QTree.seekData(new Vector2(cbBarm3.bBox.Min.X, cbBarm3.bBox.Min.Z),
-                new Vector2(cbBarm3.bBox.Max.X, cbBarm3.bBox.Max.Z));
+            }
+            temp = _QTree.seekData(new Vector2(cbBarm3.bBox.Min.X, cbBarm3.bBox.Min.Z),
+            new Vector2(cbBarm3.bBox.Max.X, cbBarm3.bBox.Max.Z));
 
 
             for (int u = 0; u < temp.Count; ++u)

@@ -37,7 +37,7 @@ namespace KeyPixels
         public static bool morebullets = false;
 
 
-        public int mapindex;
+        public static int mapindex;
         Mapchange change;
 
         Spawning sp;
