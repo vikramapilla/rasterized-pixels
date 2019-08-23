@@ -9,7 +9,7 @@ namespace KeyPixels
         public BoundingBox bBox;
         private Vector2[] pVec2;
         
-
+        
         public CreateBoundingBox(Model model, Matrix meshTransform)
         {
             // Initialize minimum and maximum corners of the bounding box to max and min values

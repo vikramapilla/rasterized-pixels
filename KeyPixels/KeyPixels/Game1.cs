@@ -24,6 +24,7 @@ namespace KeyPixels
         Model ground;
         Model wall;
         Model particle;
+        Model projectile;
 
         Model portal;
         ParticleEngine portalParticle;
@@ -31,7 +32,7 @@ namespace KeyPixels
         bool flag = true;
         static Shots shots;
 
-        Map map;
+        static Map map;
         private bool mapFlag = false;
         public static bool morebullets = false;
 
@@ -64,6 +65,7 @@ namespace KeyPixels
 
         public static SoundManager soundManager;
 
+        public PickUps pickUps;
 
         public Game1()
         {
@@ -117,9 +119,13 @@ namespace KeyPixels
             cutScenes.LoadContent(Content);
             soundManager = new SoundManager();
             soundManager.LoadContent(Content);
-            portal = Content.Load<Model>("Models/Pickup");
-            portalParticle = new ParticleEngine(portal, new Vector3(0, 0, -4), 0, "Wall");
+            portal = Content.Load<Model>("Models/Portal_Tex");
+            projectile = Content.Load<Model>("Models/partical");
+            portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", 500);
             soundManager.menuBackgroundMusicPlay();
+            pickUps = new PickUps();
+            pickUps.LoadContent(Content);
+            pickUps.initialize();
 
         }
 
@@ -161,6 +167,7 @@ namespace KeyPixels
             if (isGamePlaying && isTeleportPlaying)
             {
                 change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
+                portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", 500);
             }
 
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
@@ -204,6 +211,7 @@ namespace KeyPixels
                         shots.clearAll();
                         sp.GetEnemy().initialize(Content);
                     }
+                    pickUps.Update(gameTime);
                     
                 }
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
@@ -266,6 +274,7 @@ namespace KeyPixels
             //Draw3DModel(playerModel, Matrix.CreateTranslation(0, 0, 2.69999f), viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
+            pickUps.Draw(gameTime, spriteBatch);
             base.Draw(gameTime);
 
             if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying)
@@ -369,6 +378,16 @@ namespace KeyPixels
         public static int numberOfShots()
         {
             return player.shotsCounter;
+        }
+
+        public static List<int[,]> getMapList()
+        {
+            return map.getmapList();
+        }
+
+        public static int getMapindex()
+        {
+            return mapindex;
         }
 
     }

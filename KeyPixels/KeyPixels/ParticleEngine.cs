@@ -30,6 +30,17 @@ namespace KeyPixels
             this.ParticleType = particleType;
         }
 
+        public ParticleEngine(Model model, Vector3 location, float rotation, String particleType, int tte)
+        {
+            EmitterLocation = location;
+            EmitterRotation = rotation;
+            this.model = model;
+            random = new Random();
+            this.particles = new List<Particle>();
+            this.TTE = tte;
+            this.ParticleType = particleType;
+        }
+
         private Particle GenerateNewParticle()
         {
             if(ParticleType == "Enemy")
@@ -40,8 +51,12 @@ namespace KeyPixels
             {
                 return GenerateWallParticle();
             }
+            if (ParticleType == "Portal")
+            {
+                return GenerateWallParticle();
+            }
 
-            return GenerateDefaultParticle();
+            return GeneratePortalParticle();
 
         }
 
@@ -82,6 +97,32 @@ namespace KeyPixels
             Color color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             float size = (float)random.NextDouble();
             int ttl = 15;
+
+            return new Particle(model, position, velocity, angle, angularVelocity, color, size, ttl);
+        }
+
+        private Particle GeneratePortalParticle()
+        {
+            Vector3 position = EmitterLocation;
+            Vector3 velocity;
+            if (EmitterRotation % 180 == 0)
+            {
+                velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
+                    0.01f * (float)(random.NextDouble() * 2 - 1),
+                   0);
+            }
+            else
+            {
+
+                velocity = new Vector3(0,
+                    0.01f * (float)(random.NextDouble() * 2 - 1),
+                    0.01f * (float)(random.NextDouble() * 2 - 1));
+            }
+            float angle = EmitterRotation;
+            float angularVelocity = 0.1f * (float)(random.NextDouble() * 2);
+            Color color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            float size = (float)random.NextDouble();
+            int ttl = 125;
 
             return new Particle(model, position, velocity, angle, angularVelocity, color, size, ttl);
         }
