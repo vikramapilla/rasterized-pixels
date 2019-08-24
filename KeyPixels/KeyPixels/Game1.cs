@@ -35,6 +35,7 @@ namespace KeyPixels
         static Map map;
         private bool mapFlag = false;
         public static bool morebullets = false;
+        public static bool doubleshot = false;
 
 
         public static int mapindex;
@@ -366,7 +367,7 @@ namespace KeyPixels
                 if (colldown < 1)
                 {
                     shots.createShot(player.worldMatrix,numberShot);
-                    if (Keyboard.GetState().IsKeyDown(Keys.M))
+                    if (Keyboard.GetState().IsKeyDown(Keys.M) || doubleshot == true)
                     {
                         if (numberShot == 0) { shots.createShot(player.worldMatrix, 1); }
                         else shots.createShot(player.worldMatrix, 0);
