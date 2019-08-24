@@ -33,7 +33,7 @@ namespace KeyPixels
         public static float angle = 0f;
 
         private int burstCounter = 0;
-        private static int numberOfBursts = 0;
+        public static int numberOfBursts = 0;
         public int shotsCounter { get; set; }
         public static int healthCounter { get; set; }
 
@@ -49,7 +49,7 @@ namespace KeyPixels
             cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
             buildRotationMap();
             shotsCounter = 10;
-            healthCounter = 10;
+            healthCounter = 1;
         }
 
         public static void activateHealth()

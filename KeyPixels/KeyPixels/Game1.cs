@@ -280,7 +280,6 @@ namespace KeyPixels
             //Draw3DModel(playerModel, Matrix.CreateTranslation(0, 0, 2.69999f), viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
-            pickUps.Draw(gameTime, spriteBatch);
             base.Draw(gameTime);
 
             if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying)
@@ -308,6 +307,7 @@ namespace KeyPixels
             {
                 cutScenes.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
             }
+            pickUps.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();
 

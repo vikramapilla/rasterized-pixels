@@ -16,11 +16,9 @@ namespace KeyPixels.UI
         Texture2D HUDPoint;
 
         int healthCount;
-        int shotsCount;
         
 
         List<Rectangle> healthBar = new List<Rectangle>();
-        List<Rectangle> shotsBar = new List<Rectangle>();
 
         public void LoadContent(ContentManager Content)
         {
@@ -29,12 +27,11 @@ namespace KeyPixels.UI
 
             for (int i = 0; i < 5; i++)
             {
-                healthBar.Add(new Rectangle(160 + (i * 48), 128, HUDPoint.Width, HUDPoint.Height));
+                healthBar.Add(new Rectangle(160 + (i * 30), 50, HUDPoint.Width, HUDPoint.Height));
             }
-
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
-                shotsBar.Add(new Rectangle(66, 915 - (i * 26), HUDPoint.Width, HUDPoint.Height));
+                healthBar.Add(new Rectangle(160 + (i * 30), 85, HUDPoint.Width, HUDPoint.Height));
             }
 
         }
@@ -46,20 +43,11 @@ namespace KeyPixels.UI
             {
                 spriteBatch.Draw(HUDPoint, healthBar[i], Color.White);
             }
-
-            for (int i = 0; i < shotsCount; i++)
-            {
-                spriteBatch.Draw(HUDPoint, shotsBar[i], Color.White);
-            }
         }
 
         public override void Update(GameTime gameTime)
         {
-            shotsCount = Game1.numberOfShots();
-            healthCount = 5;
-
-
-
+            healthCount = Player.healthCounter;
         }
     }
 }
