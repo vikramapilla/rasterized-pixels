@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace KeyPixels
@@ -13,8 +14,8 @@ namespace KeyPixels
         List<ParticleEngine> ParticleEngines;
         Model particle;
 
-        public float speed=0.05f;
-        public static bool piercing=false;
+        public float speed = 0.05f;
+        public static bool piercing = false;
 
 
         private Player player = new Player();
@@ -30,8 +31,10 @@ namespace KeyPixels
         {
             public Matrix _matrix;
             public Vector3 _directionAddSpeed;
+            public Vector3 _maximumDistance;
             public CreateBoundingBox _bbox;
             public float _shotAngle;
+            public bool _bazookaShot;
         };
 
         public Shots(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
@@ -46,7 +49,7 @@ namespace KeyPixels
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel = new List<List<_Value>>();
             posModel.Add(new List<_Value>());
-            ColorModel(_difcolor,0);
+            ColorModel(_difcolor, 0);
         }
         public void initialize(ContentManager contentManager)
         {
@@ -59,11 +62,11 @@ namespace KeyPixels
             posModel.Add(new List<_Value>());
         }
 
-        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed,Color _difcolor)
+        public void addModel(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed, Color _difcolor)
         {
             helpConstruct(contentManager, modelName, _speed, _directionSpeed);
             posModel.Add(new List<_Value>());
-            ColorModel(_difcolor,mOModel.Count-1);
+            ColorModel(_difcolor, mOModel.Count - 1);
         }
 
         /// <summary>
@@ -71,9 +74,9 @@ namespace KeyPixels
         ///     E.g. posMatrix := Player Matrix (+ Translate Shot position)
         /// </summary>
 
-        public void createShot(Matrix posMatrix,int numberShot)
+        public void createShot(Matrix posMatrix, int numberShot)
         {
-            if (numberShot < posModel.Count && numberShot>=0)
+            if (numberShot < posModel.Count && numberShot >= 0)
             {
                 _Value temp = new _Value();
                 temp._matrix = posMatrix;
@@ -83,9 +86,57 @@ namespace KeyPixels
                 temp._shotAngle = player.getCurrentRotation();
                 posModel[numberShot].Add(temp);
                 //System.Diagnostics.Debug.WriteLine("Shot: {0}", temp._shotAngle);
+                temp._bazookaShot = false;
             }
         }
-
+        public void createBazookaShot(Matrix posMatrix, int numberShot, int directionIndex)
+        {
+            if (numberShot < posModel.Count && numberShot >= 0)
+            {
+                _Value temp = new _Value();
+                temp._bazookaShot = true;
+                temp._matrix = posMatrix;
+                temp._maximumDistance = Vector3.Zero;
+                Vector3 transformVector = Vector3.Zero;
+                if (directionIndex == 0)
+                {
+                    transformVector = new Vector3(0, 0, 0.05f);
+                }
+                else if (directionIndex == 1)
+                {
+                    transformVector = new Vector3(-0.05f, 0, 0.05f);
+                }
+                else if (directionIndex == 2)
+                {
+                    transformVector = new Vector3(-0.05f, 0, 0);
+                }
+                else if (directionIndex == 3)
+                {
+                    transformVector = new Vector3(-0.05f, 0, -0.05f);
+                }
+                else if (directionIndex == 4)
+                {
+                    transformVector = new Vector3(0, 0, -0.05f);
+                }
+                else if (directionIndex == 5)
+                {
+                    transformVector = new Vector3(0.05f, 0, -0.05f);
+                }
+                else if (directionIndex == 6)
+                {
+                    transformVector = new Vector3(0.05f, 0, 0);
+                }
+                else if (directionIndex == 7)
+                {
+                    transformVector = new Vector3(0.05f, 0, 0.05f);
+                }
+                temp._directionAddSpeed = Vector3.Transform(transformVector, Matrix.CreateFromQuaternion(temp._matrix.Rotation));
+                temp._bbox = new CreateBoundingBox(mOModel[numberShot].mModel, temp._matrix);
+                temp._shotAngle = player.getCurrentRotation();
+                posModel[numberShot].Add(temp);
+                //System.Diagnostics.Debug.WriteLine("Shot: {0}", temp._shotAngle);
+            }
+        }
 
         /// <summary>
         ///     createShot will be create a Shot of now time posPlayer. Y in Vector not use! faster!
@@ -112,7 +163,7 @@ namespace KeyPixels
 
         public void clearAll()
         {
-            for(int i=0;i<posModel.Count;++i)
+            for (int i = 0; i < posModel.Count; ++i)
                 posModel[i].Clear();
         }
 
@@ -129,9 +180,19 @@ namespace KeyPixels
                 {
                     var temp = posModel[n][i];
                     temp._matrix.Translation += temp._directionAddSpeed;
+                    temp._maximumDistance += temp._directionAddSpeed;
                     temp._bbox.bBox.Max += temp._directionAddSpeed;
                     temp._bbox.bBox.Min += temp._directionAddSpeed;
+
                     posModel[n][i] = temp;
+                    if (temp._bazookaShot)
+                    {
+                        if (Math.Abs(temp._maximumDistance.X) > 1 || Math.Abs(temp._maximumDistance.Z) > 1)
+                        {
+                            posModel[n].Remove(posModel[n][i]);
+                            N--;
+                        }
+                    }
                 }
             }
         }
@@ -166,7 +227,7 @@ namespace KeyPixels
         {
             bool hit = false;
             for (int n = 0; n < posModel.Count; ++n)
-            { 
+            {
                 int N = posModel[n].Count;
                 for (int i = 0; i < N; i++)
                 {
@@ -230,10 +291,10 @@ namespace KeyPixels
         {
             _ret_collision = new List<BoundingBox>();
             bool hit = false;
-            for (int n = posModel.Count-1; n >-1; --n)
+            for (int n = posModel.Count - 1; n > -1; --n)
             {
                 int N = posModel[n].Count;
-                for (int i = N-1; i >-1; --i)
+                for (int i = N - 1; i > -1; --i)
                 {
                     List<BoundingBox> temp = _QTree.seekData(new Vector2(posModel[n][i]._bbox.bBox.Min.X, posModel[n][i]._bbox.bBox.Min.Z),
                         new Vector2(posModel[n][i]._bbox.bBox.Max.X, posModel[n][i]._bbox.bBox.Max.Z));
@@ -307,10 +368,10 @@ namespace KeyPixels
 
         private void helpConstruct(ContentManager contentManager, string modelName, float _speed, Vector3 _directionSpeed)
         {
-            if(mOModel==null)
+            if (mOModel == null)
                 mOModel = new List<_Model>();
             _Model temp = new _Model();
-            temp.mModel=(contentManager.Load<Model>(modelName));
+            temp.mModel = (contentManager.Load<Model>(modelName));
             temp.mDifColor = new List<Vector3>();
 
             foreach (ModelMesh mesh in temp.mModel.Meshes)
@@ -321,10 +382,10 @@ namespace KeyPixels
             mOModel.Add(temp);
         }
 
-        private void ColorModel(Color c,int num)
+        private void ColorModel(Color c, int num)
         {
             var temp = mOModel[num];
-            for (int i=0; i< temp.mDifColor.Count;++i)
+            for (int i = 0; i < temp.mDifColor.Count; ++i)
                 temp.mDifColor[i] = c.ToVector3();
             mOModel[num] = temp;
         }

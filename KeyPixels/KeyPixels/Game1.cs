@@ -36,6 +36,7 @@ namespace KeyPixels
         private bool mapFlag = false;
         public static bool morebullets = false;
         public static bool doubleshot = false;
+        public static bool bazookashot = false;
 
 
         public static int mapindex;
@@ -49,6 +50,7 @@ namespace KeyPixels
         List<BoundingBox> collision_return;
         static int colldown;
         static int telecolldown;
+        static int bazcolldown;
 
         public static Vector3 playerPosition = Vector3.Zero;
 
@@ -87,6 +89,7 @@ namespace KeyPixels
             colldown = 0;
             mapindex = 0;
             telecolldown = 50;
+            bazcolldown = 1;
             change = new Mapchange();
 
             sceneIndex = 0;
@@ -179,7 +182,7 @@ namespace KeyPixels
                     Vector3 tele_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, -4);//distans to the Teleporter
                     telecolldown--;
 
-                    if ((tele_dis.X<0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f) && telecolldown < 1)
+                    if ((tele_dis.X < 0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f) && telecolldown < 1)
                     {
                         isTeleportPlaying = true;
                         soundManager.mapChangeEffect();
@@ -213,7 +216,7 @@ namespace KeyPixels
                         sp.GetEnemy().initialize(Content);
                     }
                     pickUps.Update(gameTime);
-                    
+
                 }
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
                 {
@@ -224,7 +227,7 @@ namespace KeyPixels
                 sp.SpawnEnemy(mapindex);
                 shots.updateShotsPos(gameTime);
                 getPosition();
-                
+
                 player.getPosition(ref map.QTree);
                 player.getRotation();
 
@@ -366,7 +369,7 @@ namespace KeyPixels
             {
                 if (colldown < 1)
                 {
-                    shots.createShot(player.worldMatrix,numberShot);
+                    shots.createShot(player.worldMatrix, numberShot);
                     if (Keyboard.GetState().IsKeyDown(Keys.M) || doubleshot == true)
                     {
                         if (numberShot == 0) { shots.createShot(player.worldMatrix, 1); }
@@ -379,8 +382,24 @@ namespace KeyPixels
                     else
                         numberShot--;
                     colldown = 50;
-                    if (morebullets==true) { colldown = 25; }
+                    if (morebullets == true) { colldown = 25; }
                 }
+            }
+
+            if (bazookashot && Keyboard.GetState().IsKeyDown(Keys.E))
+            {
+                if (bazcolldown > 0)
+                {
+                    for(int i=0; i<8; i++)
+                        shots.createBazookaShot(player.worldMatrix, numberShot, i);
+                    bazcolldown--;
+                    bazookashot = false;
+                    System.Diagnostics.Debug.WriteLine("{0}", getPosition());
+                }
+            }
+            else if (bazookashot && Keyboard.GetState().IsKeyUp(Keys.E))
+            {
+                bazcolldown = 1;
             }
             return player.worldMatrix.Translation;
         }

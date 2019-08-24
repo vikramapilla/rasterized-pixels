@@ -124,6 +124,11 @@ namespace KeyPixels
                     if (Player.numberOfBursts <= 0)
                         pickUpStack[i].timer = 0;
                 }
+                if (pickUpStack[i].pickedUpIndex == 0)
+                {
+                    if (Game1.bazookashot == false)
+                        pickUpStack[i].timer = 0;
+                }
                 if (pickUpStack[i].timer <= 0)
                 {
                     if (pickUpStack[i].pickedUpIndex == 2)
@@ -134,11 +139,11 @@ namespace KeyPixels
                     i--;
                 }
             }
-            System.Diagnostics.Debug.WriteLine("\nStack");
+           /* System.Diagnostics.Debug.WriteLine("\nStack");
             for (int i = 0; i < pickUpStack.Count; i++)
             {
                 System.Diagnostics.Debug.WriteLine("Index: {0}, Time: {1}", pickUpStack[i].pickedUpIndex, pickUpStack[i].timer);
-            }
+            }*/
 
 
         }
@@ -159,7 +164,7 @@ namespace KeyPixels
 
                 if (!addedFlag)
                     pickUpStack.Add(new StackPickUp(0, float.MaxValue));
-                System.Diagnostics.Debug.WriteLine("Bazooka");
+                Game1.bazookashot = true;
             }
             else if (pickedUpIndex == 1) //Burst
             {
@@ -176,7 +181,7 @@ namespace KeyPixels
                 if (!addedFlag)
                     pickUpStack.Add(new StackPickUp(1, float.MaxValue));
                 Player.activateBurst();
-                System.Diagnostics.Debug.WriteLine("Burst Up");
+               // System.Diagnostics.Debug.WriteLine("Burst Up");
             }
             else if (pickedUpIndex == 2) //Cooldown
             {
@@ -326,7 +331,7 @@ namespace KeyPixels
                 posX = posX * 2 - i * 2;
                 posZ = posZ * 2 - j * 2;
 
-                pickUpIndex = random.Next(1, 5);
+                pickUpIndex = random.Next(0, 6);
                 pickUpLocation = new Vector3(0, 0, 0);
 
                 pickUpWorldMatrix = Matrix.CreateTranslation(pickUpLocation);
@@ -334,7 +339,7 @@ namespace KeyPixels
                 CBBPickUP = new CreateBoundingBox(PickUpModel[pickUpIndex], Matrix.CreateTranslation(pickUpLocation));
 
                 isPickUp = true;
-                System.Diagnostics.Debug.WriteLine("New Pick Up; {0}", pickUpIndex);
+                //System.Diagnostics.Debug.WriteLine("New Pick Up; {0}", pickUpIndex);
             }
         }
 
