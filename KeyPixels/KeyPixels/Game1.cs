@@ -102,7 +102,7 @@ namespace KeyPixels
             particle = Content.Load<Model>("Models/Shot_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
-            shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Blue);
+            shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Blue);
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
@@ -236,7 +236,6 @@ namespace KeyPixels
 
                 }
 
-
                 //sp.GetEnemy().clearList();
                 sp.GetEnemy().enemyChase(player, ref map.QTree);
 
@@ -360,8 +359,12 @@ namespace KeyPixels
             {
                 if (colldown < 1)
                 {
-                    shots.createShot(player.worldMatrix, numberShot);
-                    soundManager.shotEffect();
+                    shots.createShot(player.worldMatrix,numberShot);
+                    if (Keyboard.GetState().IsKeyDown(Keys.M))
+                    {
+                        if (numberShot == 0) { shots.createShot(player.worldMatrix, 1); }
+                        else shots.createShot(player.worldMatrix, 0);
+                    }
                     if (player.shotsCounter > 0)
                         player.shotsCounter--;
                     if (numberShot < 1 && numberShot > -1)

@@ -77,8 +77,8 @@ namespace KeyPixels
             {
                 _Value temp = new _Value();
                 temp._matrix = posMatrix;
-                Vector3 directionAddSpeed = new Vector3(new Vector3(0, 0, 1).X * speed, new Vector3(0, 0, 1).Y * speed, new Vector3(0, 0, 1).Z * speed);
-                temp._directionAddSpeed = Vector3.Transform(directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));//mOModel[numberShot].directionAddSpeed
+                //Vector3 directionAddSpeed = new Vector3(new Vector3(0, 0, 1).X * speed, new Vector3(0, 0, 1).Y * speed, new Vector3(0, 0, 1).Z * speed);
+                temp._directionAddSpeed = Vector3.Transform(mOModel[numberShot].directionAddSpeed, Matrix.CreateFromQuaternion(temp._matrix.Rotation));//mOModel[numberShot].directionAddSpeed
                 temp._bbox = new CreateBoundingBox(mOModel[numberShot].mModel, temp._matrix);
                 temp._shotAngle = player.getCurrentRotation();
                 posModel[numberShot].Add(temp);
@@ -283,7 +283,7 @@ namespace KeyPixels
                             effect.View = viewMatrix;
                             effect.Projection = projectionMatrix;
                             DifC = effect.DiffuseColor;
-                            firstStep = false;
+                            //firstStep = false;
                         }
                         for (int i = 0; i < N; i++)
                         {
