@@ -17,7 +17,8 @@ namespace KeyPixels
         private Model model;
         private int TTE; //TimeToEmit
         private string ParticleType;
-        
+
+        private int particleCoolDown = 65;
 
         public ParticleEngine(Model model, Vector3 location, float rotation, String particleType)
         {
@@ -43,20 +44,20 @@ namespace KeyPixels
 
         private Particle GenerateNewParticle()
         {
-            if(ParticleType == "Enemy")
+            if (ParticleType == "Enemy")
             {
                 return GenerateEnemyParticle();
             }
-            if(ParticleType == "Wall")
+            if (ParticleType == "Wall")
             {
                 return GenerateWallParticle();
             }
             if (ParticleType == "Portal")
             {
-                return GenerateWallParticle();
+                return GeneratePortalParticle();
             }
 
-            return GeneratePortalParticle();
+            return GenerateDefaultParticle();
 
         }
 
@@ -79,7 +80,7 @@ namespace KeyPixels
         {
             Vector3 position = EmitterLocation;
             Vector3 velocity;
-            if (EmitterRotation%180 == 0)
+            if (EmitterRotation % 180 == 0)
             {
                 velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
                     0.01f * (float)(random.NextDouble() * 2 - 1),
@@ -103,26 +104,18 @@ namespace KeyPixels
 
         private Particle GeneratePortalParticle()
         {
-            Vector3 position = EmitterLocation;
+            Vector3 position = new Vector3(EmitterLocation.X + (float)random.NextDouble() * random.Next(-1, 2) * 0.5f,
+                0,
+                EmitterLocation.Z + (float)random.NextDouble() * random.Next(-1, 2) * 0.5f);
             Vector3 velocity;
-            if (EmitterRotation % 180 == 0)
-            {
-                velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
-                    0.01f * (float)(random.NextDouble() * 2 - 1),
-                   0);
-            }
-            else
-            {
-
-                velocity = new Vector3(0,
-                    0.01f * (float)(random.NextDouble() * 2 - 1),
-                    0.01f * (float)(random.NextDouble() * 2 - 1));
-            }
+            velocity = new Vector3(0.007f * (float)(random.NextDouble() * 2 - 1),
+                0.01f * (float)(random.NextDouble() * 2 - 1),
+                0.007f * (float)(random.NextDouble() * 2 - 1));
             float angle = EmitterRotation;
             float angularVelocity = 0.1f * (float)(random.NextDouble() * 2);
             Color color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
             float size = (float)random.NextDouble();
-            int ttl = 125;
+            int ttl = 70;
 
             return new Particle(model, position, velocity, angle, angularVelocity, color, size, ttl);
         }
@@ -153,19 +146,51 @@ namespace KeyPixels
 
                     for (int i = 0; i < total; i++)
                     {
-                        particles.Add(GenerateNewParticle());
+                        if (ParticleType == "Portal")
+                        {
+                            if (particleCoolDown < 0)
+                            {
+                                particleCoolDown = 65;
+                                particles.Add(GenerateNewParticle());
+                            }
+                            else
+                            {
+                                particleCoolDown--;
+                            }
+                        }
+                        else
+                        {
+                            particles.Add(GenerateNewParticle());
+                        }
                     }
 
                     for (int particle = 0; particle < particles.Count; particle++)
                     {
+                        bool removeParticle = false;
                         particles[particle].Update();
                         if (particles[particle].TTL <= 0)
                         {
-                            particles.RemoveAt(particle);
-                            particle--;
+                            removeParticle = true;
+                        }
+                        if (ParticleType == "Portal")
+                        {
+                            if (particles[particle].Position.X < -0.5f || particles[particle].Position.X > 0.5f)
+                            {
+                                removeParticle = true;
+                            }
+
+                            if (particles[particle].Position.Z < -4.5f || particles[particle].Position.Z > -3.5f)
+                            {
+                                removeParticle = true;
+                            }
+
+                            if (removeParticle)
+                            {
+                                particles.RemoveAt(particle);
+                                particle--;
+                            }
                         }
                     }
-
                 }
                 else
                 {
@@ -182,10 +207,23 @@ namespace KeyPixels
 
         public void Draw()
         {
-            for (int i = 0; i < particles.Count; i++)
+
+
+            if (ParticleType == "Portal")
             {
-                particles[i].Draw();
+                for (int i = 0; i < particles.Count; i++)
+                {
+                    particles[i].Draw(new Color(204, 255, 0, 75));
+                }
             }
+            else
+            {
+                for (int i = 0; i < particles.Count; i++)
+                {
+                    particles[i].Draw();
+                }
+            }
+
         }
 
     }

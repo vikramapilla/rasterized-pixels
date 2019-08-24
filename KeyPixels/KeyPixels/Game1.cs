@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
+using System;
 
 namespace KeyPixels
 {
@@ -70,6 +71,17 @@ namespace KeyPixels
 
         public PickUps pickUps;
 
+
+
+        Skybox skybox;
+        Matrix world = Matrix.Identity;
+        Matrix view = Matrix.CreateLookAt(new Vector3(20, 0, 0), new Vector3(0, 0, 0), Vector3.UnitY);
+        Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f/600f, 0.1f, 100f);
+        Vector3 cameraPosition;
+        float angle = 0;
+        float distance = 20;
+
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -125,12 +137,12 @@ namespace KeyPixels
             soundManager.LoadContent(Content);
             portal = Content.Load<Model>("Models/Portal_Tex");
             projectile = Content.Load<Model>("Models/partical");
-            portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", 500);
+            portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", int.MaxValue);
             soundManager.menuBackgroundMusicPlay();
             pickUps = new PickUps();
             pickUps.LoadContent(Content);
             pickUps.initialize();
-
+            skybox = new Skybox("Skyboxes/Islands", Content);
         }
 
 
@@ -145,6 +157,7 @@ namespace KeyPixels
 
             //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || )
             //    Exit();
+            
 
             if (testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
@@ -193,6 +206,10 @@ namespace KeyPixels
                 if (!mapFlag)
                 {
                     //Changes when the game is playing goes here
+                    //angle += 0.002f;
+                    cameraPosition = distance * new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle));
+                    view = Matrix.CreateLookAt(cameraPosition, new Vector3(0, 0, 0), Vector3.UnitY);
+
 
                     if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
                     {
@@ -283,6 +300,22 @@ namespace KeyPixels
             //Draw3DModel(playerModel, Matrix.CreateTranslation(0, 0, 2.69999f), viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
+
+
+
+
+
+            //GraphicsDevice.Clear(Color.Black);
+            RasterizerState originalRasterizerState = graphics.GraphicsDevice.RasterizerState;
+            RasterizerState rasterizerState = new RasterizerState();
+            rasterizerState.CullMode = CullMode.None;
+            graphics.GraphicsDevice.RasterizerState = rasterizerState;
+
+            skybox.Draw(view, projection, cameraPosition);
+
+            graphics.GraphicsDevice.RasterizerState = originalRasterizerState;
+            
+
             base.Draw(gameTime);
 
             if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying)
@@ -312,6 +345,9 @@ namespace KeyPixels
             }
             pickUps.Draw(gameTime, spriteBatch);
 
+
+
+
             spriteBatch.End();
 
         }
@@ -337,6 +373,26 @@ namespace KeyPixels
                     effect.Projection = _projectionMatrix;
                     //effect.DiffuseColor = Color.MidnightBlue.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
+                    effect.Alpha = 1.0f;
+
+                }
+                mesh.Draw();
+            }
+        }
+        public static void Draw3DModelColor(Model model, Matrix worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix, Color _color)
+        {
+            foreach (ModelMesh mesh in model.Meshes)
+            {
+                foreach (BasicEffect effect in mesh.Effects)
+                {
+                    effect.EnableDefaultLighting();
+                    effect.PreferPerPixelLighting = true;
+
+                    effect.World = worldMatrix;
+                    effect.View = _viewMatrix;
+                    effect.Projection = _projectionMatrix;
+                    effect.DiffuseColor = _color.ToVector3();
+                    effect.AmbientLightColor = _color.ToVector3();
                     effect.Alpha = 1.0f;
 
                 }
