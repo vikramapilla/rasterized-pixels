@@ -12,18 +12,14 @@ namespace KeyPixels
     {
         Model _ground;
         Model _wall;
-        Matrix _viewMatrix;
-        Matrix _projectionMatrix;
         public List<Matrix> wallposMatrix;
         List<Matrix> groundposMatrix;
         List<int[,]> mapList;
         public QuadTree<BoundingBox> QTree;
-        public Map(Model ground,Model wall, Matrix viewMatrix, Matrix projectionMatrix)
+        public Map(Model ground,Model wall)
         {
             _ground = ground;
             _wall = wall;
-            _viewMatrix = viewMatrix;
-            _projectionMatrix = projectionMatrix;
             wallposMatrix = new List<Matrix>();
             groundposMatrix = new List<Matrix>();
             
@@ -237,9 +233,9 @@ namespace KeyPixels
                 {
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
-                    effect.View = _viewMatrix;
+                    effect.View = Game1.viewMatrix;
                     effect.World = Matrix.CreateRotationY(MathHelper.ToRadians(angle))*Matrix.CreateTranslation(posx,0,posz);
-                    effect.Projection = _projectionMatrix;
+                    effect.Projection = Game1.projectionMatrix;
                     effect.DiffuseColor = Color.Blue.ToVector3();
                     effect.Alpha = 1.0f;
                 }
@@ -257,9 +253,9 @@ namespace KeyPixels
                 {
                     effect.EnableDefaultLighting();
                     effect.PreferPerPixelLighting = true;
-                    effect.View = _viewMatrix;
+                    effect.View = Game1.viewMatrix;
                     effect.World = world;
-                    effect.Projection = _projectionMatrix;
+                    effect.Projection = Game1.projectionMatrix;
                     //effect.DiffuseColor = Color.DarkSlateGray.ToVector3();
                     effect.Alpha = 1.0f;
                 }

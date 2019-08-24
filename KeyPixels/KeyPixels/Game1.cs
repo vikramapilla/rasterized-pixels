@@ -106,7 +106,7 @@ namespace KeyPixels
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
-            map = new Map(ground, wall, viewMatrix, projectionMatrix);
+            map = new Map(ground, wall);
             map.CreateMap(0);
             sp = new Spawning(map.getmapList());
             enemy = sp.GetEnemy();
@@ -235,6 +235,12 @@ namespace KeyPixels
                 {
 
                 }
+
+                //camera.Update(gameTime);
+                Vector3 movement = player.getCurrentPlayerPosition() - camera.target;
+                camera.position += movement;
+                camera.target += movement;
+                viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
 
                 //sp.GetEnemy().clearList();
                 sp.GetEnemy().enemyChase(player, ref map.QTree);

@@ -320,7 +320,7 @@ namespace KeyPixels
         {
             playerPosition.X = 0;
             playerPosition.Z = -4;
-
+            
         }
 
         public void teleportback()
