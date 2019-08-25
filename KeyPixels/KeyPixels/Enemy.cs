@@ -31,9 +31,7 @@ namespace KeyPixels
         private float angle = 0f;
         private float relativePositionX = 0f;
         private float relativePositionZ = 0f;
-
-        private float healthCoolDown = 15f;
-        private const float HEALTHCOOLDOWN = 15f;
+        
 
         public void initialize(ContentManager contentManager)
         {
@@ -311,11 +309,10 @@ namespace KeyPixels
                 {
                     if (cbBarm.bBox.Intersects(cbB.bBox) || cbBbody.bBox.Intersects(cbB.bBox))
                     {
-                        healthCoolDown -= 0.05f;
-                        System.Diagnostics.Debug.WriteLine(healthCoolDown);
-                        if (healthCoolDown < 0) { 
-                            healthCoolDown = HEALTHCOOLDOWN;
+                        if (Player.healthCoolDown < 1)
+                        {
                             Player.healthCounter--;
+                            Player.healthCoolDown = Player.HealthCoolDown;
                         }
                         return true;
                     }

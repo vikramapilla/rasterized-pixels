@@ -312,8 +312,11 @@ namespace KeyPixels
             {
                 if (cbBarm.bBox.Intersects(cbBpbody.bBox) || cbBbody.bBox.Intersects(cbBpbody.bBox)|| cbBarm.bBox.Intersects(cbBparm.bBox) || cbBbody.bBox.Intersects(cbBparm.bBox))
                 {
-
-                    //player.healthCounter--;
+                    if (Player.healthCoolDown < 1)
+                    {
+                        Player.healthCounter--;
+                        Player.healthCoolDown = Player.HealthCoolDown;
+                    }
                     return true;
                 }
             }

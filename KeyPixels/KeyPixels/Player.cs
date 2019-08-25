@@ -39,6 +39,8 @@ namespace KeyPixels
         public static int numberOfBursts = 0;
         public int shotsCounter { get; set; }
         public static int healthCounter { get; set; }
+        public static float healthCoolDown = 15;
+        public static float HealthCoolDown = 50;
 
         public void initialize(ContentManager contentManager)
         {
@@ -72,10 +74,7 @@ namespace KeyPixels
         public void getPosition(ref QuadTree<BoundingBox> _QTree)
         {
             //playerupdate
-            if (healthCounter < 1)
-            {
-                //?
-            }
+            healthCoolDown--;
 
             if (!burstFlag)
             {
@@ -331,7 +330,7 @@ namespace KeyPixels
         {
             playerPosition.X = 0;
             playerPosition.Z = -4;
-            
+
         }
 
         public void teleportback()
@@ -508,29 +507,42 @@ namespace KeyPixels
         public bool IsCollision(Shots shots)// for shot to player
         {
             bool hit = false;
-            
-                CreateBoundingBox cbB = new CreateBoundingBox(playerModel.body, worldMatrix);
-                if (shots.playerIsCollision(ref cbB.bBox))// test if shot hits enemy
+
+            CreateBoundingBox cbB = new CreateBoundingBox(playerModel.body, worldMatrix);
+            if (shots.playerIsCollision(ref cbB.bBox))// test if shot hits enemy
+            {
+                if (healthCoolDown < 1)
                 {
                     Vector3 enemyDisappearPosition = playerPosition;
                     Game1.soundManager.enemyShotEffect();
                     ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
                     healthCounter--;
-                    //worldMatrix.Remove(worldMatrix[n]);//disapear
 
-                    return true;
+                    healthCoolDown = HealthCoolDown;
                 }
-                CreateBoundingBox cbBa = new CreateBoundingBox(playerModel.arms, worldMatrix);
-                if (shots.playerIsCollision(ref cbB.bBox))// test if shot hits enemy
+                //worldMatrix.Remove(worldMatrix[n]);//disapear
+
+                return true;
+            }
+            CreateBoundingBox cbBa = new CreateBoundingBox(playerModel.arms, worldMatrix);
+            if (shots.playerIsCollision(ref cbBa.bBox))// test if shot hits enemy
+            {
+
+                if (healthCoolDown < 1)
                 {
                     Vector3 enemyDisappearPosition = playerPosition;
                     Game1.soundManager.enemyShotEffect();
                     ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
-                    healthCounter--;
-                    //worldMatrix.Remove(worldMatrix[n]);//disapear
 
-                    return true;
+                    healthCounter--;
+
+                    healthCoolDown = HealthCoolDown;
                 }
+                //worldMatrix.Remove(worldMatrix[n]);//disapear
+
+                return true;
+            }
+
 
 
             return hit;
@@ -539,7 +551,7 @@ namespace KeyPixels
         public bool IsCollision(ref QuadTree<BoundingBox> _QTree, Vector3 target)
         {
             bool hit = false;
-            
+
             cbBarm2.bBox.Max += target;
             cbBarm2.bBox.Min += target;
             cbBarm3.bBox.Max += target;
@@ -548,7 +560,7 @@ namespace KeyPixels
             List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
                 new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
 
-            
+
             for (int u = 0; u < temp.Count; ++u)
             {
                 if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
@@ -564,7 +576,7 @@ namespace KeyPixels
 
             temp = _QTree.seekData(new Vector2(cbBarm3.bBox.Min.X, cbBarm3.bBox.Min.Z),
             new Vector2(cbBarm3.bBox.Max.X, cbBarm3.bBox.Max.Z));
-            
+
             for (int u = 0; u < temp.Count; ++u)
             {
                 if (cbBarm3.bBox.Intersects(temp[u]))//test if playerarm hits map
@@ -579,7 +591,7 @@ namespace KeyPixels
             }
 
             cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
-            
+
             temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
             new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
 
