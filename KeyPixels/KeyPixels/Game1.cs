@@ -187,11 +187,11 @@ namespace KeyPixels
                 cutScenes.makeGameOver();
                 endMenu.Update(gameTime);
                 particleEngine2D.Update();
-
                 if (endMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {
                     Initialize();
                     LoadContent();
+                    isGameEnded = false;
                 }
                 else if (endMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {
@@ -200,11 +200,11 @@ namespace KeyPixels
             }
 
 
-            if (testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            if (startMenuFlag && testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 Exit();
             }
-            else if (testMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            else if (startMenuFlag && testMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 startMenuFlag = false;
                 isGamePlaying = true;
