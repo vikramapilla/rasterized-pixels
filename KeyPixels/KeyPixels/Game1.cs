@@ -63,9 +63,11 @@ namespace KeyPixels
         public static bool isGamePlaying;
         public static bool isTeleportPlaying;
         public static bool isScenePlaying;
+        public static bool isKeyFound;
 
         HUD gameHUD;
         CutScenes cutScenes;
+        KeyCutScene keyCutScene;
         int sceneIndex;
 
         public static SoundManager soundManager;
@@ -82,7 +84,7 @@ namespace KeyPixels
         Vector3 cameraPosition;
         float angle = 0;
         float distance = 20;
-
+        
 
         public Game1()
         {
@@ -116,6 +118,7 @@ namespace KeyPixels
             isGameEnded = false;
             isGamePlaying = false;
             isTeleportPlaying = false;
+            isKeyFound = false;
             isScenePlaying = false;
 
             sceneIndex = 0;
@@ -149,6 +152,8 @@ namespace KeyPixels
             gameHUD.LoadContent(Content);
             cutScenes = new CutScenes();
             cutScenes.LoadContent(Content);
+            keyCutScene = new KeyCutScene();
+            keyCutScene.LoadContent(Content);
             soundManager = new SoundManager();
             soundManager.LoadContent(Content);
             portal = Content.Load<Model>("Models/Portal_Tex");
@@ -181,30 +186,15 @@ namespace KeyPixels
             //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || )
             //    Exit();
 
-            if (Player.healthCounter <= 0) //After Player Dies, reset the game
+            //System.Diagnostics.Debug.WriteLine("1");
+
+            if (startMenuFlag)
             {
-                isGameEnded = true;
-                cutScenes.makeGameOver();
-                endMenu.Update(gameTime);
+                testMenu.Update(gameTime);
                 particleEngine2D.Update();
-                if (endMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
-                {
-                    Initialize();
-                    LoadContent();
-                    isGameEnded = false;
-                }
-                else if (endMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
-                {
-                    Exit();
-                }
             }
 
-
-            if (startMenuFlag && testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
-            {
-                Exit();
-            }
-            else if (startMenuFlag && testMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            if (startMenuFlag && testMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 startMenuFlag = false;
                 isGamePlaying = true;
@@ -213,11 +203,15 @@ namespace KeyPixels
                 isGameStarted = true;
                 soundManager.menuBackgroundMusicStop();
             }
-
-            if (startMenuFlag)
+            else if (startMenuFlag && testMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
-                testMenu.Update(gameTime);
-                particleEngine2D.Update();
+                if (!isGameStarted)
+                    isScenePlaying = true;
+                isKeyFound = true;
+            }
+            else if (startMenuFlag && testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                Exit();
             }
 
             if (isGamePlaying && isScenePlaying)
@@ -229,10 +223,13 @@ namespace KeyPixels
                 change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
                 portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", 500);
             }
-
+            if(isScenePlaying && isKeyFound)
+            {
+                keyCutScene.Update(gameTime);
+            }
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
             {
-
+                
                 if (mapindex == 4)
                 {
                     boss.update(shots, player, ref map.QTree);
@@ -337,8 +334,24 @@ namespace KeyPixels
                     startMenuFlag = true;
                     soundManager.menuBackgroundMusicPlay();
                 }
+            }
 
-
+            if (Player.healthCounter <= 0) //After Player Dies, reset the game
+            {
+                isGameEnded = true;
+                cutScenes.makeGameOver();
+                endMenu.Update(gameTime);
+                particleEngine2D.Update();
+                if (endMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    Initialize();
+                    LoadContent();
+                    isGameEnded = false;
+                }
+                else if (endMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    Exit();
+                }
             }
 
         }
@@ -424,6 +437,9 @@ namespace KeyPixels
                 endMenu.Draw(gameTime, spriteBatch);
                 particleEngine2D.Draw(spriteBatch);
             }
+
+            if (isKeyFound)
+                keyCutScene.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
 
             spriteBatch.End();
 

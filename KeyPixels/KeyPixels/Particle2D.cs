@@ -17,8 +17,7 @@ namespace KeyPixels
         public Color Color { get; set; }            // particle's color
         public float Size { get; set; }             // particle's size
         public int TTL { get; set; }                // particle's time to live
-
-        Matrix worldMatrix;                         // matrix for the particle (rotation + position)
+        
 
 
         public Particle2D(Texture2D texture, Vector2 position, Vector2 velocity, float angle,
