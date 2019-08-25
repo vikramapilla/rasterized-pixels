@@ -184,11 +184,11 @@ namespace KeyPixels
                                 removeParticle = true;
                             }
 
-                            if (removeParticle)
-                            {
-                                particles.RemoveAt(particle);
-                                particle--;
-                            }
+                        }
+                        if (removeParticle)
+                        {
+                            particles.RemoveAt(particle);
+                            particle--;
                         }
                     }
                 }

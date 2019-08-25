@@ -52,7 +52,7 @@ namespace KeyPixels
             cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
             buildRotationMap();
             shotsCounter = 10;
-            healthCounter = 1;
+            healthCounter = 10;
             particle = contentManager.Load<Model>("Models/Shot_Tria");
             ParticleEngines = new List<ParticleEngine>();
         }

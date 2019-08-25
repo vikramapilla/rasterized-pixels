@@ -17,7 +17,6 @@ namespace KeyPixels
 
         static int numberShot;
 
-        Matrix worldMatrix;
         public static Matrix viewMatrix;
         public static Matrix projectionMatrix;
 
@@ -30,14 +29,13 @@ namespace KeyPixels
         Model portal;
         ParticleEngine portalParticle;
 
-        bool flag = true;
         static Shots shots;
 
         static Map map;
-        private bool mapFlag = false;
-        public static bool morebullets = false;
-        public static bool doubleshot = false;
-        public static bool bazookashot = false;
+        private bool mapFlag;
+        public static bool morebullets;
+        public static bool doubleshot;
+        public static bool bazookashot;
 
 
         public static int mapindex;
@@ -48,8 +46,8 @@ namespace KeyPixels
         static Enemy enemy;
         static Boss boss;
 
-        CreateBoundingBox cbB;
-        List<BoundingBox> collision_return;
+        //CreateBoundingBox cbB;
+        //List<BoundingBox> collision_return;
         static int colldown;
         static int telecolldown;
         static int bazcolldown;
@@ -58,27 +56,28 @@ namespace KeyPixels
 
 
         StartMenu testMenu;
-        bool startMenuFlag = true;
-        public static bool isGameStarted = false;
-        public static bool isGamePlaying = false;
-        public static bool isTeleportPlaying = false;
-        public static bool bossfight = false;
+        bool startMenuFlag;
+        public static bool isGameStarted;
+        public static bool isGameEnded;
+        public static bool isGamePlaying;
+        public static bool isTeleportPlaying;
+        public static bool isScenePlaying;
 
         HUD gameHUD;
         CutScenes cutScenes;
         int sceneIndex;
-        public static bool isScenePlaying = false;
 
         public static SoundManager soundManager;
 
         public PickUps pickUps;
 
-
+        ParticleEngine2D particleEngine2D;
+        Texture2D textureParticle2D;
 
         Skybox skybox;
         Matrix world = Matrix.Identity;
         Matrix view = Matrix.CreateLookAt(new Vector3(20, 0, 0), new Vector3(0, 0, 0), Vector3.UnitY);
-        Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f/600f, 0.1f, 100f);
+        Matrix projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 600f, 0.1f, 100f);
         Vector3 cameraPosition;
         float angle = 0;
         float distance = 20;
@@ -105,6 +104,18 @@ namespace KeyPixels
             telecolldown = 50;
             bazcolldown = 1;
             change = new Mapchange();
+
+            mapFlag = false;
+            morebullets = false;
+            doubleshot = false;
+            bazookashot = false;
+           
+            startMenuFlag = true;
+            isGameStarted = false;
+            isGameEnded = false;
+            isGamePlaying = false;
+            isTeleportPlaying = false;
+            isScenePlaying = false;
 
             sceneIndex = 0;
             base.Initialize();
@@ -148,6 +159,9 @@ namespace KeyPixels
             pickUps.initialize();
             boss = new Boss();
             boss.initialize(Content);
+            textureParticle2D = Content.Load<Texture2D>("HUD/hud_point");
+            particleEngine2D = new ParticleEngine2D(textureParticle2D, new Vector2(900, 990), 0, int.MaxValue);
+
             skybox = new Skybox("Skyboxes/Islands", Content);
         }
 
@@ -163,7 +177,15 @@ namespace KeyPixels
 
             //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || )
             //    Exit();
-            
+
+            if (Player.healthCounter <= 0) //After Player Dies, reset the game
+            {
+                isGameEnded = true;
+                cutScenes.makeGameOver();
+                //Initialize();
+                //LoadContent();
+            }
+
 
             if (testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
@@ -173,14 +195,16 @@ namespace KeyPixels
             {
                 startMenuFlag = false;
                 isGamePlaying = true;
+                if (!isGameStarted)
+                    isScenePlaying = true;
                 isGameStarted = true;
-                isScenePlaying = true;
                 soundManager.menuBackgroundMusicStop();
             }
 
             if (startMenuFlag)
             {
                 testMenu.Update(gameTime);
+                particleEngine2D.Update();
             }
 
             if (isGamePlaying && isScenePlaying)
@@ -195,10 +219,7 @@ namespace KeyPixels
 
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
             {
-                if (mapindex == 4 && bossfight == false)
-                {
-                    bossfight = true;
-                }
+                
                 if (mapindex == 4)
                 {
                     boss.update(shots, player, ref map.QTree);
@@ -220,7 +241,7 @@ namespace KeyPixels
                 if (!mapFlag)
                 {
                     //Changes when the game is playing goes here
-                    //angle += 0.002f;
+                    angle += 0.0001f;
                     cameraPosition = distance * new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle));
                     view = Matrix.CreateLookAt(cameraPosition, new Vector3(0, 0, 0), Vector3.UnitY);
 
@@ -292,6 +313,9 @@ namespace KeyPixels
 
                 if (colldown > 0)
                     colldown -= 1;
+
+                gameHUD.Update(gameTime);
+
                 base.Update(gameTime);
 
                 if (Keyboard.GetState().IsKeyDown(Keys.Escape))
@@ -301,7 +325,6 @@ namespace KeyPixels
                     soundManager.menuBackgroundMusicPlay();
                 }
 
-                gameHUD.Update(gameTime);
 
             }
 
@@ -338,7 +361,7 @@ namespace KeyPixels
             skybox.Draw(view, projection, cameraPosition);
 
             graphics.GraphicsDevice.RasterizerState = originalRasterizerState;
-            
+
 
             base.Draw(gameTime);
             if (mapindex == 4)
@@ -364,20 +387,27 @@ namespace KeyPixels
 
             spriteBatch.Begin(transformMatrix: matrix);
             if (startMenuFlag)
+            {
                 testMenu.Draw(gameTime, spriteBatch);
+                particleEngine2D.Draw(spriteBatch);
+            }
 
             if (!startMenuFlag)
+            {
                 gameHUD.Draw(gameTime, spriteBatch);
+                pickUps.Draw(gameTime, spriteBatch);
+            }
 
 
             if (isGamePlaying && isScenePlaying)
             {
                 cutScenes.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
             }
-            pickUps.Draw(gameTime, spriteBatch);
 
-
-
+            if (isGameEnded)
+            {
+                cutScenes.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
+            }
 
             spriteBatch.End();
 

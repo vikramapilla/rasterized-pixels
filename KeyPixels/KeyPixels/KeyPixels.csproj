@@ -45,6 +45,8 @@
     <Compile Include="Mapchange.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="CutScenes\CutScenes.cs" />
+    <Compile Include="Particle2D.cs" />
+    <Compile Include="ParticleEngine2D.cs" />
     <Compile Include="PickUps.cs" />
     <Compile Include="Skybox.cs" />
     <Compile Include="SoundManager.cs" />

@@ -22,6 +22,7 @@ namespace KeyPixels
         List<Texture2D> BossEnemyScale = new List<Texture2D>();
         List<Texture2D> Kenny = new List<Texture2D>();
         List<Texture2D> KennyScale = new List<Texture2D>();
+        List<Texture2D> KennyCrying = new List<Texture2D>();
 
         String[] textArray = { "Somewhere in the future", "Time: around 6029 A.D", "Place: High Beam, 5th Dimension", //2
                                 ". . . . . . . .", ". . . . . . . .", ". . . . . . . .", //5
@@ -71,6 +72,11 @@ namespace KeyPixels
         int prevTextIndex = 0;
         bool isTypingEffect = false;
 
+
+        int cryingIndex = 0;
+        bool isGameEnded = false;
+
+
         public void LoadContent(ContentManager Content)
         {
             font = Content.Load<SpriteFont>("Fonts/Dialog");
@@ -115,6 +121,11 @@ namespace KeyPixels
             KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale3"));
             KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale4"));
             KennyScale.Add(Content.Load<Texture2D>("CutScenes/Kenny/Scale/scale5"));
+
+            KennyCrying.Add(Content.Load<Texture2D>("CutScenes/Kenny/Crying/0"));
+            KennyCrying.Add(Content.Load<Texture2D>("CutScenes/Kenny/Crying/1"));
+            KennyCrying.Add(Content.Load<Texture2D>("CutScenes/Kenny/Crying/2"));
+            KennyCrying.Add(Content.Load<Texture2D>("CutScenes/Kenny/Crying/3"));
         }
 
         private void makeEpilogue(GameTime gameTime)
@@ -204,6 +215,10 @@ namespace KeyPixels
             }
         }
 
+        public void makeGameOver()
+        {
+            isGameEnded = true;
+        }
 
         private void animateText(GameTime gameTime)
         {
@@ -268,64 +283,78 @@ namespace KeyPixels
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, GraphicsDevice graphics)
         {
-            Vector2 textMiddlePoint = font.MeasureString(text) / 2;
-            Vector2 position = storyPosition;
-            if (isDialog)
+            if (isGameEnded)
             {
-                position = dialogPosition;
-            }
-            spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.Black);
-            if (isScale && jennyScene)
-            {
-                if (jennyScaleIndex <= 6)
-                    spriteBatch.Draw(JennyScale[jennyScaleIndex], Vector2.Zero, Color.White);
+                spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.Black);
+                if (cryingIndex <= 3)
+                spriteBatch.Draw(KennyCrying[cryingIndex], Vector2.Zero, Color.White);
                 else
-                    isScale = false;
+                    cryingIndex = 0;
 
-                if (isHoldAnimation(gameTime, 0.5f))
-                    jennyScaleIndex++;
+                if (isHoldAnimation(gameTime, 0.2f))
+                    cryingIndex++;
             }
-            if (!isScale && jennyScene)
+            else
             {
-                if (isHoldAnimation(gameTime, 0.35f))
-                    jennyIndex = random.Next(0, 3);
-                spriteBatch.Draw(Jenny[jennyIndex], Vector2.Zero, Color.White);
-            }
-            if (isScale && bossEnemyScene)
-            {
-                if (bossEnemyScaleIndex <= 6)
-                    spriteBatch.Draw(BossEnemyScale[bossEnemyScaleIndex], Vector2.Zero, Color.White);
-                else
-                    isScale = false;
+                Vector2 textMiddlePoint = font.MeasureString(text) / 2;
+                Vector2 position = storyPosition;
+                if (isDialog)
+                {
+                    position = dialogPosition;
+                }
+                spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.Black);
+                if (isScale && jennyScene)
+                {
+                    if (jennyScaleIndex <= 6)
+                        spriteBatch.Draw(JennyScale[jennyScaleIndex], Vector2.Zero, Color.White);
+                    else
+                        isScale = false;
 
-                if (isHoldAnimation(gameTime, 0.5f))
-                    bossEnemyScaleIndex++;
-            }
-            if (!isScale && bossEnemyScene)
-            {
-                if (isHoldAnimation(gameTime, 0.35f))
-                    bossEnemyIndex = random.Next(0, 3);
-                spriteBatch.Draw(BossEnemy[bossEnemyIndex], Vector2.Zero, Color.White);
-            }
-            if (isScale && kennyScene)
-            {
-                if (kennyScaleIndex <= 6)
-                    spriteBatch.Draw(KennyScale[kennyScaleIndex], Vector2.Zero, Color.White);
-                else
-                    isScale = false;
+                    if (isHoldAnimation(gameTime, 0.5f))
+                        jennyScaleIndex++;
+                }
+                if (!isScale && jennyScene)
+                {
+                    if (isHoldAnimation(gameTime, 0.35f))
+                        jennyIndex = random.Next(0, 3);
+                    spriteBatch.Draw(Jenny[jennyIndex], Vector2.Zero, Color.White);
+                }
+                if (isScale && bossEnemyScene)
+                {
+                    if (bossEnemyScaleIndex <= 6)
+                        spriteBatch.Draw(BossEnemyScale[bossEnemyScaleIndex], Vector2.Zero, Color.White);
+                    else
+                        isScale = false;
 
-                if (isHoldAnimation(gameTime, 0.5f))
-                    kennyScaleIndex++;
+                    if (isHoldAnimation(gameTime, 0.5f))
+                        bossEnemyScaleIndex++;
+                }
+                if (!isScale && bossEnemyScene)
+                {
+                    if (isHoldAnimation(gameTime, 0.35f))
+                        bossEnemyIndex = random.Next(0, 3);
+                    spriteBatch.Draw(BossEnemy[bossEnemyIndex], Vector2.Zero, Color.White);
+                }
+                if (isScale && kennyScene)
+                {
+                    if (kennyScaleIndex <= 6)
+                        spriteBatch.Draw(KennyScale[kennyScaleIndex], Vector2.Zero, Color.White);
+                    else
+                        isScale = false;
+
+                    if (isHoldAnimation(gameTime, 0.5f))
+                        kennyScaleIndex++;
+                }
+                if (!isScale && kennyScene)
+                {
+                    if (isHoldAnimation(gameTime, 0.35f))
+                        kennyIndex = random.Next(0, 3);
+                    spriteBatch.Draw(Kenny[kennyIndex], Vector2.Zero, Color.White);
+                }
+                if (isDialog)
+                    spriteBatch.Draw(DialogBackground, Vector2.Zero, Color.White);
+                spriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
             }
-            if (!isScale && kennyScene)
-            {
-                if (isHoldAnimation(gameTime, 0.35f))
-                    kennyIndex = random.Next(0, 3);
-                spriteBatch.Draw(Kenny[kennyIndex], Vector2.Zero, Color.White);
-            }
-            if (isDialog)
-                spriteBatch.Draw(DialogBackground, Vector2.Zero, Color.White);
-            spriteBatch.DrawString(font, text, position, color, 0, Vector2.Zero, 1.0f, SpriteEffects.None, 1.0f);
         }
 
     }

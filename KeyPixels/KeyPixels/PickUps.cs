@@ -133,6 +133,8 @@ namespace KeyPixels
                 {
                     if (pickUpStack[i].pickedUpIndex == 2)
                         Game1.morebullets = false;
+                    else if (pickUpStack[i].pickedUpIndex == 3)
+                        Game1.doubleshot = false;
                     else if (pickUpStack[i].pickedUpIndex == 4)
                         Shots.piercing = false;
                     pickUpStack.RemoveAt(i);
@@ -331,7 +333,7 @@ namespace KeyPixels
                 posX = posX * 2 - i * 2;
                 posZ = posZ * 2 - j * 2;
 
-                pickUpIndex = random.Next(0, 6);
+                pickUpIndex = random.Next(3, 4);
                 pickUpLocation = new Vector3(0, 0, 0);
 
                 pickUpWorldMatrix = Matrix.CreateTranslation(pickUpLocation);

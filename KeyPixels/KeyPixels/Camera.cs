@@ -10,6 +10,8 @@ namespace KeyPixels
     class Camera
     {
         public Vector3 position;
+        public Vector3 gamePosition;
+        public Vector3 resetPosition;
         public Vector3 target;
 
         public float fieldOfView;
@@ -21,11 +23,24 @@ namespace KeyPixels
         {
             //position = new Vector3(0f, 12f, -13f);
             position = new Vector3(0f, 9f, -8f);
+            gamePosition = new Vector3(0f, 9f, -8f);
+            resetPosition = new Vector3(0f, 10f, -14f);
             target = Vector3.Zero;
             fieldOfView = MathHelper.PiOver4;
             aspectRatio = graphics.PreferredBackBufferWidth / graphics.PreferredBackBufferHeight;
             nearPlane = 0.1f;
             farPlane = 100f;
         }
+
+        public void reset()
+        {
+            position = resetPosition;
+        }
+
+        public void setGameCamera()
+        {
+            position = gamePosition;
+        }
+
     }
 }

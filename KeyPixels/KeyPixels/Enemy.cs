@@ -20,7 +20,7 @@ namespace KeyPixels
         List<ParticleEngine> ParticleEngines;
         public List<BoundingBox> armlist1;
         public List<BoundingBox> armlist2;
-        
+
 
         public List<Matrix> worldMatrix;
 
@@ -32,6 +32,9 @@ namespace KeyPixels
         private float relativePositionX = 0f;
         private float relativePositionZ = 0f;
 
+        private float healthCoolDown = 15f;
+        private const float HEALTHCOOLDOWN = 15f;
+
         public void initialize(ContentManager contentManager)
         {
             enemyModel._model = new List<Model>();
@@ -41,7 +44,7 @@ namespace KeyPixels
             enemyModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett_Walk2"));
             particle = contentManager.Load<Model>("Models/Shot_Tria");
             worldMatrix = new List<Matrix>();
-            enemyPosition = new Vector3(2,0,0);
+            enemyPosition = new Vector3(2, 0, 0);
             worldMatrix.Add(Matrix.CreateTranslation(enemyPosition));
             ParticleEngines = new List<ParticleEngine>();
             armlist1 = new List<BoundingBox>();
@@ -54,8 +57,8 @@ namespace KeyPixels
 
         public void enemyChase(Player playerPos, ref QuadTree<BoundingBox> map)
         {
-            
-            for (int i = 0;i<worldMatrix.Count;i++)
+
+            for (int i = 0; i < worldMatrix.Count; i++)
             {
                 Matrix m = worldMatrix[i];
                 Vector3 tar = playerPos.worldMatrix.Translation - m.Translation;
@@ -67,15 +70,15 @@ namespace KeyPixels
                 //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
                 //Console.WriteLine(target);
                 worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
-                if (IsCollision(playerPos, ref map, i,target) == true)
+                if (IsCollision(playerPos, ref map, i, target) == true)
                 {
                     //worldMatrix[i] = m;
-                    target = tar* new Vector3(1, 1, 0) ;
+                    target = tar * new Vector3(1, 1, 0);
                     //Console.WriteLine("mist0" + target);
                     //enemyPosition = m.Translation + target;
                     angle = (float)Math.Atan2(target.X, target.Z);
                     worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
-                    if (IsCollision(playerPos, ref map, i,target) == true)
+                    if (IsCollision(playerPos, ref map, i, target) == true)
                     {
                         //worldMatrix[i] = m;
                         target = tar * new Vector3(0, 1, 1);
@@ -83,7 +86,7 @@ namespace KeyPixels
                         //enemyPosition = m.Translation + target;
                         angle = (float)Math.Atan2(target.X, target.Z);
                         worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
-                        if (IsCollision(playerPos, ref map, i,target) == true)
+                        if (IsCollision(playerPos, ref map, i, target) == true)
                         {
                             worldMatrix[i] = m;
                             //Console.WriteLine("mist2");
@@ -93,17 +96,17 @@ namespace KeyPixels
                     }
 
                 }
-                
+
             }
-            
+
         }
-        
+
         public void clearList()
         {
             armlist1.Clear();
             armlist2.Clear();
         }
-        
+
 
         private void getRotation()
         {
@@ -113,7 +116,7 @@ namespace KeyPixels
 
             if (relativePositionX >= 0)
             {
-                
+
                 if (relativePositionX > -0.5 && relativePositionX < 0.5 && relativePositionZ < 0)
                 {
                     angle = 0f;
@@ -130,7 +133,8 @@ namespace KeyPixels
                 {
                     angle = -45f;
                 }
-            }else if (relativePositionX < 0)
+            }
+            else if (relativePositionX < 0)
             {
 
                 if (relativePositionX > -0.5 && relativePositionX < 0.5 && relativePositionZ > 0)
@@ -162,7 +166,7 @@ namespace KeyPixels
 
             for (int n = N - 1; n > -1; --n)
             {
-                
+
                 for (int i = 0; i < 2; i++)
                 {
                     CreateBoundingBox cbB = new CreateBoundingBox(enemyModel._model[i], worldMatrix[n]);
@@ -170,7 +174,7 @@ namespace KeyPixels
                     {
                         Vector3 enemyDisappearPosition = worldMatrix[n].Translation;
                         Game1.soundManager.enemyShotEffect();
-                        ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f,  "Enemy"));
+                        ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
                         worldMatrix.Remove(worldMatrix[n]);//disapear
                         armlist1.Remove(armlist1[n]);
                         armlist2.Remove(armlist2[n]);
@@ -179,26 +183,26 @@ namespace KeyPixels
                         N--;
                         break;
                     }
-                    
-                    
+
+
                 }
             }
-            
+
             return hit;
         }
-        
+
         public bool IsCollision(Player player, ref QuadTree<BoundingBox> _QTree, int index, Vector3 target)// 
         {
 
             bool hit = false;
-            
-                BoundingBox b = armlist1[index];
-                b.Max += target;
-                b.Min += target;
-                BoundingBox b2 = armlist2[index];
-                b2.Max += target;
-                b2.Min += target;
-            
+
+            BoundingBox b = armlist1[index];
+            b.Max += target;
+            b.Min += target;
+            BoundingBox b2 = armlist2[index];
+            b2.Max += target;
+            b2.Min += target;
+
 
             for (int i = 0; i < 2; i++)
             {
@@ -260,26 +264,26 @@ namespace KeyPixels
                 //}
                 //if (i == 0)
                 //{
-                    //List<BoundingBox> temp = _QTree.seekData(new Vector2(cbB.bBox.Min.X, cbB.bBox.Min.Z),
-                    //new Vector2(cbB.bBox.Max.X, cbB.bBox.Max.Z));
+                //List<BoundingBox> temp = _QTree.seekData(new Vector2(cbB.bBox.Min.X, cbB.bBox.Min.Z),
+                //new Vector2(cbB.bBox.Max.X, cbB.bBox.Max.Z));
 
-                    //for (int u = 0; u < temp.Count; ++u)
-                    //{
-                    //    if (cbB.bBox.Intersects(temp[u]))//test if enemybody hits map
-                    //    {
-                    //        return true;
-                    //    }
-                    //}
+                //for (int u = 0; u < temp.Count; ++u)
+                //{
+                //    if (cbB.bBox.Intersects(temp[u]))//test if enemybody hits map
+                //    {
+                //        return true;
+                //    }
+                //}
                 //}
                 if (i == 1)
                 {
                     //CreateBoundingBox cbBn = new CreateBoundingBox(enemyModel._model[i], Matrix.CreateTranslation(worldMatrix[index].Translation));
                     //CreateBoundingBox cbBr = new CreateBoundingBox(enemyModel._model[i], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(worldMatrix[index].Translation));
-                    
+
                     //CreateBoundingBox cbBr = new CreateBoundingBox(enemyModel._model[i], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * worldMatrix[index]);
                     List<BoundingBox> temp = _QTree.seekData(new Vector2(b.Min.X, b.Min.Z),
                     new Vector2(b.Max.X, b.Max.Z));
-                    
+
                     for (int u = 0; u < temp.Count; ++u)
                     {
                         if (b.Intersects(temp[u]))//test if enemyarm hits map
@@ -307,11 +311,17 @@ namespace KeyPixels
                 {
                     if (cbBarm.bBox.Intersects(cbB.bBox) || cbBbody.bBox.Intersects(cbB.bBox))
                     {
+                        healthCoolDown -= 0.05f;
+                        System.Diagnostics.Debug.WriteLine(healthCoolDown);
+                        if (healthCoolDown < 0) { 
+                            healthCoolDown = HEALTHCOOLDOWN;
+                            Player.healthCounter--;
+                        }
                         return true;
                     }
                 }
 
-                
+
             }
             if (hit == false)
             {
@@ -319,11 +329,11 @@ namespace KeyPixels
                 armlist2[index] = b2;
             }
             return hit;
-            
+
         }
 
 
-            public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
+        public void Draw(ref Matrix viewMatrix, ref Matrix projectionMatrix)
         {
 
             for (int i = 0; i < ParticleEngines.Count; i++)
@@ -339,10 +349,10 @@ namespace KeyPixels
                     {
                         effect.EnableDefaultLighting();
                         effect.PreferPerPixelLighting = true;
-                        
+
                         effect.View = viewMatrix;
                         effect.Projection = projectionMatrix;
-                        
+
                         //effect.DiffuseColor = Color.MediumBlue.ToVector3();
 
                         for (int i = 0; i < worldMatrix.Count; i++)
