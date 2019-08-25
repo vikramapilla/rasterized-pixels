@@ -58,6 +58,7 @@ namespace KeyPixels
         private const float TIMER = 20f;
 
         static bool isPickUp;
+        float spawnSpeed;
 
 
         private float pickUpHUDTimer = 10f;
@@ -102,6 +103,11 @@ namespace KeyPixels
         public override void Update(GameTime gameTime)
         {
             playerLocation = Game1.getPosition();
+
+            if (isPickUp)
+                spawnSpeed = 0.035f;
+            else
+                spawnSpeed = 0.05f;
 
             if (isCollision())
             {
@@ -291,7 +297,7 @@ namespace KeyPixels
 
         private bool isTime()
         {
-            timer -= 0.05f;
+            timer -= spawnSpeed;
             if (timer < random.Next(0, 2))
             {
                 timer = TIMER;

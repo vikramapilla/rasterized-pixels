@@ -64,6 +64,7 @@ namespace KeyPixels
         public static bool isTeleportPlaying;
         public static bool isScenePlaying;
         public static bool isKeyFound;
+        public static bool isBossFight;
 
         HUD gameHUD;
         CutScenes cutScenes;
@@ -188,6 +189,15 @@ namespace KeyPixels
 
             //System.Diagnostics.Debug.WriteLine("1");
 
+            if (mapindex == 4) //Set bossFight Flag
+            {
+                isBossFight = true;
+            }
+            else
+            {
+                isBossFight = false;
+            }
+
             if (startMenuFlag)
             {
                 testMenu.Update(gameTime);
@@ -221,7 +231,7 @@ namespace KeyPixels
             if (isGamePlaying && isTeleportPlaying)
             {
                 change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
-                portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", 500);
+                portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", int.MaxValue);
             }
             if(isScenePlaying && isKeyFound)
             {
@@ -339,6 +349,9 @@ namespace KeyPixels
             if (Player.healthCounter <= 0) //After Player Dies, reset the game
             {
                 isGameEnded = true;
+                isGamePlaying = false;
+                isGamePlaying = false;
+                
                 cutScenes.makeGameOver();
                 endMenu.Update(gameTime);
                 particleEngine2D.Update();

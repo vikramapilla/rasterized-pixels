@@ -1505,6 +1505,7 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:CutScenes/Kenny/Crying/gameover.png
+
 #begin Models/keypart1.fbx
 /importer:FbxImporter
 /processor:ModelProcessor
@@ -1542,7 +1543,6 @@
 /processorParam:SwapWindingOrder=False
 /processorParam:TextureFormat=Compressed
 /build:Models/keypart2.fbx
-
 
 #begin CutScenes/Kenny/Crying/gameover1.png
 /importer:TextureImporter
@@ -1687,4 +1687,28 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:CutScenes/Key/3_3.png
+
+#begin HUD/boss_hud_background.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:HUD/boss_hud_background.png
+
+#begin HUD/hud_point1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:HUD/hud_point1.png
 
