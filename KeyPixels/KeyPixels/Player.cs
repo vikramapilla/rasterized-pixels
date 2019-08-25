@@ -40,7 +40,7 @@ namespace KeyPixels
         public int shotsCounter { get; set; }
         public static int healthCounter { get; set; }
         public static float healthCoolDown = 15;
-        public static float HealthCoolDown = 50;
+        public static float HealthCoolDown = 60;
 
         public void initialize(ContentManager contentManager)
         {
@@ -54,7 +54,7 @@ namespace KeyPixels
             cbBarm3 = new CreateBoundingBox(playerModel.arms, Matrix.CreateTranslation(playerPosition));
             buildRotationMap();
             shotsCounter = 10;
-            healthCounter = 1;
+            healthCounter = 5;
             particle = contentManager.Load<Model>("Models/Shot_Tria");
             ParticleEngines = new List<ParticleEngine>();
         }

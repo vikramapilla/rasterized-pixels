@@ -26,8 +26,10 @@ namespace KeyPixels
         public Matrix worldMatrix;
 
         static int numberShot;
-        static int cooldown=10;
+        static int cooldown = 10;
         static int bazcolldown = 20;
+        public static float healthCoolDown = 15;
+        public static float HealthCoolDown = 60;
 
         public static bool morebullets2 = false;
         public static bool doubleshot2 = false;
@@ -39,7 +41,7 @@ namespace KeyPixels
         bool doubles = false;
         bool reset = false;
         int timer;
-        
+
         int clockorcounter;
 
         public static int healthCounter { get; set; }
@@ -64,10 +66,10 @@ namespace KeyPixels
             numberShot = 2;
         }
 
-        public void update(Shots shots,Player player, ref QuadTree<BoundingBox> map)
+        public void update(Shots shots, Player player, ref QuadTree<BoundingBox> map)
         {
             IsCollision(shots);
-            if (healthCounter<1)
+            if (healthCounter < 1)
             {
                 //dead
             }
@@ -77,7 +79,7 @@ namespace KeyPixels
 
                 Random r = new Random();
                 int i = r.Next(0, 99);
-                if (i>=0&&i<25)
+                if (i >= 0 && i < 25)
                 {
                     chase = true;
                     timer = 200;
@@ -92,7 +94,7 @@ namespace KeyPixels
                     doubles = true;
                     timer = 250;
                     Random random = new Random();
-                    clockorcounter = random.Next(0, 3);
+                    clockorcounter = random.Next(0, 4);
                 }
                 if (i >= 75 && i < 99)
                 {
@@ -101,7 +103,7 @@ namespace KeyPixels
                 }
             }
 
-            if (chase==true)
+            if (chase == true)
             {
                 enemyChase(player, ref map);
                 shot(shots);
@@ -123,7 +125,7 @@ namespace KeyPixels
                 }
 
                 unlimitedshot(shots);
-                
+
                 timer--;
                 if (timer < 1)
                 {
@@ -132,7 +134,7 @@ namespace KeyPixels
             }
             if (doubles == true)
             {
-                
+
                 doubleshot2 = true;
                 morebullets2 = true;
                 //look at player
@@ -173,7 +175,7 @@ namespace KeyPixels
                 {
                     for (int i = 0; i < 8; i++)
                         shots.createBazookaShot(worldMatrix, 2, i);
-                    bazcolldown=40;
+                    bazcolldown = 40;
                 }
 
                 timer--;
@@ -230,72 +232,75 @@ namespace KeyPixels
             if (cooldown < 1)
             {
                 shots.createShot(worldMatrix, 2);
-            if (Keyboard.GetState().IsKeyDown(Keys.P) || doubleshot2 == true)
-            {
-                if (numberShot == 2) { shots.createShot(worldMatrix, 2); }
-                else shots.createShot(worldMatrix, 3);
-            }
+                if (Keyboard.GetState().IsKeyDown(Keys.P) || doubleshot2 == true)
+                {
+                    if (numberShot == 2) { shots.createShot(worldMatrix, 2); }
+                    else shots.createShot(worldMatrix, 3);
+                }
                 cooldown = 5;
             }
         }
 
         public void enemyChase(Player player, ref QuadTree<BoundingBox> map)
         {
-            
-                Matrix m = worldMatrix;
-                Vector3 tar = player.worldMatrix.Translation - m.Translation;
-                tar = Vector3.Normalize(tar) / 150;
-                target = tar * new Vector3(1, 1, 1);
-                bossPosition = m.Translation + target;
+
+            Matrix m = worldMatrix;
+            Vector3 tar = player.worldMatrix.Translation - m.Translation;
+            tar = Vector3.Normalize(tar) / 150;
+            target = tar * new Vector3(1, 1, 1);
+            bossPosition = m.Translation + target;
+            angle = (float)Math.Atan2(target.X, target.Z);
+            worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(bossPosition);
+            if (IsCollision(player, ref map, target) == true)
+            {
+                //worldMatrix[i] = m;
+                target = tar * new Vector3(1, 1, 0);
                 angle = (float)Math.Atan2(target.X, target.Z);
-                worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(bossPosition);
+                worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
                 if (IsCollision(player, ref map, target) == true)
                 {
                     //worldMatrix[i] = m;
-                    target = tar * new Vector3(1, 1, 0);
+                    target = tar * new Vector3(0, 1, 1);
                     angle = (float)Math.Atan2(target.X, target.Z);
                     worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
                     if (IsCollision(player, ref map, target) == true)
                     {
-                        //worldMatrix[i] = m;
-                        target = tar * new Vector3(0, 1, 1);
-                        angle = (float)Math.Atan2(target.X, target.Z);
-                        worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
-                        if (IsCollision(player, ref map, target) == true)
-                        {
-                            worldMatrix = m;
-                        }
-
-
+                        worldMatrix = m;
                     }
+
 
                 }
 
-            
+            }
+
+
 
         }
 
         public bool IsCollision(Shots shots)// for shot to enemy
         {
             bool hit = false;
-            
-                for (int i = 0; i < 2; i++)
+
+            for (int i = 0; i < 2; i++)
+            {
+                CreateBoundingBox cbB = new CreateBoundingBox(bossModel._model[i], worldMatrix);
+                if (shots.IsCollision(ref cbB.bBox))// test if shot hits enemy
                 {
-                    CreateBoundingBox cbB = new CreateBoundingBox(bossModel._model[i], worldMatrix);
-                    if (shots.IsCollision(ref cbB.bBox))// test if shot hits enemy
+                    if (healthCoolDown < 1)
                     {
                         Vector3 enemyDisappearPosition = worldMatrix.Translation;
                         Game1.soundManager.enemyShotEffect();
                         ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
                         healthCounter--;
                         //worldMatrix.Remove(worldMatrix[n]);//disapear
-
+                        healthCoolDown = HealthCoolDown;
+                    }
                         hit = true;
                         break;
-                    }
-
-
                 }
+
+
+            }
 
             return hit;
         }
@@ -310,7 +315,7 @@ namespace KeyPixels
 
             for (int n = 0; n < 2; n++)
             {
-                if (cbBarm.bBox.Intersects(cbBpbody.bBox) || cbBbody.bBox.Intersects(cbBpbody.bBox)|| cbBarm.bBox.Intersects(cbBparm.bBox) || cbBbody.bBox.Intersects(cbBparm.bBox))
+                if (cbBarm.bBox.Intersects(cbBpbody.bBox) || cbBbody.bBox.Intersects(cbBpbody.bBox) || cbBarm.bBox.Intersects(cbBparm.bBox) || cbBbody.bBox.Intersects(cbBparm.bBox))
                 {
                     if (Player.healthCoolDown < 1)
                     {
@@ -438,10 +443,10 @@ namespace KeyPixels
                         effect.Projection = Game1.projectionMatrix;
 
                         //effect.DiffuseColor = Color.MediumBlue.ToVector3();
-                        
+
                         effect.World = worldMatrix;
                         mesh.Draw();
-                        
+
                     }
                 }
             }

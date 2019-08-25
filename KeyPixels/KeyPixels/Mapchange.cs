@@ -34,6 +34,8 @@ namespace KeyPixels
                 mapindex += 1;
                 map.CreateMap(mapindex);
                 down = true;
+                PickUps.clearpickup();
+
 
                 player.teleport();//down move player to start pos (0,0,-4)
                 

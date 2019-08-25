@@ -45,7 +45,7 @@ namespace KeyPixels
         Matrix pickUpWorldMatrix;
         Random random;
 
-        List<StackPickUp> pickUpStack;
+        static List<StackPickUp> pickUpStack;
 
         int mapIndex;
         int pickUpIndex;
@@ -57,7 +57,7 @@ namespace KeyPixels
         private float timer = 20f;
         private const float TIMER = 20f;
 
-        bool isPickUp;
+        static bool isPickUp;
 
 
         private float pickUpHUDTimer = 10f;
@@ -333,8 +333,8 @@ namespace KeyPixels
                 posX = posX * 2 - i * 2;
                 posZ = posZ * 2 - j * 2;
 
-                pickUpIndex = random.Next(3, 4);
-                pickUpLocation = new Vector3(0, 0, 0);
+                pickUpIndex = random.Next(0, 6);
+                pickUpLocation = new Vector3(posX, 0, posZ);
 
                 pickUpWorldMatrix = Matrix.CreateTranslation(pickUpLocation);
 
@@ -343,6 +343,12 @@ namespace KeyPixels
                 isPickUp = true;
                 //System.Diagnostics.Debug.WriteLine("New Pick Up; {0}", pickUpIndex);
             }
+        }
+
+        public static void clearpickup()
+        {
+            pickUpStack.Clear();
+            isPickUp = false;
         }
 
 
