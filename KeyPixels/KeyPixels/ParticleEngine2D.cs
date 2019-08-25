@@ -50,7 +50,7 @@ namespace KeyPixels
 
         public void Update()
         {
-            if (!Game1.isGamePlaying)
+            if (!Game1.isGamePlaying || Game1.isGameEnded)
             {
 
                 if (TTE >= 0)

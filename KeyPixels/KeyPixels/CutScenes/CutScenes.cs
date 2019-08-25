@@ -16,6 +16,9 @@ namespace KeyPixels
 
         Texture2D SceneBackground;
         Texture2D DialogBackground;
+        Texture2D GameOver;
+        Texture2D GameOver1;
+        Texture2D GameOver2;
         List<Texture2D> Jenny = new List<Texture2D>();
         List<Texture2D> JennyScale = new List<Texture2D>();
         List<Texture2D> BossEnemy = new List<Texture2D>();
@@ -74,14 +77,26 @@ namespace KeyPixels
 
 
         int cryingIndex = 0;
+        int gameOverTextureIndex = 1;
+        float gameOverTextureRatio = 0f;
+        float updateTextureCoolDown = 1.5f;
+        float UPDATETEXTURECOOLDOWN = 1.5f;
         bool isGameEnded = false;
 
+
+        Vector2 ScreenCenter;
+        Vector2 TextureCenter;
 
         public void LoadContent(ContentManager Content)
         {
             font = Content.Load<SpriteFont>("Fonts/Dialog");
             SceneBackground = Content.Load<Texture2D>("CutScenes/background");
             DialogBackground = Content.Load<Texture2D>("CutScenes/dialog_system");
+            GameOver1 = Content.Load<Texture2D>("CutScenes/Kenny/Crying/gameover");
+            GameOver2 = Content.Load<Texture2D>("CutScenes/Kenny/Crying/gameover1");
+            GameOver = GameOver1;
+            ScreenCenter = new Vector2(1920 / 2, 1080 / 2);
+            TextureCenter = new Vector2(GameOver.Width / 2, GameOver.Height / 2);
 
             Jenny.Add(Content.Load<Texture2D>("CutScenes/Jenny/normal"));
             Jenny.Add(Content.Load<Texture2D>("CutScenes/Jenny/blink"));
@@ -139,13 +154,13 @@ namespace KeyPixels
                 textInQueue = true;
             }
             animateText(gameTime);
-            
-            if(prevTextIndex == textIndex && !isTypingEffect && textIndex < 3)
+
+            if (prevTextIndex == textIndex && !isTypingEffect && textIndex < 3)
             {
                 isTypingEffect = true;
                 Game1.soundManager.typingEffect();
             }
-            else if(prevTextIndex != textIndex)
+            else if (prevTextIndex != textIndex)
             {
                 prevTextIndex = textIndex;
                 isTypingEffect = false;
@@ -156,7 +171,7 @@ namespace KeyPixels
                 jennyScene = true;
                 isDialog = true;
             }
-            if(textIndex == 11)
+            if (textIndex == 11)
             {
                 jennyScene = false;
                 bossEnemyScene = true;
@@ -209,7 +224,7 @@ namespace KeyPixels
                 if (keyTimer > 7f)
                     textIndex = textArray.Length;
             }
-            else if(Keyboard.GetState().IsKeyUp(Keys.N))
+            else if (Keyboard.GetState().IsKeyUp(Keys.N))
             {
                 keyTimer = 0f;
             }
@@ -285,14 +300,36 @@ namespace KeyPixels
         {
             if (isGameEnded)
             {
-                spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.Black);
+                spriteBatch.Draw(SceneBackground, Vector2.Zero, Color.White);
+                spriteBatch.Draw(GameOver, ScreenCenter, null, Color.White, 0f, TextureCenter, 
+                    1f * gameOverTextureRatio, SpriteEffects.None, 0f);
+
+                updateTextureCoolDown -= 0.05f;
+                if (updateTextureCoolDown < 0)
+                {
+                    updateTextureCoolDown = UPDATETEXTURECOOLDOWN;
+                    if (gameOverTextureIndex == 1)
+                    {
+                        GameOver = GameOver2;
+                        gameOverTextureIndex = 2;
+                    }
+                    else
+                    {
+                        GameOver = GameOver1;
+                        gameOverTextureIndex = 1;
+                    }
+                }
+
                 if (cryingIndex <= 3)
-                spriteBatch.Draw(KennyCrying[cryingIndex], Vector2.Zero, Color.White);
+                    spriteBatch.Draw(KennyCrying[cryingIndex], Vector2.Zero, Color.White);
                 else
                     cryingIndex = 0;
 
                 if (isHoldAnimation(gameTime, 0.2f))
                     cryingIndex++;
+
+                if(gameOverTextureRatio <= 1)
+                    gameOverTextureRatio += 0.0025f;
             }
             else
             {

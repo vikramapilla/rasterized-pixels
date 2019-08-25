@@ -56,6 +56,7 @@ namespace KeyPixels
 
 
         StartMenu testMenu;
+        EndMenu endMenu;
         bool startMenuFlag;
         public static bool isGameStarted;
         public static bool isGameEnded;
@@ -109,7 +110,7 @@ namespace KeyPixels
             morebullets = false;
             doubleshot = false;
             bazookashot = false;
-           
+
             startMenuFlag = true;
             isGameStarted = false;
             isGameEnded = false;
@@ -161,6 +162,8 @@ namespace KeyPixels
             boss.initialize(Content);
             textureParticle2D = Content.Load<Texture2D>("HUD/hud_point");
             particleEngine2D = new ParticleEngine2D(textureParticle2D, new Vector2(900, 990), 0, int.MaxValue);
+            endMenu = new EndMenu();
+            endMenu.LoadContent(Content);
 
             skybox = new Skybox("Skyboxes/Islands", Content);
         }
@@ -182,8 +185,18 @@ namespace KeyPixels
             {
                 isGameEnded = true;
                 cutScenes.makeGameOver();
-                //Initialize();
-                //LoadContent();
+                endMenu.Update(gameTime);
+                particleEngine2D.Update();
+
+                if (endMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    Initialize();
+                    LoadContent();
+                }
+                else if (endMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+                {
+                    Exit();
+                }
             }
 
 
@@ -219,7 +232,7 @@ namespace KeyPixels
 
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
             {
-                
+
                 if (mapindex == 4)
                 {
                     boss.update(shots, player, ref map.QTree);
@@ -291,7 +304,7 @@ namespace KeyPixels
                     if (sp.GetEnemy().IsCollision(shots))
 
                     {
-                        
+
                     }
                     sp.GetEnemy().enemyChase(player, ref map.QTree);
                 }
@@ -309,7 +322,7 @@ namespace KeyPixels
                 camera.target += movement;
                 viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
 
-                
+
 
                 if (colldown > 0)
                     colldown -= 1;
@@ -343,7 +356,7 @@ namespace KeyPixels
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
             player.Draw();
-            
+
             //Draw3DModel(playerModel, Matrix.CreateTranslation(0, 0, 2.69999f), viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
@@ -392,6 +405,7 @@ namespace KeyPixels
                 particleEngine2D.Draw(spriteBatch);
             }
 
+
             if (!startMenuFlag)
             {
                 gameHUD.Draw(gameTime, spriteBatch);
@@ -407,6 +421,8 @@ namespace KeyPixels
             if (isGameEnded)
             {
                 cutScenes.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
+                endMenu.Draw(gameTime, spriteBatch);
+                particleEngine2D.Draw(spriteBatch);
             }
 
             spriteBatch.End();
@@ -507,7 +523,7 @@ namespace KeyPixels
             {
                 if (bazcolldown > 0)
                 {
-                    for(int i=0; i<8; i++)
+                    for (int i = 0; i < 8; i++)
                         shots.createBazookaShot(player.worldMatrix, 0, i);
                     bazcolldown--;
                     bazookashot = false;

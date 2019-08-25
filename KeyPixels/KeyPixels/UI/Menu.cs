@@ -17,6 +17,7 @@ namespace KeyPixels.UI
         Texture2D MenuBackground1;
         Texture2D MenuBackground2;
         bool menuFlag;
+        bool noMenuBackgroundFlag;
         public int buttonIndex { get; set; }
 
         private float timer = 0.1f;
@@ -49,6 +50,11 @@ namespace KeyPixels.UI
             }
         }
 
+        public void setNoMenuBackground(bool _flag)
+        {
+            noMenuBackgroundFlag = _flag;
+        }
+
         private bool isMenuBlink(GameTime gameTime)
         {
             float timeElapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -65,7 +71,8 @@ namespace KeyPixels.UI
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(MenuBackgroundActive, Vector2.Zero, Color.White);
+            if(!noMenuBackgroundFlag)
+                spriteBatch.Draw(MenuBackgroundActive, Vector2.Zero, Color.White);
             foreach (Button button in ButtonList)
             {
                 button.Draw(gameTime, spriteBatch);
