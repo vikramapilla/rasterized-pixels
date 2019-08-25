@@ -62,7 +62,7 @@ namespace KeyPixels
             ParticleEngines = new List<ParticleEngine>();
             cbBarm2 = new CreateBoundingBox(bossModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(bossPosition));
             cbBarm3 = new CreateBoundingBox(bossModel._model[1], Matrix.CreateTranslation(bossPosition));
-            healthCounter = 50;
+            healthCounter = 20;
             numberShot = 2;
         }
 
