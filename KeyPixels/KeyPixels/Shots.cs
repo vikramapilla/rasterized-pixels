@@ -226,7 +226,7 @@ namespace KeyPixels
         public bool IsCollision(ref BoundingBox _bModel)
         {
             bool hit = false;
-            for (int n = 0; n < posModel.Count; ++n)
+            for (int n = 0; n < 2; ++n)
             {
                 int N = posModel[n].Count;
                 for (int i = 0; i < N; i++)
@@ -239,6 +239,26 @@ namespace KeyPixels
                             posModel[n].Remove(posModel[n][i]);
                             N--;
                         }
+                    }
+                }
+            }
+            return hit;
+        }
+        public bool playerIsCollision(ref BoundingBox _bModel)
+        {
+            bool hit = false;
+            for (int n = 2; n < 4; ++n)
+            {
+                int N = posModel[n].Count;
+                for (int i = 0; i < N; i++)
+                {
+                    if (posModel[n][i]._bbox.bBox.Intersects(_bModel))
+                    {
+                        hit = true;
+                        
+                        posModel[n].Remove(posModel[n][i]);
+                        N--;
+                        
                     }
                 }
             }

@@ -46,6 +46,7 @@ namespace KeyPixels
         Spawning sp;
         static Player player;
         static Enemy enemy;
+        static Boss boss;
 
         CreateBoundingBox cbB;
         List<BoundingBox> collision_return;
@@ -61,6 +62,7 @@ namespace KeyPixels
         public static bool isGameStarted = false;
         public static bool isGamePlaying = false;
         public static bool isTeleportPlaying = false;
+        public static bool bossfight = false;
 
         HUD gameHUD;
         CutScenes cutScenes;
@@ -119,6 +121,8 @@ namespace KeyPixels
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
             shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Blue);
+            shots.addModel(Content, "Models/Shot_Tria3", 0.03f, new Vector3(0, 0, 1), Color.Green);
+            shots.addModel(Content, "Models/Shot_Tria", 0.03f, new Vector3(0, 0, 1), Color.Violet);
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
@@ -142,6 +146,8 @@ namespace KeyPixels
             pickUps = new PickUps();
             pickUps.LoadContent(Content);
             pickUps.initialize();
+            boss = new Boss();
+            boss.initialize(Content);
             skybox = new Skybox("Skyboxes/Islands", Content);
         }
 
@@ -189,6 +195,14 @@ namespace KeyPixels
 
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
             {
+                if (mapindex == 4 && bossfight == false)
+                {
+                    bossfight = true;
+                }
+                if (mapindex == 4)
+                {
+                    boss.update(shots, player, ref map.QTree);
+                }
                 if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
                 {
                     //change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
@@ -241,17 +255,28 @@ namespace KeyPixels
                 }
 
                 // TODO: Add your update logic here
-                sp.SpawnEnemy(mapindex);
+
                 shots.updateShotsPos(gameTime);
                 getPosition();
 
+                player.IsCollision(shots);
                 player.getPosition(ref map.QTree);
                 player.getRotation();
 
-                if (sp.GetEnemy().IsCollision(shots))
+                //spawning and enemy
+                if (mapindex != 4)
                 {
+                    sp.SpawnEnemy(mapindex);
+                    if (sp.GetEnemy().IsCollision(shots))
 
+                    {
+                        
+                    }
+                    sp.GetEnemy().enemyChase(player, ref map.QTree);
                 }
+
+
+
                 if (shots.IsCollision(ref map.QTree))
                 {
 
@@ -263,8 +288,7 @@ namespace KeyPixels
                 camera.target += movement;
                 viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
 
-                //sp.GetEnemy().clearList();
-                sp.GetEnemy().enemyChase(player, ref map.QTree);
+                
 
                 if (colldown > 0)
                     colldown -= 1;
@@ -296,7 +320,7 @@ namespace KeyPixels
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
             player.Draw();
-            sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
+            
             //Draw3DModel(playerModel, Matrix.CreateTranslation(0, 0, 2.69999f), viewMatrix, projectionMatrix);
             //Draw3DModel(wall,Matrix.CreateRotationY(0)*Matrix.CreateTranslation(0,0,1) * worldMatrix, viewMatrix, projectionMatrix);
             map.Draw();
@@ -317,8 +341,15 @@ namespace KeyPixels
             
 
             base.Draw(gameTime);
-
-            if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying)
+            if (mapindex == 4)
+            {
+                boss.Draw();
+            }
+            if (mapindex != 4)
+            {
+                sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
+            }
+            if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying && mapindex != 4)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 portalParticle.Update();
@@ -447,7 +478,7 @@ namespace KeyPixels
                 if (bazcolldown > 0)
                 {
                     for(int i=0; i<8; i++)
-                        shots.createBazookaShot(player.worldMatrix, numberShot, i);
+                        shots.createBazookaShot(player.worldMatrix, 0, i);
                     bazcolldown--;
                     bazookashot = false;
                     System.Diagnostics.Debug.WriteLine("{0}", getPosition());

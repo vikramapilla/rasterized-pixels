@@ -52,9 +52,16 @@ namespace KeyPixels
             {
                 player.teleportback();
                 sp.clearEnemy();
-                sp = new Spawning(map.getmapList());
                 shots.clearAll();
-                sp.GetEnemy().initialize(content);
+                if (mapindex < 4)
+                {
+                    sp = new Spawning(map.getmapList());
+                    sp.GetEnemy().initialize(content);
+                }
+                if (mapindex > 3)
+                {
+                    sp.GetEnemy().worldMatrix.Clear();
+                }
                 down = false;
                 turnSpeed = 0;
                 player.resetbbox();

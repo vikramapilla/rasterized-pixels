@@ -32,6 +32,7 @@ namespace KeyPixels
             enemy.worldMatrix.Clear();
             enemy.armlist1.Clear();
             enemy.armlist2.Clear();
+            enemy.clearList();
             spawnrate = -1;
         }
 

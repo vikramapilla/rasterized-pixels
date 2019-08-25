@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Content;
@@ -27,6 +27,9 @@ namespace KeyPixels
         public CreateBoundingBox cbBarm2;
         public CreateBoundingBox cbBarm3;
 
+        Model particle;
+        List<ParticleEngine> ParticleEngines;
+
         private Dictionary<string, float> rotationMap = new Dictionary<string, float>();
 
         private bool burstFlag = false;
@@ -50,6 +53,8 @@ namespace KeyPixels
             buildRotationMap();
             shotsCounter = 10;
             healthCounter = 1;
+            particle = contentManager.Load<Model>("Models/Shot_Tria");
+            ParticleEngines = new List<ParticleEngine>();
         }
 
         public static void activateHealth()
@@ -66,6 +71,12 @@ namespace KeyPixels
 
         public void getPosition(ref QuadTree<BoundingBox> _QTree)
         {
+            //playerupdate
+            if (healthCounter < 1)
+            {
+                //?
+            }
+
             if (!burstFlag)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
@@ -494,64 +505,131 @@ namespace KeyPixels
             rotationMap.Add("SouthEast", -135);
         }
 
+        public bool IsCollision(Shots shots)// for shot to player
+        {
+            bool hit = false;
+            
+                CreateBoundingBox cbB = new CreateBoundingBox(playerModel.body, worldMatrix);
+                if (shots.playerIsCollision(ref cbB.bBox))// test if shot hits enemy
+                {
+                    Vector3 enemyDisappearPosition = playerPosition;
+                    Game1.soundManager.enemyShotEffect();
+                    ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
+                    healthCounter--;
+                    //worldMatrix.Remove(worldMatrix[n]);//disapear
+
+                    return true;
+                }
+                CreateBoundingBox cbBa = new CreateBoundingBox(playerModel.arms, worldMatrix);
+                if (shots.playerIsCollision(ref cbB.bBox))// test if shot hits enemy
+                {
+                    Vector3 enemyDisappearPosition = playerPosition;
+                    Game1.soundManager.enemyShotEffect();
+                    ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
+                    healthCounter--;
+                    //worldMatrix.Remove(worldMatrix[n]);//disapear
+
+                    return true;
+                }
+
+
+            return hit;
+        }
+
         public bool IsCollision(ref QuadTree<BoundingBox> _QTree, Vector3 target)
         {
             bool hit = false;
-
-            cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
-            cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
-
+            
             cbBarm2.bBox.Max += target;
             cbBarm2.bBox.Min += target;
             cbBarm3.bBox.Max += target;
             cbBarm3.bBox.Min += target;
 
-            List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
-                new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
+            List<BoundingBox> temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
+                new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
+
+            
+            for (int u = 0; u < temp.Count; ++u)
+            {
+                if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
+                {
+                    cbBarm2.bBox.Max -= target;
+                    cbBarm2.bBox.Min -= target;
+                    cbBarm3.bBox.Max -= target;
+                    cbBarm3.bBox.Min -= target;
+                    return true;
+                    //hit = true;
+                }
+            }
+
+            temp = _QTree.seekData(new Vector2(cbBarm3.bBox.Min.X, cbBarm3.bBox.Min.Z),
+            new Vector2(cbBarm3.bBox.Max.X, cbBarm3.bBox.Max.Z));
+            
+            for (int u = 0; u < temp.Count; ++u)
+            {
+                if (cbBarm3.bBox.Intersects(temp[u]))//test if playerarm hits map
+                {
+                    cbBarm2.bBox.Max -= target;
+                    cbBarm2.bBox.Min -= target;
+                    cbBarm3.bBox.Max -= target;
+                    cbBarm3.bBox.Min -= target;
+                    return true;
+                    //hit = true;
+                }
+            }
+
+            cbBbody = new CreateBoundingBox(playerModel.body, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
+            
+            temp = _QTree.seekData(new Vector2(cbBbody.bBox.Min.X, cbBbody.bBox.Min.Z),
+            new Vector2(cbBbody.bBox.Max.X, cbBbody.bBox.Max.Z));
 
             for (int u = 0; u < temp.Count; ++u)
             {
                 if (cbBbody.bBox.Intersects(temp[u]))//test if playerbody hits map
                 {
-                    //return true;
-                    hit = true;
+                    cbBarm2.bBox.Max -= target;
+                    cbBarm2.bBox.Min -= target;
+                    cbBarm3.bBox.Max -= target;
+                    cbBarm3.bBox.Min -= target;
+                    return true;
+                    //hit = true;
                 }
             }
-            temp = _QTree.seekData(new Vector2(cbBarm2.bBox.Min.X, cbBarm2.bBox.Min.Z),
-            new Vector2(cbBarm2.bBox.Max.X, cbBarm2.bBox.Max.Z));
+
+            cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
+
+            temp = _QTree.seekData(new Vector2(cbBarm.bBox.Min.X, cbBarm.bBox.Min.Z),
+            new Vector2(cbBarm.bBox.Max.X, cbBarm.bBox.Max.Z));
 
             for (int u = 0; u < temp.Count; ++u)
             {
-                if (cbBarm2.bBox.Intersects(temp[u]))//test if playerarm hits map
+                if (cbBarm.bBox.Intersects(temp[u]))//test if playerbody hits map
                 {
-                    //return true;
-                    hit = true;
+                    cbBarm2.bBox.Max -= target;
+                    cbBarm2.bBox.Min -= target;
+                    cbBarm3.bBox.Max -= target;
+                    cbBarm3.bBox.Min -= target;
+                    return true;
+                    //hit = true;
                 }
             }
-            temp = _QTree.seekData(new Vector2(cbBarm3.bBox.Min.X, cbBarm3.bBox.Min.Z),
-            new Vector2(cbBarm3.bBox.Max.X, cbBarm3.bBox.Max.Z));
-
-
-            for (int u = 0; u < temp.Count; ++u)
-            {
-                if (cbBarm3.bBox.Intersects(temp[u]))//test if playerarm hits map
-                {
-                    //return true;
-                    hit = true;
-                }
-            }
-            if (hit == true)
-            {
-                cbBarm2.bBox.Max -= target;
-                cbBarm2.bBox.Min -= target;
-                cbBarm3.bBox.Max -= target;
-                cbBarm3.bBox.Min -= target;
-            }
+            //if (hit == true)
+            //{
+            //    cbBarm2.bBox.Max -= target;
+            //    cbBarm2.bBox.Min -= target;
+            //    cbBarm3.bBox.Max -= target;
+            //    cbBarm3.bBox.Min -= target;
+            //}
             return hit;
         }
 
         public void Draw()
         {
+            for (int i = 0; i < ParticleEngines.Count; i++)
+            {
+                ParticleEngines[i].Update();
+                ParticleEngines[i].Draw();
+            }
             worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(playerPosition);
             Game1.Draw3DModel(playerModel.body, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
             Game1.Draw3DModel(playerModel.arms, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
