@@ -17,21 +17,25 @@ namespace KeyPixels
         //List<Enemy> elist;
         int n;
         int spawnrate;
+        int maxenemy=40;
+        int samemax=30;
+        public static bool isspawnended = false;
 
         public Spawning(List<int[,]> mapList)
         {
             _mapList = mapList;
             enemy = new Enemy();
             //elist = new List<Enemy>();
-            n = 1;
+            n = 0;
+            isspawnended = false;
         }
 
         public void clearEnemy()
         {
             n = 0;
-            enemy.worldMatrix.Clear();
-            enemy.armlist1.Clear();
-            enemy.armlist2.Clear();
+            Enemy.worldMatrix.Clear();
+            Enemy.armlist1.Clear();
+            Enemy.armlist2.Clear();
             enemy.clearList();
             spawnrate = -1;
         }
@@ -41,8 +45,9 @@ namespace KeyPixels
             return enemy;
         }
         //public void minusnumber() { n--; }
-        public void SpawnEnemy(int index)
+        public void SpawnEnemy(int index, Player player)
         {
+            int count = Enemy.worldMatrix.Count;
             int posx;
             int posz;
             spawnrate--;
@@ -52,8 +57,8 @@ namespace KeyPixels
              * 6 = g + wall (left + top),       7 = g + wall (top + right),     8 = g + wall (right + bottom),      9 = g + wall (bottom + left)
              * 10 = g + w (left top right),     11 = g + w (top right bottom),  12 = g + w (right bottom left),     13 = g + w (bottom left top)
              */
-            
-            if (n< 3&& spawnrate<0) {
+            if (n == maxenemy) { isspawnended = true; }
+            else if(count < samemax && spawnrate<0) {
 
                 int[,] a = _mapList[index];
                 posx = a.GetLength(0) / 2;// pos = lenght/2 so that the map is as central as possible
@@ -64,35 +69,37 @@ namespace KeyPixels
                 
                 if (a[j, i] != 0)
                 {
-                    
 
-                    if ((Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > 2)|| (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < -2)||
-                        (Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > -2)|| (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < 2))
+                    //if ((Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > 2) || (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < -2) ||
+                    //    (Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > -2) || (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < 2))
+                    //{
+                    if (((player.getCurrentPlayerPosition().X - ((posx * 2) - (i * 2))) > 1 || player.getCurrentPlayerPosition().X - (posx * 2 - i * 2) < -1) && (player.getCurrentPlayerPosition().Z - (posz * 2 - j * 2) < 1 || player.getCurrentPlayerPosition().Z - (posz * 2 - j * 2) < -1))
                     {
-                        if (n==0)
+                        if (count==0)
                         {
-                            enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                            CreateBoundingBox cbBn = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                            CreateBoundingBox cbBr = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                            enemy.armlist1.Add(cbBn.bBox);
-                            enemy.armlist2.Add(cbBr.bBox);
+                            Enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            CreateBoundingBox cbBn = new CreateBoundingBox(Enemy.enemyModel._model[1], Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            CreateBoundingBox cbBr = new CreateBoundingBox(Enemy.enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                            Enemy.armlist1.Add(cbBn.bBox);
+                            Enemy.armlist2.Add(cbBr.bBox);
                             n++;
                             spawnrate = 50;
                         }
                         else
                         {
-                            int count = enemy.worldMatrix.Count;
 
                             for (int l = 0; l < count; l++)
                             {
-                                if ((enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > 2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2) ||
-                                    (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > -2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2))
-                                {
-                                    enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                                    CreateBoundingBox cbBn = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                                    CreateBoundingBox cbBr = new CreateBoundingBox(enemy.enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                                    enemy.armlist1.Add(cbBn.bBox);
-                                    enemy.armlist2.Add(cbBr.bBox);
+                                //if ((enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > 2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2) ||
+                                //    (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > -2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2))
+                                //{
+                                    if ((Enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 || Enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2) && (Enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2 || Enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2))
+                                    {
+                                        Enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    CreateBoundingBox cbBn = new CreateBoundingBox(Enemy.enemyModel._model[1], Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    CreateBoundingBox cbBr = new CreateBoundingBox(Enemy.enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
+                                    Enemy.armlist1.Add(cbBn.bBox);
+                                    Enemy.armlist2.Add(cbBr.bBox);
                                     n++;
                                     spawnrate = 50;
 

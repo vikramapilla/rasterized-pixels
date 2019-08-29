@@ -57,7 +57,7 @@ namespace KeyPixels
             bossModel._model.Add(contentManager.Load<Model>("Models/Arms_Skelett_Tex"));
             bossModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett_Walk"));
             particle = contentManager.Load<Model>("Models/Shot_Tria");
-            bossPosition = new Vector3(0, 0, 2);
+            bossPosition = new Vector3(0, 0, 1);
             worldMatrix = Matrix.CreateTranslation(bossPosition);
             ParticleEngines = new List<ParticleEngine>();
             cbBarm2 = new CreateBoundingBox(bossModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(bossPosition));
@@ -73,6 +73,7 @@ namespace KeyPixels
             {
                 //dead
             }
+            healthCoolDown--;
 
             if (chase == false && round == false && bazooka == false && doubles == false && reset == false)
             {
@@ -422,34 +423,6 @@ namespace KeyPixels
             Game1.Draw3DModel(bossModel._model[2], worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
         }
 
-        public void Draw2()
-        {
-            worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(bossPosition);
-            for (int i = 0; i < ParticleEngines.Count; i++)
-            {
-                ParticleEngines[i].Update();
-                ParticleEngines[i].Draw();
-            }
-            for (int z = 0; z < bossModel._model.Count; ++z)
-            {
-                foreach (ModelMesh mesh in bossModel._model[z].Meshes)
-                {
-                    foreach (BasicEffect effect in mesh.Effects)
-                    {
-                        effect.EnableDefaultLighting();
-                        effect.PreferPerPixelLighting = true;
-
-                        effect.View = Game1.viewMatrix;
-                        effect.Projection = Game1.projectionMatrix;
-
-                        //effect.DiffuseColor = Color.MediumBlue.ToVector3();
-
-                        effect.World = worldMatrix;
-                        mesh.Draw();
-
-                    }
-                }
-            }
-        }
+        
     }
 }

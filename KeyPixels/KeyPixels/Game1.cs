@@ -4,6 +4,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace KeyPixels
 {
@@ -11,6 +13,7 @@ namespace KeyPixels
     public class Game1 : Game
     {
         GraphicsDeviceManager graphics;
+
         Camera camera;
         SpriteBatch spriteBatch;
         Vector2 DesiredResolution;
@@ -66,6 +69,9 @@ namespace KeyPixels
         public static bool isKeyFound;
         public static bool isBossFight;
 
+        public static bool ismultitread;
+        public static bool multitreadflag;
+
         HUD gameHUD;
         CutScenes cutScenes;
         KeyCutScene keyCutScene;
@@ -85,12 +91,14 @@ namespace KeyPixels
         Vector3 cameraPosition;
         float angle = 0;
         float distance = 20;
-        
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
             //graphics.IsFullScreen = true;
+            //graphics.ApplyChanges();
             Content.RootDirectory = "Content";
             camera = new Camera(graphics);
 
@@ -122,6 +130,8 @@ namespace KeyPixels
             isKeyFound = false;
             isScenePlaying = false;
 
+            ismultitread = false;
+
             sceneIndex = 0;
             base.Initialize();
         }
@@ -137,8 +147,8 @@ namespace KeyPixels
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
             shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Blue);
-            shots.addModel(Content, "Models/Shot_Tria3", 0.03f, new Vector3(0, 0, 1), Color.Green);
-            shots.addModel(Content, "Models/Shot_Tria", 0.03f, new Vector3(0, 0, 1), Color.Violet);
+            shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Green);
+            shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Violet);
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
@@ -219,6 +229,21 @@ namespace KeyPixels
                     isScenePlaying = true;
                 isKeyFound = true;
             }
+            //test for multitread
+            else if (Keyboard.GetState().IsKeyUp(Keys.Enter))
+            {
+                multitreadflag = false;
+            }
+            else if (startMenuFlag && testMenu.getButtonIndex() == 2 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                if (!multitreadflag)
+                {
+                    if (ismultitread) { ismultitread = false; }
+                    else ismultitread = true;
+                    multitreadflag = true;
+                }
+            }
+            //
             else if (startMenuFlag && testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 Exit();
@@ -233,21 +258,22 @@ namespace KeyPixels
                 change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
                 portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", int.MaxValue);
             }
-            if(isScenePlaying && isKeyFound)
+            if (isScenePlaying && isKeyFound)
             {
                 keyCutScene.Update(gameTime);
             }
-            if (isGamePlaying && !isScenePlaying && !isTeleportPlaying)
+            if (isGamePlaying && !isScenePlaying && !isTeleportPlaying && !isGameEnded)
             {
-                
+
+
                 if (mapindex == 4)
                 {
                     boss.update(shots, player, ref map.QTree);
                 }
-                if (sp.GetEnemy().worldMatrix.Count == 0 && mapindex != 4)
+                if (Enemy.worldMatrix.Count == 0 && mapindex != 4 && Spawning.isspawnended)
                 {
                     //change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
-                    Vector3 tele_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, -4);//distans to the Teleporter
+                    Vector3 tele_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, -4);//distance to the Teleporter
                     telecolldown--;
 
                     if ((tele_dis.X < 0.1f && tele_dis.X > -0.1f) && (tele_dis.Y < 0.1f && tele_dis.Y > -0.1f) && (tele_dis.Z < 0.1f && tele_dis.Z > -0.1f) && telecolldown < 1)
@@ -258,19 +284,21 @@ namespace KeyPixels
                         telecolldown = 50;
                     }
                 }
+                //Changes when the game is playing goes here
+                angle += 0.0001f;
+                cameraPosition = distance * new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle));
+                view = Matrix.CreateLookAt(cameraPosition, new Vector3(0, 0, 0), Vector3.UnitY);
+
+                pickUps.Update(gameTime);
+
                 if (!mapFlag)
                 {
-                    //Changes when the game is playing goes here
-                    angle += 0.0001f;
-                    cameraPosition = distance * new Vector3((float)Math.Sin(angle), 0, (float)Math.Cos(angle));
-                    view = Matrix.CreateLookAt(cameraPosition, new Vector3(0, 0, 0), Vector3.UnitY);
-
-
                     if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
                     {
                         mapindex -= 1;
                         map.CreateMap(mapindex);
                         sp.clearEnemy();
+                        Spawning.isspawnended = false;
                         sp = new Spawning(map.getmapList());
                         mapFlag = true;
                         shots.clearAll();
@@ -282,12 +310,12 @@ namespace KeyPixels
                         mapindex += 1;
                         map.CreateMap(mapindex);
                         sp.clearEnemy();
+                        Spawning.isspawnended = false;
                         sp = new Spawning(map.getmapList());
                         mapFlag = true;
                         shots.clearAll();
                         sp.GetEnemy().initialize(Content);
                     }
-                    pickUps.Update(gameTime);
 
                 }
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
@@ -302,18 +330,25 @@ namespace KeyPixels
 
                 player.IsCollision(shots);
                 player.getPosition(ref map.QTree);
-                player.getRotation();
+                //player.getRotation();
 
                 //spawning and enemy
                 if (mapindex != 4)
                 {
-                    sp.SpawnEnemy(mapindex);
+                    sp.SpawnEnemy(mapindex, player);
                     if (sp.GetEnemy().IsCollision(shots))
 
                     {
 
                     }
-                    sp.GetEnemy().enemyChase(player, ref map.QTree);
+                    System.Console.WriteLine(Enemy.worldMatrix.Count);
+                    System.Console.WriteLine(ismultitread);
+                    if (!ismultitread) { sp.GetEnemy().enemyChase(player, ref map.QTree); }
+                    else if (Enemy.worldMatrix.Count >= 1)
+                    {
+                        sp.GetEnemy().Thread(player, map.QTree);
+
+                    }
                 }
 
 
@@ -351,7 +386,7 @@ namespace KeyPixels
                 isGameEnded = true;
                 isGamePlaying = false;
                 isGamePlaying = false;
-                
+
                 cutScenes.makeGameOver();
                 endMenu.Update(gameTime);
                 particleEngine2D.Update();
@@ -401,7 +436,6 @@ namespace KeyPixels
 
             graphics.GraphicsDevice.RasterizerState = originalRasterizerState;
 
-
             base.Draw(gameTime);
             if (mapindex == 4)
             {
@@ -411,7 +445,7 @@ namespace KeyPixels
             {
                 sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
             }
-            if (sp.GetEnemy().worldMatrix.Count == 0 && !isTeleportPlaying && mapindex != 4)
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && mapindex != 4 && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !startMenuFlag)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 portalParticle.Update();
@@ -532,7 +566,7 @@ namespace KeyPixels
                 if (colldown < 1)
                 {
                     shots.createShot(player.worldMatrix, numberShot);
-                    if (Keyboard.GetState().IsKeyDown(Keys.M) || doubleshot == true)
+                    if (doubleshot == true)
                     {
                         if (numberShot == 0) { shots.createShot(player.worldMatrix, 1); }
                         else shots.createShot(player.worldMatrix, 0);

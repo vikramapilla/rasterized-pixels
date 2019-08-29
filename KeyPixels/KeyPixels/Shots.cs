@@ -285,11 +285,11 @@ namespace KeyPixels
                     {
                         if (posModel[n][i]._bbox.bBox.Intersects(temp[u]))
                         {
-                            Vector3 shotDisappearPosition = posModel[n][i]._matrix.Translation;
-                            float shotDisappearRotation = posModel[n][i]._shotAngle;
+                            //Vector3 shotDisappearPosition = posModel[n][i]._matrix.Translation;
+                            //float shotDisappearRotation = posModel[n][i]._shotAngle;
                             //System.Diagnostics.Debug.WriteLine(shotDisappearRotation);
-                            ParticleEngines.Add(new ParticleEngine(particle, shotDisappearPosition, shotDisappearRotation, "Wall"));
-                            Game1.soundManager.wallShotEffect();
+                            //ParticleEngines.Add(new ParticleEngine(particle, shotDisappearPosition, shotDisappearRotation, "Wall"));
+                            //Game1.soundManager.wallShotEffect();
                             posModel[n].Remove(posModel[n][i]);
                             hit = true;
                             N--;

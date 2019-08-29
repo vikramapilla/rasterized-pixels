@@ -105,7 +105,7 @@ namespace KeyPixels
             playerLocation = Game1.getPosition();
 
             if (isPickUp)
-                spawnSpeed = 0.035f;
+                spawnSpeed = 0.02f;
             else
                 spawnSpeed = 0.05f;
 
@@ -353,7 +353,6 @@ namespace KeyPixels
 
         public static void clearpickup()
         {
-            pickUpStack.Clear();
             isPickUp = false;
         }
 

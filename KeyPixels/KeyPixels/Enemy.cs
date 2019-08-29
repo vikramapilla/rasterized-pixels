@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Threading;
 
 namespace KeyPixels
 {
@@ -14,15 +15,18 @@ namespace KeyPixels
 
     class Enemy
     {
-        public EnemyModel enemyModel;
+        static public EnemyModel enemyModel;
         public Player player;
         Model particle;
         List<ParticleEngine> ParticleEngines;
-        public List<BoundingBox> armlist1;
-        public List<BoundingBox> armlist2;
+        static public List<BoundingBox> armlist1;
+        static public List<BoundingBox> armlist2;
 
 
-        public List<Matrix> worldMatrix;
+        Player playerPos;
+        QuadTree<BoundingBox> map;
+
+        static public List<Matrix> worldMatrix;
 
         private Vector3 enemyPosition;
         private Vector3 playerPosition;
@@ -31,7 +35,9 @@ namespace KeyPixels
         private float angle = 0f;
         private float relativePositionX = 0f;
         private float relativePositionZ = 0f;
-        
+
+        public int StartIndex { get; set; }
+        public int Count { get; set; }
 
         public void initialize(ContentManager contentManager)
         {
@@ -43,50 +49,188 @@ namespace KeyPixels
             particle = contentManager.Load<Model>("Models/Shot_Tria");
             worldMatrix = new List<Matrix>();
             enemyPosition = new Vector3(2, 0, 0);
-            worldMatrix.Add(Matrix.CreateTranslation(enemyPosition));
+            //worldMatrix.Add(Matrix.CreateTranslation(enemyPosition));
             ParticleEngines = new List<ParticleEngine>();
             armlist1 = new List<BoundingBox>();
             armlist2 = new List<BoundingBox>();
-            CreateBoundingBox cbBn = new CreateBoundingBox(enemyModel._model[1], Matrix.CreateTranslation(new Vector3(2, 0, 0)));
-            CreateBoundingBox cbBr = new CreateBoundingBox(enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(2, 0, 0)));
-            armlist1.Add(cbBn.bBox);
-            armlist2.Add(cbBr.bBox);
+            //CreateBoundingBox cbBn = new CreateBoundingBox(enemyModel._model[1], Matrix.CreateTranslation(new Vector3(2, 0, 0)));
+            //CreateBoundingBox cbBr = new CreateBoundingBox(enemyModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(new Vector3(2, 0, 0)));
+            //armlist1.Add(cbBn.bBox);
+            //armlist2.Add(cbBr.bBox);
         }
 
-        public void enemyChase(Player playerPos, ref QuadTree<BoundingBox> map)
+
+        public void Thread(Player player, QuadTree<BoundingBox> map2)
         {
 
-            for (int i = 0; i < worldMatrix.Count; i++)
+            // Prepare the list of threads and the list of tasks for those threads to work on.
+            int threadCount = worldMatrix.Count / 3;
+
+            if (worldMatrix.Count % 3 == 0)
             {
-                Matrix m = worldMatrix[i];
+                Enemy[] tasks = new Enemy[threadCount];
+                Thread[] threads = new Thread[threadCount];
+
+                for (int index = 0; index < threadCount; index++)
+                {
+                    // Create the task, and set it up with the right properties--these are our
+                    // parameters.
+                    tasks[index] = new Enemy()
+                    {
+                        Count = 3,
+                        StartIndex = index * 3,
+                        playerPos = player,
+                        map = map2
+                    };
+
+                    // Create the thread
+                    threads[index] = new Thread(tasks[index].enemyChase);
+
+                    // Start the thread running
+                    threads[index].Start();
+                }
+
+
+                // Wait around and join up with all of the threads, so that when we 
+                // move on, we're sure all of the work has been done.
+                for (int index = 0; index < threadCount; index++)
+                {
+                    threads[index].Join();
+                }
+            }
+            else
+            {
+                Enemy[] tasks = new Enemy[threadCount+1];
+                Thread[] threads = new Thread[threadCount+1];
+                int index=0;
+                for (index = 0; index < threadCount; index++)
+                {
+                    // Create the task, and set it up with the right properties--these are our
+                    // parameters.
+                    tasks[index] = new Enemy()
+                    {
+                        Count = 3,
+                        StartIndex = index * 3,
+                        playerPos = player,
+                        map = map2
+                    };
+
+                    // Create the thread
+                    threads[index] = new Thread(tasks[index].enemyChase);
+
+                    // Start the thread running
+                    threads[index].Start();
+                }
+                    tasks[threadCount] = new Enemy()
+                    {
+                        Count = worldMatrix.Count % 3,
+                        StartIndex = threadCount * 3,
+                        playerPos = player,
+                        map = map2
+                    };
+                // Create the thread
+                threads[threadCount] = new Thread(tasks[threadCount].enemyChase);
+
+                // Start the thread running
+                threads[threadCount].Start();
+
+
+                // Wait around and join up with all of the threads, so that when we 
+                // move on, we're sure all of the work has been done.
+                for (int index2 = 0; index2 < threadCount; index2++)
+                {
+                    threads[index2].Join();
+                }
+            }
+
+        }
+
+
+
+        //multithread
+        public void enemyChase()
+        {
+            //for (int index = 0; index < worldMatrix.Count; index++)
+            //{
+            for (int index = StartIndex; index < StartIndex + Count; index++)
+            {
+
+                Matrix m = worldMatrix[index];
                 Vector3 tar = playerPos.worldMatrix.Translation - m.Translation;
-                tar = Vector3.Normalize(tar) / 150;
+                tar = Vector3.Normalize(tar) / 66;
                 target = tar * new Vector3(1, 1, 1);
                 enemyPosition = m.Translation + target;
                 //getRotation();
                 angle = (float)Math.Atan2(target.X, target.Z);
                 //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
                 //Console.WriteLine(target);
-                worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
-                if (IsCollision(playerPos, ref map, i, target) == true)
+                worldMatrix[index] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
+                if (IsCollision(playerPos, ref map, index, target) == true)
                 {
                     //worldMatrix[i] = m;
                     target = tar * new Vector3(1, 1, 0);
                     //Console.WriteLine("mist0" + target);
                     //enemyPosition = m.Translation + target;
                     angle = (float)Math.Atan2(target.X, target.Z);
-                    worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
-                    if (IsCollision(playerPos, ref map, i, target) == true)
+                    worldMatrix[index] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                    if (IsCollision(playerPos, ref map, index, target) == true)
                     {
                         //worldMatrix[i] = m;
                         target = tar * new Vector3(0, 1, 1);
                         //Console.WriteLine("mist1" + target);
                         //enemyPosition = m.Translation + target;
                         angle = (float)Math.Atan2(target.X, target.Z);
-                        worldMatrix[i] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
-                        if (IsCollision(playerPos, ref map, i, target) == true)
+                        worldMatrix[index] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                        if (IsCollision(playerPos, ref map, index, target) == true)
                         {
-                            worldMatrix[i] = m;
+                            worldMatrix[index] = m;
+                            //Console.WriteLine("mist2");
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        //normal
+        public void enemyChase(Player playerPos,ref QuadTree<BoundingBox> map)
+        {
+            for (int index = 0; index < worldMatrix.Count; index++)
+            {
+
+                Matrix m = worldMatrix[index];
+                Vector3 tar = playerPos.worldMatrix.Translation - m.Translation;
+                tar = Vector3.Normalize(tar) / 100;
+                target = tar * new Vector3(1, 1, 1);
+                enemyPosition = m.Translation + target;
+                //getRotation();
+                angle = (float)Math.Atan2(target.X, target.Z);
+                //worldMatrix[0] = Matrix.CreateRotationY(MathHelper.ToRadians( angle)) * Matrix.CreateTranslation(enemyPosition);
+                //Console.WriteLine(target);
+                worldMatrix[index] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(enemyPosition);
+                if (IsCollision(playerPos, ref map, index, target) == true)
+                {
+                    //worldMatrix[i] = m;
+                    target = tar * new Vector3(1, 1, 0);
+                    //Console.WriteLine("mist0" + target);
+                    //enemyPosition = m.Translation + target;
+                    angle = (float)Math.Atan2(target.X, target.Z);
+                    worldMatrix[index] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                    if (IsCollision(playerPos, ref map, index, target) == true)
+                    {
+                        //worldMatrix[i] = m;
+                        target = tar * new Vector3(0, 1, 1);
+                        //Console.WriteLine("mist1" + target);
+                        //enemyPosition = m.Translation + target;
+                        angle = (float)Math.Atan2(target.X, target.Z);
+                        worldMatrix[index] = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
+                        if (IsCollision(playerPos, ref map, index, target) == true)
+                        {
+                            worldMatrix[index] = m;
                             //Console.WriteLine("mist2");
                         }
 

@@ -35,12 +35,14 @@ namespace KeyPixels
         private bool burstFlag = false;
         public static float angle = 0f;
 
+
         private int burstCounter = 0;
         public static int numberOfBursts = 0;
         public int shotsCounter { get; set; }
         public static int healthCounter { get; set; }
         public static float healthCoolDown = 15;
         public static float HealthCoolDown = 60;
+        Vector3 movement;
 
         public void initialize(ContentManager contentManager)
         {
@@ -76,253 +78,296 @@ namespace KeyPixels
             //playerupdate
             healthCoolDown--;
 
-            if (!burstFlag)
+            //
+            movement = new Vector3(0, 0, 0);
+            if (Keyboard.GetState().IsKeyDown(Keys.W))
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
+                movement.Z += 0.02f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                movement.X += 0.02f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.S))
+            {
+                movement.Z -= 0.02f;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                movement.X -= 0.02f;
+            }
+
+            if (movement.X != 0 || movement.Z != 0)
+            {
+                if (!burstFlag)
                 {
-                    if (numberOfBursts > 0)
+                    if (Keyboard.GetState().IsKeyDown(Keys.LeftControl))
                     {
-                        if (burstCounter == 0)
+                        if (numberOfBursts > 0)
                         {
-                            burstCounter = 7;
-                            burstFlag = true;
-                            Game1.soundManager.burstEffect();
+                            if (burstCounter == 0)
+                            {
+                                burstCounter = 7;
+                                burstFlag = true;
+                                Game1.soundManager.burstEffect();
+                            }
                         }
                     }
                 }
-            }
-            if (Keyboard.GetState().IsKeyUp(Keys.LeftControl))
-            {
-                if (burstFlag)
-                    numberOfBursts--;
-                burstFlag = false;
-            }
-
-
-            if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.W))
-            {
+                if (Keyboard.GetState().IsKeyUp(Keys.LeftControl))
+                {
+                    if (burstFlag)
+                        numberOfBursts--;
+                    burstFlag = false;
+                }
+                float temp_Z = playerPosition.Z;
+                float temp_X = playerPosition.X;
+                movement = Vector3.Normalize(movement) / 50;
                 if (burstCounter > 0)
                 {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z += 0.15f;
-                    playerPosition.X += 0.15f;
+                    movement.Z *= 7;
+                    movement.X *= 7;
                     burstCounter--;
-
-                    if (IsCollision(ref _QTree, new Vector3(0.15f, 0, 0.15f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-
                 }
-                else
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z += 0.01f;
-                    playerPosition.X += 0.01f;
 
-                    if (IsCollision(ref _QTree, new Vector3(0.01f, 0, 0.01f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
+                playerPosition.Z += movement.Z;
+                playerPosition.X += movement.X;
+                float temp_angle = angle;
+                angle = (float)Math.Atan2(movement.X, movement.Z);
+                angle = (angle + temp_angle) / 2;
+                if (IsCollision(ref _QTree, movement) == true)
+                {
+                    playerPosition.Z = temp_Z;
+                    playerPosition.X = temp_X;
                 }
             }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z += 0.15f;
-                    playerPosition.X -= 0.15f;
-                    burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, 0.15f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-                }
-                else
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z += 0.01f;
-                    playerPosition.X -= 0.01f;
+            //
 
-                    if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, 0.01f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-                }
-            }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z -= 0.15f;
-                    playerPosition.X += 0.15f;
-                    burstCounter--;
+            //    if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.W))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z += 0.15f;
+            //            playerPosition.X += 0.15f;
+            //            burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(0.15f, 0, -0.15f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-                }
-                else
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z -= 0.01f;
-                    playerPosition.X += 0.01f;
+            //            if (IsCollision(ref _QTree, new Vector3(0.15f, 0, 0.15f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
 
-                    if (IsCollision(ref _QTree, new Vector3(0.01f, 0, -0.01f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-                }
-            }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z -= 0.15f;
-                    playerPosition.X -= 0.15f;
-                    burstCounter--;
+            //        }
+            //        else
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z += 0.01f;
+            //            playerPosition.X += 0.01f;
 
-                    if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, -0.15f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-                }
-                else
-                {
-                    float tempZ = playerPosition.Z;
-                    float tempX = playerPosition.X;
-                    playerPosition.Z -= 0.01f;
-                    playerPosition.X -= 0.01f;
+            //            if (IsCollision(ref _QTree, new Vector3(0.01f, 0, 0.01f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.W))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z += 0.15f;
+            //            playerPosition.X -= 0.15f;
+            //            burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, -0.01f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                        playerPosition.X = tempX;
-                    }
-                }
-            }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.W))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempZ = playerPosition.Z;
-                    playerPosition.Z += 0.15f;
-                    burstCounter--;
+            //            if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, 0.15f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z += 0.01f;
+            //            playerPosition.X -= 0.01f;
 
-                    if (IsCollision(ref _QTree, new Vector3(0, 0, 0.15f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                    }
-                }
-                else
-                {
-                    float tempZ = playerPosition.Z;
-                    playerPosition.Z += 0.01f;
+            //            if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, 0.01f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.A) && Keyboard.GetState().IsKeyDown(Keys.S))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z -= 0.15f;
+            //            playerPosition.X += 0.15f;
+            //            burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(0, 0, 0.01f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                    }
-                }
-            }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.S))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempZ = playerPosition.Z;
-                    playerPosition.Z -= 0.15f;
-                    burstCounter--;
+            //            if (IsCollision(ref _QTree, new Vector3(0.15f, 0, -0.15f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z -= 0.01f;
+            //            playerPosition.X += 0.01f;
 
-                    if (IsCollision(ref _QTree, new Vector3(0, 0, -0.15f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                    }
-                }
-                else
-                {
-                    float tempZ = playerPosition.Z;
-                    playerPosition.Z -= 0.01f;
+            //            if (IsCollision(ref _QTree, new Vector3(0.01f, 0, -0.01f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.D) && Keyboard.GetState().IsKeyDown(Keys.S))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z -= 0.15f;
+            //            playerPosition.X -= 0.15f;
+            //            burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(0, 0, -0.01f)) == true)
-                    {
-                        playerPosition.Z = tempZ;
-                    }
-                }
-            }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.A))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempX = playerPosition.X;
-                    playerPosition.X += 0.15f;
-                    burstCounter--;
+            //            if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, -0.15f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            float tempX = playerPosition.X;
+            //            playerPosition.Z -= 0.01f;
+            //            playerPosition.X -= 0.01f;
 
-                    if (IsCollision(ref _QTree, new Vector3(0.15f, 0, 0)) == true)
-                    {
-                        playerPosition.X = tempX;
-                    }
-                }
-                else
-                {
-                    float tempX = playerPosition.X;
-                    playerPosition.X += 0.01f;
+            //            if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, -0.01f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.W))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            playerPosition.Z += 0.15f;
+            //            burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(0.01f, 0, 0)) == true)
-                    {
-                        playerPosition.X = tempX;
-                    }
-                }
-            }
-            else
-            if (Keyboard.GetState().IsKeyDown(Keys.D))
-            {
-                if (burstCounter > 0)
-                {
-                    float tempX = playerPosition.X;
-                    playerPosition.X -= 0.15f;
-                    burstCounter--;
+            //            if (IsCollision(ref _QTree, new Vector3(0, 0, 0.15f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            playerPosition.Z += 0.01f;
 
-                    if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, 0)) == true)
-                    {
-                        playerPosition.X = tempX;
-                    }
-                }
-                else
-                {
-                    float tempX = playerPosition.X;
-                    playerPosition.X -= 0.01f;
+            //            if (IsCollision(ref _QTree, new Vector3(0, 0, 0.01f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.S))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            playerPosition.Z -= 0.15f;
+            //            burstCounter--;
 
-                    if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, 0)) == true)
-                    {
-                        playerPosition.X = tempX;
-                    }
-                }
-            }
+            //            if (IsCollision(ref _QTree, new Vector3(0, 0, -0.15f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempZ = playerPosition.Z;
+            //            playerPosition.Z -= 0.01f;
+
+            //            if (IsCollision(ref _QTree, new Vector3(0, 0, -0.01f)) == true)
+            //            {
+            //                playerPosition.Z = tempZ;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.A))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempX = playerPosition.X;
+            //            playerPosition.X += 0.15f;
+            //            burstCounter--;
+
+            //            if (IsCollision(ref _QTree, new Vector3(0.15f, 0, 0)) == true)
+            //            {
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempX = playerPosition.X;
+            //            playerPosition.X += 0.01f;
+
+            //            if (IsCollision(ref _QTree, new Vector3(0.01f, 0, 0)) == true)
+            //            {
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //    }
+            //    else
+            //if (Keyboard.GetState().IsKeyDown(Keys.D))
+            //    {
+            //        if (burstCounter > 0)
+            //        {
+            //            float tempX = playerPosition.X;
+            //            playerPosition.X -= 0.15f;
+            //            burstCounter--;
+
+            //            if (IsCollision(ref _QTree, new Vector3(-0.15f, 0, 0)) == true)
+            //            {
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            float tempX = playerPosition.X;
+            //            playerPosition.X -= 0.01f;
+
+            //            if (IsCollision(ref _QTree, new Vector3(-0.01f, 0, 0)) == true)
+            //            {
+            //                playerPosition.X = tempX;
+            //            }
+            //        }
+            //    }
 
         }
 
@@ -608,6 +653,7 @@ namespace KeyPixels
                 }
             }
 
+
             cbBarm = new CreateBoundingBox(playerModel.arms, Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition));
 
             temp = _QTree.seekData(new Vector2(cbBarm.bBox.Min.X, cbBarm.bBox.Min.Z),
@@ -625,6 +671,7 @@ namespace KeyPixels
                     //hit = true;
                 }
             }
+
             //if (hit == true)
             //{
             //    cbBarm2.bBox.Max -= target;
@@ -642,7 +689,8 @@ namespace KeyPixels
                 ParticleEngines[i].Update();
                 ParticleEngines[i].Draw();
             }
-            worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(playerPosition);
+            worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(playerPosition);
+            //worldMatrix = Matrix.CreateRotationY(MathHelper.ToRadians(angle)) * Matrix.CreateTranslation(playerPosition);
             Game1.Draw3DModel(playerModel.body, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
             Game1.Draw3DModel(playerModel.arms, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);
             Game1.Draw3DModel(playerModel.legs, worldMatrix, Game1.viewMatrix, Game1.projectionMatrix);

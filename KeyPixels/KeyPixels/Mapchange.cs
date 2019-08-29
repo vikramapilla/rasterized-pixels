@@ -25,7 +25,8 @@ namespace KeyPixels
 
             if (player.getCurrentPlayerPosition().Y < 10&&!down)
             {
-                turnSpeed+=0.5f;
+                shots.clearAll();
+                turnSpeed +=0.5f;
                 //turnSpeed *= 0.90f;
                 player.teleportup(turnSpeed);
             }
@@ -52,9 +53,9 @@ namespace KeyPixels
             }
             if (down == true && player.getCurrentPlayerPosition().Y < 0)
             {
+                Spawning.isspawnended = false;
                 player.teleportback();
                 sp.clearEnemy();
-                shots.clearAll();
                 if (mapindex < 4)
                 {
                     sp = new Spawning(map.getmapList());
@@ -62,7 +63,7 @@ namespace KeyPixels
                 }
                 if (mapindex > 3)
                 {
-                    sp.GetEnemy().worldMatrix.Clear();
+                    Enemy.worldMatrix.Clear();
                 }
                 down = false;
                 turnSpeed = 0;
