@@ -60,7 +60,12 @@ namespace KeyPixels
 
         StartMenu testMenu;
         EndMenu endMenu;
+        ControlsMenu controlsMenu;
+        OptionsMenu optionsMenu;
+
         bool startMenuFlag;
+        bool controlsMenuFlag;
+        bool optionsMenuFlag;
         public static bool isGameStarted;
         public static bool isGameEnded;
         public static bool isGamePlaying;
@@ -95,10 +100,7 @@ namespace KeyPixels
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
-            //graphics.IsFullScreen = true;
-            //graphics.ApplyChanges();
+            graphics.IsFullScreen = false;
             Content.RootDirectory = "Content";
             camera = new Camera(graphics);
 
@@ -108,6 +110,11 @@ namespace KeyPixels
 
         protected override void Initialize()
         {
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
+
+
             DesiredResolution = new Vector2(1920, 1080);
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
             projectionMatrix = Matrix.CreatePerspectiveFieldOfView(camera.fieldOfView, camera.aspectRatio, camera.nearPlane, camera.farPlane);
@@ -123,6 +130,8 @@ namespace KeyPixels
             bazookashot = false;
 
             startMenuFlag = true;
+            controlsMenuFlag = false;
+            optionsMenuFlag = false;
             isGameStarted = false;
             isGameEnded = false;
             isGamePlaying = false;
@@ -180,6 +189,10 @@ namespace KeyPixels
             particleEngine2D = new ParticleEngine2D(textureParticle2D, new Vector2(900, 990), 0, int.MaxValue);
             endMenu = new EndMenu();
             endMenu.LoadContent(Content);
+            controlsMenu = new ControlsMenu();
+            controlsMenu.LoadContent(Content);
+            optionsMenu = new OptionsMenu();
+            optionsMenu.LoadContent(Content);
 
             skybox = new Skybox("Skyboxes/Islands", Content);
         }
@@ -225,9 +238,18 @@ namespace KeyPixels
             }
             else if (startMenuFlag && testMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
-                if (!isGameStarted)
+                startMenuFlag = false;
+                optionsMenuFlag = true;
+
+
+                /*if (!isGameStarted)
                     isScenePlaying = true;
-                isKeyFound = true;
+                isKeyFound = true;*/
+            }
+            else if (startMenuFlag && testMenu.getButtonIndex() == 2 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                startMenuFlag = false;
+                controlsMenuFlag = true;
             }
             //test for multitread
             else if (Keyboard.GetState().IsKeyUp(Keys.Enter))
@@ -248,6 +270,57 @@ namespace KeyPixels
             {
                 Exit();
             }
+
+            if (!startMenuFlag && controlsMenuFlag)
+            {
+                controlsMenu.Update(gameTime);
+                particleEngine2D.Update();
+                
+
+                if (controlsMenu.goBackFlag())
+                {
+                    startMenuFlag = true;
+                    controlsMenuFlag = false;
+                }
+
+            }
+            else if (!startMenuFlag && optionsMenuFlag)
+            {
+                optionsMenu.Update(gameTime);
+                particleEngine2D.Update();
+                if (optionsMenu.goBackFlag())
+                {
+                    startMenuFlag = true;
+                    optionsMenuFlag = false;
+
+                    int[] values = optionsMenu.getOptionValues();
+                    if(values[0] == 0)
+                    {
+                        graphics.PreferredBackBufferWidth = 1024;
+                        graphics.PreferredBackBufferHeight = 576;
+                    }else if(values[0] == 1)
+                    {
+                        graphics.PreferredBackBufferWidth = 1280;
+                        graphics.PreferredBackBufferHeight = 720;
+                    }
+                    else if (values[0] == 2)
+                    {
+                        graphics.PreferredBackBufferWidth = 1920;
+                        graphics.PreferredBackBufferHeight = 1080;
+                    }
+
+                    if (values[1] == 0)
+                        graphics.IsFullScreen = false;
+                    else
+                        graphics.IsFullScreen = true;
+
+                    graphics.ApplyChanges();
+                    
+                    SoundManager.Volume = (values[2] / 10f);
+                }
+            }
+
+            soundManager.update();
 
             if (isGamePlaying && isScenePlaying)
             {
@@ -385,7 +458,6 @@ namespace KeyPixels
             {
                 isGameEnded = true;
                 isGamePlaying = false;
-                isGamePlaying = false;
 
                 cutScenes.makeGameOver();
                 endMenu.Update(gameTime);
@@ -464,9 +536,18 @@ namespace KeyPixels
                 testMenu.Draw(gameTime, spriteBatch);
                 particleEngine2D.Draw(spriteBatch);
             }
+            if (!startMenuFlag && controlsMenuFlag)
+            {
+                controlsMenu.Draw(gameTime, spriteBatch);
+                particleEngine2D.Draw(spriteBatch);
+            }
+            else if (!startMenuFlag && optionsMenuFlag)
+            {
+                optionsMenu.Draw(gameTime, spriteBatch);
+                particleEngine2D.Draw(spriteBatch);
+            }
 
-
-            if (!startMenuFlag)
+            if (!startMenuFlag && !controlsMenuFlag && !optionsMenuFlag)
             {
                 gameHUD.Draw(gameTime, spriteBatch);
                 pickUps.Draw(gameTime, spriteBatch);

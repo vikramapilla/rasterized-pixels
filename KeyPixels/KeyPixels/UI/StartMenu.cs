@@ -30,8 +30,8 @@ namespace KeyPixels.UI
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/options_button"),
                 Content.Load<Texture2D>("UI/Buttons/options_button_hover"), new Vector2(150, 510)));
 
-            menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/credits_button"),
-                Content.Load<Texture2D>("UI/Buttons/credits_button_hover"), new Vector2(150, 645)));
+            menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/controls_button"),
+                Content.Load<Texture2D>("UI/Buttons/controls_button_hover"), new Vector2(150, 645)));
 
             menu.addButton(new Button(Content.Load<Texture2D>("UI/Buttons/exit_button"),
                 Content.Load<Texture2D>("UI/Buttons/exit_button_hover"), new Vector2(150, 780)));

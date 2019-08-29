@@ -31,6 +31,7 @@ namespace KeyPixels.UI
             isHovered = false;
             isClicked = false;
         }
+        
 
         public void changeButtonTexture(Texture2D _buttonTexture, Texture2D _buttonHoverTexture)
         {

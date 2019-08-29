@@ -22,10 +22,14 @@ namespace KeyPixels
 
         bool isPortalPlay = false;
 
+        public static float Volume;
+
         public void LoadContent(ContentManager Content)
         {
             menuBGM = Content.Load<Song>("Audio/menu_bgm");
             typing = Content.Load<SoundEffect>("Audio/typing_0");
+
+            Volume = 0.5f;
 
             //Shooting
             shot = Content.Load<SoundEffect>("Audio/Shooting/shot");
@@ -41,6 +45,10 @@ namespace KeyPixels
 
         }
 
+        public void update()
+        {
+            MediaPlayer.Volume = Volume;
+        }
 
         public void typingEffect()
         {
@@ -50,7 +58,6 @@ namespace KeyPixels
         public void menuBackgroundMusicPlay()
         {
             MediaPlayer.Play(menuBGM);
-            MediaPlayer.Volume = 0.5f;
         }
 
         public void menuBackgroundMusicStop()
@@ -60,28 +67,29 @@ namespace KeyPixels
 
         public void shotEffect()
         {
-            shot.Play();
+            shot.Play(Volume, 0, 0);
         }
 
         public void wallShotEffect()
         {
-            wallShot.Play();
+            wallShot.Play(Volume, 0, 0);
         }
 
         public void enemyShotEffect()
         {
-            enemyShot.Play();
+            enemyShot.Play(Volume, 0, 0);
         }
 
         public void burstEffect()
         {
-            burstMove.Play();
+            burstMove.Play(Volume, 0, 0);
         }
 
         public void portalEffectPlay()
         {
             if (!isPortalPlay)
             {
+                portal.Volume = Volume;
                 portal.Play();
                 isPortalPlay = true;
             }
@@ -95,7 +103,7 @@ namespace KeyPixels
 
         public void mapChangeEffect()
         {
-            mapChange.Play();
+            mapChange.Play(Volume, 0, 0);
         }
     }
 }
