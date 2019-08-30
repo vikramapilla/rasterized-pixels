@@ -13,16 +13,22 @@ namespace KeyPixels.UI
     class OptionsMenu : Component
     {
         Menu menu;
-        List<Texture2D> optionsButtons;
+
         List<List<Texture2D>> optionsButtonsValues;
-        Texture2D optionActivated;
+        List<List<Texture2D>> optionsButtonsValuesActivated;
+
         int optionActivatedIndex;
-        int[] optionActivatedMod = { 3, 2, 11};
-        int[] optionActivatedValues = { 1, 0, 5 };
+        int[] optionActivatedMod = { 3, 2, 11, 1 };
+        public int[] optionActivatedValues = { 1, 0, 5, 0 };
+        public int[] tempOptionActivatedValues = { 0, 0, 0, 0 };
+
         bool upButtonFlag = false;
         bool downButtonFlag = false;
         bool leftButtonFlag = false;
         bool rightButtonFlag = false;
+
+        public bool initializeFlag = true;
+        public bool tempChangesFlag = false;
 
         public void LoadContent(ContentManager Content)
         {
@@ -31,17 +37,14 @@ namespace KeyPixels.UI
                 Content.Load<Texture2D>("UI/Options/options_background_1"));
 
 
-            optionsButtons = new List<Texture2D>();
             optionsButtonsValues = new List<List<Texture2D>>();
-            for(int i=0; i<3; i++)
+            optionsButtonsValuesActivated = new List<List<Texture2D>>();
+
+            for (int i = 0; i < 4; i++)
             {
                 optionsButtonsValues.Add(new List<Texture2D>());
+                optionsButtonsValuesActivated.Add(new List<Texture2D>());
             }
-
-
-            optionsButtons.Add(Content.Load<Texture2D>("UI/Options/0"));
-            optionsButtons.Add(Content.Load<Texture2D>("UI/Options/1"));
-            optionsButtons.Add(Content.Load<Texture2D>("UI/Options/2"));
 
             optionsButtonsValues[0].Add(Content.Load<Texture2D>("UI/Options/0_0"));
             optionsButtonsValues[0].Add(Content.Load<Texture2D>("UI/Options/0_1"));
@@ -62,18 +65,69 @@ namespace KeyPixels.UI
             optionsButtonsValues[2].Add(Content.Load<Texture2D>("UI/Options/2_9"));
             optionsButtonsValues[2].Add(Content.Load<Texture2D>("UI/Options/2_10"));
 
-            optionActivated = optionsButtons[0];
+            optionsButtonsValues[3].Add(Content.Load<Texture2D>("UI/Options/3_0"));
+
+            optionsButtonsValuesActivated[0].Add(Content.Load<Texture2D>("UI/Options/0_0_0"));
+            optionsButtonsValuesActivated[0].Add(Content.Load<Texture2D>("UI/Options/0_1_0"));
+            optionsButtonsValuesActivated[0].Add(Content.Load<Texture2D>("UI/Options/0_2_0"));
+
+            optionsButtonsValuesActivated[1].Add(Content.Load<Texture2D>("UI/Options/1_0_0"));
+            optionsButtonsValuesActivated[1].Add(Content.Load<Texture2D>("UI/Options/1_1_0"));
+
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_0_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_1_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_2_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_3_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_4_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_5_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_6_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_7_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_8_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_9_0"));
+            optionsButtonsValuesActivated[2].Add(Content.Load<Texture2D>("UI/Options/2_10_0"));
+
+            optionsButtonsValuesActivated[3].Add(Content.Load<Texture2D>("UI/Options/3_0_0"));
+
             optionActivatedIndex = 0;
-            
+
 
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            
+            /*for (int i = 0; i < 4; i++)
+            {
+                System.Diagnostics.Debug.Write(optionActivatedValues[i] + " ");
+            }
+            System.Diagnostics.Debug.Write("\nTemp:");
+            for (int i = 0; i < 4; i++)
+            {
+                System.Diagnostics.Debug.Write(tempOptionActivatedValues[i] + " ");
+            }
+            System.Diagnostics.Debug.Write("\n");*/
+
             menu.Draw(gameTime, spriteBatch);
-            spriteBatch.Draw(optionsButtons[optionActivatedIndex], Vector2.Zero, Color.White);
-            for(int i=0; i<3; i++)
-                spriteBatch.Draw(optionsButtonsValues[i][optionActivatedValues[i]], Vector2.Zero, Color.White);
+            if (tempChangesFlag)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i != optionActivatedIndex)
+                        spriteBatch.Draw(optionsButtonsValues[i][optionActivatedValues[i] + tempOptionActivatedValues[i]], Vector2.Zero, Color.White);
+                    else
+                        spriteBatch.Draw(optionsButtonsValuesActivated[optionActivatedIndex][optionActivatedValues[i] + tempOptionActivatedValues[optionActivatedIndex]], Vector2.Zero, Color.White);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (i != optionActivatedIndex)
+                        spriteBatch.Draw(optionsButtonsValues[i][optionActivatedValues[i]], Vector2.Zero, Color.White);
+                    else
+                        spriteBatch.Draw(optionsButtonsValuesActivated[optionActivatedIndex][optionActivatedValues[optionActivatedIndex]], Vector2.Zero, Color.White);
+                }
+            }
         }
 
         public int getButtonIndex()
@@ -88,12 +142,24 @@ namespace KeyPixels.UI
 
         public override void Update(GameTime gameTime)
         {
+
+            if (initializeFlag)
+            {
+                optionActivatedIndex = 0;
+                initializeFlag = false;
+
+                for (int i = 0; i < 4; i++)
+                {
+                    tempOptionActivatedValues[i] = 0;
+                }
+            }
+
             if (!downButtonFlag)
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Down))
                 {
                     optionActivatedIndex++;
-                    optionActivatedIndex %= 3;
+                    optionActivatedIndex %= 4;
                     downButtonFlag = true;
                 }
             }
@@ -109,9 +175,9 @@ namespace KeyPixels.UI
                     optionActivatedIndex--;
 
                     if (optionActivatedIndex < 0)
-                        optionActivatedIndex += 3;
+                        optionActivatedIndex += 4;
 
-                    optionActivatedIndex %= 3;
+                    optionActivatedIndex %= 4;
                     upButtonFlag = true;
                 }
             }
@@ -125,9 +191,9 @@ namespace KeyPixels.UI
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Right))
                 {
-                    if (optionActivatedValues[optionActivatedIndex] < optionActivatedMod[optionActivatedIndex] - 1)
+                    if (optionActivatedValues[optionActivatedIndex] + tempOptionActivatedValues[optionActivatedIndex] < optionActivatedMod[optionActivatedIndex] - 1)
                     {
-                        optionActivatedValues[optionActivatedIndex]++;
+                        tempOptionActivatedValues[optionActivatedIndex]++;
                     }
                     rightButtonFlag = true;
                 }
@@ -142,9 +208,9 @@ namespace KeyPixels.UI
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 {
-                    if (optionActivatedValues[optionActivatedIndex] > 0)
+                    if (optionActivatedValues[optionActivatedIndex] + tempOptionActivatedValues[optionActivatedIndex] > 0)
                     {
-                        optionActivatedValues[optionActivatedIndex]--;
+                        tempOptionActivatedValues[optionActivatedIndex]--;
                     }
                     leftButtonFlag = true;
                 }
@@ -162,6 +228,15 @@ namespace KeyPixels.UI
         public bool goBackFlag()
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool saveChanges()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter) && optionActivatedIndex == 3)
             {
                 return true;
             }

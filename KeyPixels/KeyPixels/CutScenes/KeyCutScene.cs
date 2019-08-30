@@ -35,7 +35,7 @@ namespace KeyPixels
         List<Texture2D> FullKeyTex = new List<Texture2D>();
         List<Texture2D> Kenny = new List<Texture2D>();
         List<Texture2D> KeyTex;
-
+       
         bool flag = true;
         bool incrementFlag = false;
 
@@ -114,13 +114,13 @@ namespace KeyPixels
 
             animateText();
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 keyTimer += 0.05f;
-                if (keyTimer > 7f)
+                if (keyTimer > 5f)
                     textIndex = SceneText.Length;
             }
-            else if (Keyboard.GetState().IsKeyUp(Keys.Escape))
+            else if (Keyboard.GetState().IsKeyUp(Keys.Enter))
             {
                 keyTimer = 0f;
             }

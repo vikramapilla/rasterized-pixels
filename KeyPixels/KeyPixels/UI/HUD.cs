@@ -16,10 +16,10 @@ namespace KeyPixels.UI
         Texture2D HUDBossBackground;
         Texture2D HUDPoint;
         Texture2D HUDPointBoss;
+        List<Texture2D> KeyTexture = new List<Texture2D>();
 
         int healthCount;
         int bossHealthCount;
-
 
         List<Rectangle> healthBar = new List<Rectangle>();
         List<Rectangle> bossHealthBar = new List<Rectangle>();
@@ -30,6 +30,8 @@ namespace KeyPixels.UI
             HUDBossBackground = Content.Load<Texture2D>("HUD/boss_hud_background");
             HUDPoint = Content.Load<Texture2D>("HUD/hud_point");
             HUDPointBoss = Content.Load<Texture2D>("HUD/hud_point1");
+            KeyTexture.Add(Content.Load<Texture2D>("HUD/PickUps/key_1"));
+            KeyTexture.Add(Content.Load<Texture2D>("HUD/PickUps/key_2"));
 
             for (int i = 0; i < 5; i++)
             {
@@ -59,6 +61,15 @@ namespace KeyPixels.UI
             else
                 spriteBatch.Draw(HUDBackground, Vector2.Zero, Color.White);
 
+
+            if (Game1.isKeyFoundIndexHUD == 1)
+            {
+                spriteBatch.Draw(KeyTexture[0], Vector2.Zero, Color.White);
+            }
+            else if (Game1.isKeyFoundIndexHUD == 2 && Game1.mapindex == 3)
+            {
+                spriteBatch.Draw(KeyTexture[1], Vector2.Zero, Color.White);
+            }
 
             for (int i = 0; i < healthCount; i++)
             {

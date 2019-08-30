@@ -81,6 +81,8 @@ namespace KeyPixels
         public static bool ismultitread;
         public static bool multitreadflag;
 
+        public static int isKeyFoundIndexHUD;
+
         HUD gameHUD;
         CutScenes cutScenes;
         KeyCutScene keyCutScene;
@@ -201,8 +203,8 @@ namespace KeyPixels
             optionsMenu = new OptionsMenu();
             optionsMenu.LoadContent(Content);
 
-            key1 = Content.Load<Model>("Models/keypart1");
-            key2 = Content.Load<Model>("Models/keypart2");
+            key1 = Content.Load<Model>("Models/keypart2");
+            key2 = Content.Load<Model>("Models/keypart1");
             skybox = new Skybox("Skyboxes/Islands", Content);
         }
 
@@ -249,6 +251,7 @@ namespace KeyPixels
             {
                 startMenuFlag = false;
                 optionsMenuFlag = true;
+                optionsMenu.tempChangesFlag = true;
 
 
                 /*if (!isGameStarted)
@@ -297,11 +300,13 @@ namespace KeyPixels
             {
                 optionsMenu.Update(gameTime);
                 particleEngine2D.Update();
-                if (optionsMenu.goBackFlag())
-                {
-                    startMenuFlag = true;
-                    optionsMenuFlag = false;
 
+                if (optionsMenu.saveChanges())
+                {
+                    for (int i = 0; i < 4; i++) { 
+                        optionsMenu.optionActivatedValues[i] += optionsMenu.tempOptionActivatedValues[i];
+                        optionsMenu.tempOptionActivatedValues[i] = 0;
+                    }
                     int[] values = optionsMenu.getOptionValues();
                     if (values[0] == 0)
                     {
@@ -328,6 +333,14 @@ namespace KeyPixels
 
                     SoundManager.Volume = (values[2] / 10f);
                 }
+
+                if (optionsMenu.goBackFlag())
+                {
+                    startMenuFlag = true;
+                    optionsMenu.initializeFlag = true;
+                    optionsMenu.tempChangesFlag = false;
+                    optionsMenuFlag = false;
+                }
             }
 
             soundManager.update();
@@ -344,6 +357,7 @@ namespace KeyPixels
             if (isScenePlaying && isKeyFound)
             {
                 keyCutScene.Update(gameTime);
+                System.Diagnostics.Debug.WriteLine("Everytime");
             }
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying && !isGameEnded)
             {
@@ -371,10 +385,11 @@ namespace KeyPixels
                 {
                     Vector3 key_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, 0);//distance to the key
                     telecolldown--;
-                    matrixangle+=0.05f;
+                    matrixangle += 0.05f;
                     if ((key_dis.X < 0.1f && key_dis.X > -0.1f) && (key_dis.Y < 0.1f && key_dis.Y > -0.1f) && (key_dis.Z < 0.1f && key_dis.Z > -0.1f) && telecolldown < 1)
                     {
                         isKeyFound = true;
+                        isKeyFoundIndexHUD = 1;
                         isKeyPickup = true;
                         telecolldown = 50;
                         if (isGameStarted)
@@ -383,15 +398,16 @@ namespace KeyPixels
                         matrixangle = 0f;
                     }
                 }
-                if (keyCutScene.keyFoundIndex==2)
+                if (keyCutScene.keyFoundIndex == 2)
                 {
-                        isKeyFound = true;
-                        isKeyPickup = true;
-                        telecolldown = 50;
-                        if (isGameStarted)
-                            isScenePlaying = true;
-                        isGamePlaying = false;
-                    
+                    isKeyFound = true;
+                    isKeyFoundIndexHUD = 2;
+                    isKeyPickup = true;
+                    telecolldown = 50;
+                    if (isGameStarted)
+                        isScenePlaying = true;
+                    isGamePlaying = false;
+
                 }
                 //Changes when the game is playing goes here
                 angle += 0.0001f;
@@ -486,7 +502,7 @@ namespace KeyPixels
                 {
                     isGamePlaying = false;
                     startMenuFlag = true;
-                    if(soundManager.isPortalPlay)
+                    if (soundManager.isPortalPlay)
                         soundManager.portalEffectPause();
                     soundManager.menuBackgroundMusicPlay();
                 }
@@ -563,7 +579,7 @@ namespace KeyPixels
                 soundManager.portalEffectPlay();
                 testModel(portal, m, viewMatrix, projectionMatrix);
             }
-            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && (mapindex == 1 || mapindex == 3) && isGamePlaying && !isScenePlaying && Spawning.isspawnended&&!isKeyPickup)
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && (mapindex == 1 || mapindex == 3) && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !isKeyPickup)
             {
                 Matrix m = Matrix.CreateRotationY(matrixangle) * Matrix.CreateTranslation(new Vector3(0, 0, 0));
                 if (mapindex == 1)

@@ -218,13 +218,13 @@ namespace KeyPixels
                 Game1.isScenePlaying = false;
                 isDialog = false;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 keyTimer += 0.05f;
-                if (keyTimer > 7f)
+                if (keyTimer > 5f)
                     textIndex = textArray.Length;
             }
-            else if (Keyboard.GetState().IsKeyUp(Keys.Escape))
+            else if (Keyboard.GetState().IsKeyUp(Keys.Enter))
             {
                 keyTimer = 0f;
             }
