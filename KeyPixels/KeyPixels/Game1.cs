@@ -29,6 +29,9 @@ namespace KeyPixels
         Model particle;
         Model projectile;
 
+        Model key1;
+        Model key2;
+
         Model portal;
         ParticleEngine portalParticle;
 
@@ -72,6 +75,7 @@ namespace KeyPixels
         public static bool isTeleportPlaying;
         public static bool isScenePlaying;
         public static bool isKeyFound;
+        public static bool isKeyPickup;
         public static bool isBossFight;
 
         public static bool ismultitread;
@@ -96,6 +100,7 @@ namespace KeyPixels
         Vector3 cameraPosition;
         float angle = 0;
         float distance = 20;
+        float matrixangle;
 
         public Game1()
         {
@@ -137,10 +142,12 @@ namespace KeyPixels
             isGamePlaying = false;
             isTeleportPlaying = false;
             isKeyFound = false;
+            isKeyPickup = false;
             isScenePlaying = false;
 
             ismultitread = false;
 
+            float matrixangle = 0f;
             sceneIndex = 0;
             base.Initialize();
         }
@@ -194,6 +201,8 @@ namespace KeyPixels
             optionsMenu = new OptionsMenu();
             optionsMenu.LoadContent(Content);
 
+            key1 = Content.Load<Model>("Models/keypart1");
+            key2 = Content.Load<Model>("Models/keypart2");
             skybox = new Skybox("Skyboxes/Islands", Content);
         }
 
@@ -275,7 +284,7 @@ namespace KeyPixels
             {
                 controlsMenu.Update(gameTime);
                 particleEngine2D.Update();
-                
+
 
                 if (controlsMenu.goBackFlag())
                 {
@@ -294,11 +303,12 @@ namespace KeyPixels
                     optionsMenuFlag = false;
 
                     int[] values = optionsMenu.getOptionValues();
-                    if(values[0] == 0)
+                    if (values[0] == 0)
                     {
                         graphics.PreferredBackBufferWidth = 1024;
                         graphics.PreferredBackBufferHeight = 576;
-                    }else if(values[0] == 1)
+                    }
+                    else if (values[0] == 1)
                     {
                         graphics.PreferredBackBufferWidth = 1280;
                         graphics.PreferredBackBufferHeight = 720;
@@ -315,7 +325,7 @@ namespace KeyPixels
                         graphics.IsFullScreen = true;
 
                     graphics.ApplyChanges();
-                    
+
                     SoundManager.Volume = (values[2] / 10f);
                 }
             }
@@ -343,7 +353,7 @@ namespace KeyPixels
                 {
                     boss.update(shots, player, ref map.QTree);
                 }
-                if (Enemy.worldMatrix.Count == 0 && mapindex != 4 && Spawning.isspawnended)
+                if (Enemy.worldMatrix.Count == 0 && ((mapindex == 0 || mapindex == 2) || ((mapindex == 1 || mapindex == 3) && isKeyPickup)) && Spawning.isspawnended)
                 {
                     //change.update(ref sp, ref mapindex, ref player, ref map, ref shots, Content);
                     Vector3 tele_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, -4);//distance to the Teleporter
@@ -356,6 +366,32 @@ namespace KeyPixels
                         soundManager.portalEffectStop();
                         telecolldown = 50;
                     }
+                }
+                if ((mapindex == 1 || mapindex == 3) && Enemy.worldMatrix.Count == 0 && !isKeyPickup)
+                {
+                    Vector3 key_dis = player.getCurrentPlayerPosition() - new Vector3(0, 0, 0);//distance to the key
+                    telecolldown--;
+                    matrixangle+=0.05f;
+                    if ((key_dis.X < 0.1f && key_dis.X > -0.1f) && (key_dis.Y < 0.1f && key_dis.Y > -0.1f) && (key_dis.Z < 0.1f && key_dis.Z > -0.1f) && telecolldown < 1)
+                    {
+                        isKeyFound = true;
+                        isKeyPickup = true;
+                        telecolldown = 50;
+                        if (isGameStarted)
+                            isScenePlaying = true;
+                        isGamePlaying = false;
+                        matrixangle = 0f;
+                    }
+                }
+                if (keyCutScene.keyFoundIndex==2)
+                {
+                        isKeyFound = true;
+                        isKeyPickup = true;
+                        telecolldown = 50;
+                        if (isGameStarted)
+                            isScenePlaying = true;
+                        isGamePlaying = false;
+                    
                 }
                 //Changes when the game is playing goes here
                 angle += 0.0001f;
@@ -519,7 +555,7 @@ namespace KeyPixels
             {
                 sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
             }
-            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && (mapindex == 0||mapindex==2) && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !startMenuFlag)
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && (mapindex == 0 || mapindex == 2) && isGamePlaying && !isScenePlaying && Spawning.isspawnended)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 portalParticle.Update();
@@ -527,7 +563,16 @@ namespace KeyPixels
                 soundManager.portalEffectPlay();
                 testModel(portal, m, viewMatrix, projectionMatrix);
             }
-            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && ((mapindex == 1|| mapindex == 3) && isKeyFound) && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !startMenuFlag)
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && (mapindex == 1 || mapindex == 3) && isGamePlaying && !isScenePlaying && Spawning.isspawnended&&!isKeyPickup)
+            {
+                Matrix m = Matrix.CreateRotationY(matrixangle) * Matrix.CreateTranslation(new Vector3(0, 0, 0));
+                if (mapindex == 1)
+                {
+                    testModel(key1, m, viewMatrix, projectionMatrix);
+                }
+                else testModel(key2, m, viewMatrix, projectionMatrix);
+            }
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && ((mapindex == 1 || mapindex == 3) && isKeyPickup) && isGamePlaying && !isScenePlaying && Spawning.isspawnended)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 portalParticle.Update();
@@ -642,7 +687,7 @@ namespace KeyPixels
                     effect.World = worldMatrix;
                     effect.View = _viewMatrix;
                     effect.Projection = _projectionMatrix;
-                    effect.DiffuseColor = Color.DarkMagenta.ToVector3();
+                    //effect.DiffuseColor = Color.DarkMagenta.ToVector3();
                     //                    effect.AmbientLightColor = Color.Gray.ToVector3();
                     effect.Alpha = 1.0f;
 

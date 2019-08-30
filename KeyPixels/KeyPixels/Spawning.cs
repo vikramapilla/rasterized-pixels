@@ -17,7 +17,7 @@ namespace KeyPixels
         //List<Enemy> elist;
         int n;
         int spawnrate;
-        int maxenemy=40;
+        int maxenemy=4;
         int samemax=30;
         public static bool isspawnended = false;
 

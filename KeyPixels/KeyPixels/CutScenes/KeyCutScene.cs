@@ -43,6 +43,7 @@ namespace KeyPixels
         int kennyIndex = 0;
         bool textInQueue = false;
 
+        private float keyTimer = 0f;
         private int textTimer = 0;
         private int animationTimer = 0;
 
@@ -113,12 +114,24 @@ namespace KeyPixels
 
             animateText();
 
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
+                keyTimer += 0.05f;
+                if (keyTimer > 7f)
+                    textIndex = SceneText.Length;
+            }
+            else if (Keyboard.GetState().IsKeyUp(Keys.Escape))
+            {
+                keyTimer = 0f;
+            }
+
             if (textIndex == SceneText.Length)
             {
                 textIndex = 0;
                 incrementFlag = false;
                 Game1.isKeyFound = false;
                 Game1.isScenePlaying = false;
+                Game1.isGamePlaying = true;
             }
 
         }
