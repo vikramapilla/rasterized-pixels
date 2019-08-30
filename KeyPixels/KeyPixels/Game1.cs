@@ -151,13 +151,13 @@ namespace KeyPixels
             spriteBatch = new SpriteBatch(GraphicsDevice);
             playerModel = Content.Load<Model>("Models/Body_Tria");
             ground = Content.Load<Model>("Models/Ground_Tex");
-            wall = Content.Load<Model>("Models/Wall_Long_Tex");
+            wall = Content.Load<Model>("Models/Wall_Long_Small");
             particle = Content.Load<Model>("Models/Shot_Tria");
             shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
             shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Blue);
-            shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Green);
-            shots.addModel(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Violet);
+            shots.addModel(Content, "Models/Shot_Big", 0.05f, new Vector3(0, 0, 1), Color.Green);
+            shots.addModel(Content, "Models/Shot_Big2", 0.05f, new Vector3(0, 0, 1), Color.Violet);
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
@@ -517,7 +517,15 @@ namespace KeyPixels
             {
                 sp.GetEnemy().Draw(ref viewMatrix, ref projectionMatrix);
             }
-            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && mapindex != 4 && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !startMenuFlag)
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && (mapindex == 0||mapindex==2) && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !startMenuFlag)
+            {
+                Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
+                portalParticle.Update();
+                portalParticle.Draw();
+                soundManager.portalEffectPlay();
+                testModel(portal, m, viewMatrix, projectionMatrix);
+            }
+            if (Enemy.worldMatrix.Count == 0 && !isTeleportPlaying && ((mapindex == 1|| mapindex == 3) && isKeyFound) && isGamePlaying && !isScenePlaying && Spawning.isspawnended && !startMenuFlag)
             {
                 Matrix m = Matrix.CreateTranslation(new Vector3(0, 0, -4));
                 portalParticle.Update();
