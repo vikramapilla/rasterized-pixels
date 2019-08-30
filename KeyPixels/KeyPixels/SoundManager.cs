@@ -20,7 +20,7 @@ namespace KeyPixels
         SoundEffect burstMove, portalShrine, mapChange;
         SoundEffectInstance portal;
 
-        bool isPortalPlay = false;
+        public bool isPortalPlay = false;
 
         public static float Volume;
 
@@ -52,7 +52,7 @@ namespace KeyPixels
 
         public void typingEffect()
         {
-            typing.Play();  
+            typing.Play();
         }
 
         public void menuBackgroundMusicPlay()
@@ -67,32 +67,48 @@ namespace KeyPixels
 
         public void shotEffect()
         {
-            shot.Play(Volume, 0, 0);
+            if (Game1.isGamePlaying)
+                shot.Play(Volume, 0, 0);
         }
 
         public void wallShotEffect()
         {
-            wallShot.Play(Volume, 0, 0);
+            if (Game1.isGamePlaying)
+                wallShot.Play(Volume, 0, 0);
         }
 
         public void enemyShotEffect()
         {
-            enemyShot.Play(Volume, 0, 0);
+            if (Game1.isGamePlaying)
+                enemyShot.Play(Volume, 0, 0);
         }
 
         public void burstEffect()
         {
-            burstMove.Play(Volume, 0, 0);
+            if (Game1.isGamePlaying)
+                burstMove.Play(Volume, 0, 0);
         }
 
         public void portalEffectPlay()
         {
-            if (!isPortalPlay)
+            if (Game1.isGamePlaying)
             {
-                portal.Volume = Volume;
-                portal.Play();
-                isPortalPlay = true;
+                if (!isPortalPlay)
+                {
+                    portal.Volume = Volume;
+                    portal.Play();
+                    isPortalPlay = true;
+                }
+                else
+                {
+                    portal.Resume();
+                }
             }
+        }
+
+        public void portalEffectPause()
+        {
+            portal.Pause();
         }
 
         public void portalEffectStop()

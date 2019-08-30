@@ -450,6 +450,8 @@ namespace KeyPixels
                 {
                     isGamePlaying = false;
                     startMenuFlag = true;
+                    if(soundManager.isPortalPlay)
+                        soundManager.portalEffectPause();
                     soundManager.menuBackgroundMusicPlay();
                 }
             }
