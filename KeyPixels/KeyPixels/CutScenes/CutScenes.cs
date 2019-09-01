@@ -40,7 +40,7 @@ namespace KeyPixels
                                 ". . . . . . . .", ". . . . . . . .", ". . . . . . . .", //26
                                 "Kenny: Huh? I got a message!", "Kenny: Who is this? Boss Enemy?",  "Kenny: Who is Boss Enemy?", //29
                                 "Kenny: \"I locked your friend Jenny\"", "Kenny: \"If you want to save her, come to me!\"",//31
-                                "Kenny: \"The key to the door is everything you need.\"","Kenny: I gotta save Jenny, now!" //33
+                                "Kenny: \"The key to the door is everything you need.\"","Kenny: Oh no! I gotta save Jenny, now!" //33
         };
         String text = "";
         Queue<char> stringQueue = new Queue<char>();

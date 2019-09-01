@@ -71,12 +71,16 @@ namespace KeyPixels
         bool optionsMenuFlag;
         public static bool isGameStarted;
         public static bool isGameEnded;
+        public static bool isGameCompletelyEnded;
         public static bool isGamePlaying;
+        public static bool isCreditsPlaying;
         public static bool isTeleportPlaying;
         public static bool isScenePlaying;
         public static bool isKeyFound;
         public static bool isKeyPickup;
         public static bool isBossFight;
+        public static bool isEndCutScene1;
+        public static bool isEndCutScene2;
 
         public static bool ismultitread;
         public static bool multitreadflag;
@@ -86,6 +90,7 @@ namespace KeyPixels
         HUD gameHUD;
         CutScenes cutScenes;
         KeyCutScene keyCutScene;
+        EndCutScene endCutScene;
         int sceneIndex;
 
         public static SoundManager soundManager;
@@ -141,11 +146,14 @@ namespace KeyPixels
             optionsMenuFlag = false;
             isGameStarted = false;
             isGameEnded = false;
+            isGameCompletelyEnded = false;
             isGamePlaying = false;
             isTeleportPlaying = false;
             isKeyFound = false;
             isKeyPickup = false;
             isScenePlaying = false;
+            isEndCutScene1 = false;
+            isEndCutScene2 = false;
 
             ismultitread = false;
 
@@ -183,6 +191,8 @@ namespace KeyPixels
             cutScenes.LoadContent(Content);
             keyCutScene = new KeyCutScene();
             keyCutScene.LoadContent(Content);
+            endCutScene = new EndCutScene();
+            endCutScene.LoadContent(Content);
             soundManager = new SoundManager();
             soundManager.LoadContent(Content);
             portal = Content.Load<Model>("Models/Portal_Tex");
@@ -230,6 +240,15 @@ namespace KeyPixels
             else
             {
                 isBossFight = false;
+            }
+            if (isBossFight && !isTeleportPlaying && !isEndCutScene1)
+            {
+                isGamePlaying = false;
+                isScenePlaying = true;
+            }
+            if (isBossFight && !isGamePlaying && isScenePlaying && !isTeleportPlaying && !isEndCutScene1)
+            {
+                endCutScene.Update(gameTime);
             }
 
             if (startMenuFlag)
@@ -303,7 +322,8 @@ namespace KeyPixels
 
                 if (optionsMenu.saveChanges())
                 {
-                    for (int i = 0; i < 4; i++) { 
+                    for (int i = 0; i < 4; i++)
+                    {
                         optionsMenu.optionActivatedValues[i] += optionsMenu.tempOptionActivatedValues[i];
                         optionsMenu.tempOptionActivatedValues[i] = 0;
                     }
@@ -357,7 +377,6 @@ namespace KeyPixels
             if (isScenePlaying && isKeyFound)
             {
                 keyCutScene.Update(gameTime);
-                System.Diagnostics.Debug.WriteLine("Everytime");
             }
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying && !isGameEnded)
             {
@@ -527,9 +546,22 @@ namespace KeyPixels
                     Exit();
                 }
             }
+            else if (Boss.healthCounter <= 0) //After boss Dies, end the game
+            {
+                isEndCutScene2 = true;
+                isGameEnded = true;
+                isGamePlaying = false;
+                endCutScene.Update(gameTime);
+            }
+            if (isGameCompletelyEnded)
+            {
+                Initialize();
+                LoadContent();
+                isGameEnded = false;
+                isGameCompletelyEnded = false;
+            }
 
         }
-
 
 
         protected override void Draw(GameTime gameTime)
@@ -640,6 +672,19 @@ namespace KeyPixels
             if (isKeyFound)
                 keyCutScene.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
 
+            if (isBossFight && !isGamePlaying && isScenePlaying && !isTeleportPlaying && !isEndCutScene1)
+            {
+                endCutScene.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
+            }
+            if(isEndCutScene2 && !isGamePlaying)
+            {
+                endCutScene.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
+            }
+            if (isEndCutScene2 & isCreditsPlaying && isGameEnded) {
+
+                particleEngine2D.Update();
+                particleEngine2D.Draw(spriteBatch);
+            }
             spriteBatch.End();
 
         }

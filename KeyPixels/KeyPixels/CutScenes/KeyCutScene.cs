@@ -82,6 +82,9 @@ namespace KeyPixels
             {
                 keyFoundIndex++;
                 incrementFlag = true;
+                text = "";
+                textInQueue = false;
+                stringQueue = new Queue<char>();
             }
 
             if (keyFoundIndex == 1)

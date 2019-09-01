@@ -42,6 +42,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Boss.cs" />
+    <Compile Include="CutScenes\EndCutScene.cs" />
     <Compile Include="CutScenes\KeyCutScene.cs" />
     <Compile Include="Mapchange.cs" />
     <Compile Include="Component.cs" />
