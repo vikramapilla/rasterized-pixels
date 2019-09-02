@@ -139,6 +139,10 @@ namespace KeyPixels.UI
         {
             return optionActivatedValues;
         }
+        public void setOptionValues(int[] value)
+        {
+            optionActivatedValues=value;
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -161,6 +165,7 @@ namespace KeyPixels.UI
                     optionActivatedIndex++;
                     optionActivatedIndex %= 4;
                     downButtonFlag = true;
+                    Game1.soundManager.menuclickEffect();
                 }
             }
             if (Keyboard.GetState().IsKeyUp(Keys.Down))
@@ -173,6 +178,7 @@ namespace KeyPixels.UI
                 if (Keyboard.GetState().IsKeyDown(Keys.Up))
                 {
                     optionActivatedIndex--;
+                    Game1.soundManager.menuclickEffect();
 
                     if (optionActivatedIndex < 0)
                         optionActivatedIndex += 4;
@@ -227,6 +233,7 @@ namespace KeyPixels.UI
 
         public bool goBackFlag()
         {
+            Game1.soundManager.menuclickEffect();
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
                 return true;

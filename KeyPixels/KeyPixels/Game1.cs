@@ -170,11 +170,11 @@ namespace KeyPixels
             ground = Content.Load<Model>("Models/Ground_Tex");
             wall = Content.Load<Model>("Models/Wall_Long_Small");
             particle = Content.Load<Model>("Models/Shot_Tria");
-            shots = new Shots(Content, "Models/Shot_Tria", 0.05f, new Vector3(0, 0, 1), Color.Red);
+            shots = new Shots(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
-            shots.addModel(Content, "Models/Shot_Tria3", 0.05f, new Vector3(0, 0, 1), Color.Blue);
-            shots.addModel(Content, "Models/Shot_Big", 0.05f, new Vector3(0, 0, 1), Color.Green);
-            shots.addModel(Content, "Models/Shot_Big2", 0.05f, new Vector3(0, 0, 1), Color.Violet);
+            shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.Blue);
+            shots.addModel(Content, "Models/Shot_Big2", 0.05f, new Vector3(0, 0, 1), Color.Green);
+            shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.Violet);
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
@@ -264,13 +264,17 @@ namespace KeyPixels
                 if (!isGameStarted)
                     isScenePlaying = true;
                 isGameStarted = true;
+
+                soundManager.menuclickEffect();
                 soundManager.menuBackgroundMusicStop();
+                soundManager.BackgroundMusicPlay();
             }
             else if (startMenuFlag && testMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
                 startMenuFlag = false;
                 optionsMenuFlag = true;
                 optionsMenu.tempChangesFlag = true;
+                soundManager.menuclickEffect();
 
 
                 /*if (!isGameStarted)
@@ -281,13 +285,20 @@ namespace KeyPixels
             {
                 startMenuFlag = false;
                 controlsMenuFlag = true;
+                soundManager.menuclickEffect();
             }
+            else if (startMenuFlag && testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            {
+                soundManager.menuclickEffect();
+                Exit();
+            }
+
             //test for multitread
-            else if (Keyboard.GetState().IsKeyUp(Keys.Enter))
+            if (Keyboard.GetState().IsKeyUp(Keys.NumPad1))
             {
                 multitreadflag = false;
             }
-            else if (startMenuFlag && testMenu.getButtonIndex() == 2 && Keyboard.GetState().IsKeyDown(Keys.Enter))
+            if (Keyboard.GetState().IsKeyDown(Keys.NumPad1))
             {
                 if (!multitreadflag)
                 {
@@ -297,10 +308,6 @@ namespace KeyPixels
                 }
             }
             //
-            else if (startMenuFlag && testMenu.getButtonIndex() == 3 && Keyboard.GetState().IsKeyDown(Keys.Enter))
-            {
-                Exit();
-            }
 
             if (!startMenuFlag && controlsMenuFlag)
             {
@@ -385,6 +392,11 @@ namespace KeyPixels
                 if (mapindex == 4)
                 {
                     boss.update(shots, player, ref map.QTree);
+                    if (!soundManager.fightPlay)
+                    {
+                        soundManager.FightMusicPlay();
+                        soundManager.fightPlay = true;
+                    }
                 }
                 if (Enemy.worldMatrix.Count == 0 && ((mapindex == 0 || mapindex == 2) || ((mapindex == 1 || mapindex == 3) && isKeyPickup)) && Spawning.isspawnended)
                 {
@@ -485,8 +497,8 @@ namespace KeyPixels
                     {
 
                     }
-                    System.Console.WriteLine(Enemy.worldMatrix.Count);
-                    System.Console.WriteLine(ismultitread);
+                    //System.Console.WriteLine(Enemy.worldMatrix.Count);
+                    //System.Console.WriteLine(ismultitread);
                     if (!ismultitread) { sp.GetEnemy().enemyChase(player, ref map.QTree); }
                     else if (Enemy.worldMatrix.Count >= 1)
                     {
@@ -537,9 +549,25 @@ namespace KeyPixels
                 particleEngine2D.Update();
                 if (endMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {
+                    int rewith = graphics.PreferredBackBufferWidth;
+                    int reheight = graphics.PreferredBackBufferHeight;
+                    bool refull = graphics.IsFullScreen;
+                    float resound = SoundManager.Volume;
+                    int[] values = optionsMenu.getOptionValues();
+
                     Initialize();
                     LoadContent();
                     isGameEnded = false;
+
+                    graphics.PreferredBackBufferWidth=rewith;
+                    graphics.PreferredBackBufferHeight=reheight;
+                    graphics.IsFullScreen=refull;
+                    graphics.ApplyChanges();
+                    optionsMenu.setOptionValues(values);
+                    SoundManager.Volume=resound;
+
+
+
                 }
                 else if (endMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {

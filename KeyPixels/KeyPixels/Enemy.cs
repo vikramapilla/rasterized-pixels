@@ -457,6 +457,7 @@ namespace KeyPixels
                         {
                             Player.healthCounter--;
                             Player.healthCoolDown = Player.HealthCoolDown;
+                            Game1.soundManager.hurtEffect();
                         }
                         return true;
                     }

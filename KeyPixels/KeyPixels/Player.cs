@@ -27,6 +27,8 @@ namespace KeyPixels
         public CreateBoundingBox cbBarm2;
         public CreateBoundingBox cbBarm3;
 
+        //SoundManager soundManager;
+
         Model particle;
         List<ParticleEngine> ParticleEngines;
 
@@ -562,7 +564,7 @@ namespace KeyPixels
                     Game1.soundManager.enemyShotEffect();
                     ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
                     healthCounter--;
-
+                    Game1.soundManager.hurtEffect();
                     healthCoolDown = HealthCoolDown;
                 }
                 //worldMatrix.Remove(worldMatrix[n]);//disapear
@@ -580,6 +582,7 @@ namespace KeyPixels
                     ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
 
                     healthCounter--;
+                    Game1.soundManager.hurtEffect();
 
                     healthCoolDown = HealthCoolDown;
                 }

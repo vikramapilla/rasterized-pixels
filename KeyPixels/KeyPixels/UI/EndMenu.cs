@@ -40,6 +40,7 @@ namespace KeyPixels.UI
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Right))
                 {
+                    Game1.soundManager.menuclickEffect();
                     menu.buttonIndex++;
                     menu.buttonIndex %= 2;
                     rightButtonFlag = true;
@@ -54,6 +55,7 @@ namespace KeyPixels.UI
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 {
+                    Game1.soundManager.menuclickEffect();
                     menu.buttonIndex--;
 
                     if (menu.buttonIndex < 0)

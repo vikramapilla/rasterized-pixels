@@ -2393,3 +2393,113 @@
 /processorParam:TextureFormat=Color
 /build:CutScenes/Credits/4_0.png
 
+#begin Models/Shot_Big3.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=Compressed
+/build:Models/Shot_Big3.fbx
+
+#begin Models/Shot_Big4.fbx
+/importer:FbxImporter
+/processor:ModelProcessor
+/processorParam:ColorKeyColor=0,0,0,0
+/processorParam:ColorKeyEnabled=True
+/processorParam:DefaultEffect=BasicEffect
+/processorParam:GenerateMipmaps=True
+/processorParam:GenerateTangentFrames=False
+/processorParam:PremultiplyTextureAlpha=True
+/processorParam:PremultiplyVertexColors=True
+/processorParam:ResizeTexturesToPowerOfTwo=False
+/processorParam:RotationX=0
+/processorParam:RotationY=0
+/processorParam:RotationZ=0
+/processorParam:Scale=1
+/processorParam:SwapWindingOrder=False
+/processorParam:TextureFormat=Compressed
+/build:Models/Shot_Big4.fbx
+
+#begin Audio/434833__notyermom__selection-sound.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/434833__notyermom__selection-sound.wav
+
+#begin Audio/Player/170523__alexkandrell__royal-sparkle-whoosh-centre.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/170523__alexkandrell__royal-sparkle-whoosh-centre.wav
+
+#begin Audio/Player/377600__yudena__magic-bymondfisch89.ogg
+/importer:OggImporter
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/377600__yudena__magic-bymondfisch89.ogg
+
+#begin Audio/Player/401324__alanmcki__magical-portal-open.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/401324__alanmcki__magical-portal-open.wav
+
+#begin Audio/Shooting/347052__giomilko__kick-002.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/347052__giomilko__kick-002.wav
+
+#begin Audio/Shooting/350920__cabled-mess__hurt-c-06.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/350920__cabled-mess__hurt-c-06.wav
+
+#begin Audio/Shooting/457195__antikore__8-bit-damage.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/457195__antikore__8-bit-damage.wav
+
+#begin Audio/Songs/337789__astronautchild__one-year-of-error-in-human-calendar.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Songs/337789__astronautchild__one-year-of-error-in-human-calendar.mp3
+
+#begin Audio/Songs/377873__sirkoto51__stress-music-ambient-loop.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Songs/377873__sirkoto51__stress-music-ambient-loop.mp3
+
+#begin Audio/Songs/416632__sirkoto51__castle-music-loop-1.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Songs/416632__sirkoto51__castle-music-loop-1.mp3
+
+#begin Audio/Songs/443128__sirkoto51__boss-battle-loop-3.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Songs/443128__sirkoto51__boss-battle-loop-3.mp3
+
+#begin Audio/145443__soughtaftersounds__menu-click-dry.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/145443__soughtaftersounds__menu-click-dry.wav
+
