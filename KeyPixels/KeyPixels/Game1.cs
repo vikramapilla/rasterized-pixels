@@ -84,6 +84,7 @@ namespace KeyPixels
 
         public static bool ismultitread;
         public static bool multitreadflag;
+        public static bool damage;
 
         public static int isKeyFoundIndexHUD;
 
@@ -173,7 +174,7 @@ namespace KeyPixels
             shots = new Shots(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), Color.Red);
             shots.initialize(Content);
             shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.Blue);
-            shots.addModel(Content, "Models/Shot_Big2", 0.05f, new Vector3(0, 0, 1), Color.Green);
+            shots.addModel(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), Color.Green);
             shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.Violet);
             numberShot = 0;
             player = new Player();
@@ -195,6 +196,7 @@ namespace KeyPixels
             endCutScene.LoadContent(Content);
             soundManager = new SoundManager();
             soundManager.LoadContent(Content);
+            SoundManager.Volume = 0.5f;
             portal = Content.Load<Model>("Models/Portal_Tex");
             projectile = Content.Load<Model>("Models/partical");
             portalParticle = new ParticleEngine(projectile, new Vector3(0, 0, -4), 0, "Portal", int.MaxValue);
@@ -248,6 +250,11 @@ namespace KeyPixels
             }
             if (isBossFight && !isGamePlaying && isScenePlaying && !isTeleportPlaying && !isEndCutScene1)
             {
+                if (!soundManager.isCutscenePlay)
+                {
+                    soundManager.CutsceneMusicPlay();
+                    soundManager.isCutscenePlay = true;
+                }
                 endCutScene.Update(gameTime);
             }
 
@@ -267,7 +274,14 @@ namespace KeyPixels
 
                 soundManager.menuclickEffect();
                 soundManager.menuBackgroundMusicStop();
-                soundManager.BackgroundMusicPlay();
+                
+                if (mapindex == 4)
+                {
+                    soundManager.FightMusicPlay();
+                    soundManager.fightPlay = true;
+                    
+                }
+                else soundManager.BackgroundMusicPlay();
             }
             else if (startMenuFlag && testMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
             {
@@ -374,6 +388,11 @@ namespace KeyPixels
 
             if (isGamePlaying && isScenePlaying)
             {
+                if (!soundManager.isCutscenePlay)
+                {
+                    soundManager.CutsceneMusicPlay();
+                    soundManager.isCutscenePlay = true;
+                }
                 cutScenes.Update(gameTime, sceneIndex);
             }
             if (isGamePlaying && isTeleportPlaying)
@@ -383,11 +402,28 @@ namespace KeyPixels
             }
             if (isScenePlaying && isKeyFound)
             {
+                if (!soundManager.isCutscenePlay)
+                {
+                    soundManager.CutsceneMusicPlay();
+                    soundManager.isCutscenePlay = true;
+                }
                 keyCutScene.Update(gameTime);
             }
             if (isGamePlaying && !isScenePlaying && !isTeleportPlaying && !isGameEnded)
             {
 
+                if (keyCutScene.keyFoundIndex == 2)
+                {
+                    isKeyFound = true;
+                    isKeyFoundIndexHUD = 2;
+                    isKeyPickup = true;
+                    telecolldown = 50;
+                    if (isGameStarted)
+                        isScenePlaying = true;
+                    isGamePlaying = false;
+
+                }
+                else soundManager.isCutscenePlay = false;
 
                 if (mapindex == 4)
                 {
@@ -428,17 +464,6 @@ namespace KeyPixels
                         isGamePlaying = false;
                         matrixangle = 0f;
                     }
-                }
-                if (keyCutScene.keyFoundIndex == 2)
-                {
-                    isKeyFound = true;
-                    isKeyFoundIndexHUD = 2;
-                    isKeyPickup = true;
-                    telecolldown = 50;
-                    if (isGameStarted)
-                        isScenePlaying = true;
-                    isGamePlaying = false;
-
                 }
                 //Changes when the game is playing goes here
                 angle += 0.0001f;
@@ -580,13 +605,31 @@ namespace KeyPixels
                 isGameEnded = true;
                 isGamePlaying = false;
                 endCutScene.Update(gameTime);
+                if (!soundManager.isCutscenePlay)
+                {
+                    soundManager.CutsceneMusicPlay();
+                    soundManager.isCutscenePlay = true;
+                }
             }
             if (isGameCompletelyEnded)
             {
+                int rewith = graphics.PreferredBackBufferWidth;
+                int reheight = graphics.PreferredBackBufferHeight;
+                bool refull = graphics.IsFullScreen;
+                float resound = SoundManager.Volume;
+                int[] values = optionsMenu.getOptionValues();
+
                 Initialize();
                 LoadContent();
                 isGameEnded = false;
                 isGameCompletelyEnded = false;
+
+                graphics.PreferredBackBufferWidth = rewith;
+                graphics.PreferredBackBufferHeight = reheight;
+                graphics.IsFullScreen = refull;
+                graphics.ApplyChanges();
+                optionsMenu.setOptionValues(values);
+                SoundManager.Volume = resound;
             }
 
         }
@@ -598,7 +641,14 @@ namespace KeyPixels
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
+            
 
+            if (damage)
+            {
+                System.Console.WriteLine(damage);
+                damagedraw();
+                damage = false;
+            }
 
             // TODO: Add your drawing code here
             shots.Draw(ref viewMatrix, ref projectionMatrix);
@@ -746,6 +796,7 @@ namespace KeyPixels
         }
         public static void Draw3DModelColor(Model model, Matrix worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix, Color _color)
         {
+            
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
@@ -823,6 +874,10 @@ namespace KeyPixels
                 bazcolldown = 1;
             }
             return player.worldMatrix.Translation;
+        }
+        public void damagedraw()
+        {
+            Draw3DModelColor(playerModel, player.worldMatrix * Matrix.CreateScale(1.001f), viewMatrix, projectionMatrix, Color.Red);
         }
 
         public static int numberOfShots()

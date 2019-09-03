@@ -287,6 +287,7 @@ namespace KeyPixels
                 {
                     isPickUp = false;
                     pickedUpIndex = pickUpIndex;
+                    Game1.soundManager.pickupEffect();
                     return true;
                 }
             }

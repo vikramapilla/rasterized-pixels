@@ -216,6 +216,8 @@ namespace KeyPixels
             if (stringQueue.Count == 0 && textIndex == textArray.Length)
             {
                 Game1.isScenePlaying = false;
+                Game1.soundManager.isCutscenePlay = false;
+                Game1.soundManager.BackgroundMusicPlay();
                 isDialog = false;
             }
             if (Keyboard.GetState().IsKeyDown(Keys.Enter))

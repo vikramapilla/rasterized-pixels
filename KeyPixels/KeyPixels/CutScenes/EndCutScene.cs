@@ -158,6 +158,9 @@ namespace KeyPixels
                     Game1.isEndCutScene1 = true;
                     incrementFlag = false;
                     System.Diagnostics.Debug.WriteLine("Scene 1 Ended");
+
+                    Game1.soundManager.isCutscenePlay = false;
+                    Game1.soundManager.BackgroundMusicPlay();
                 }
                 else if (sceneIndex == 2)
                 {

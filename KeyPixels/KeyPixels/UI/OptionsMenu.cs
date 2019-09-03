@@ -95,7 +95,7 @@ namespace KeyPixels.UI
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            
+
             /*for (int i = 0; i < 4; i++)
             {
                 System.Diagnostics.Debug.Write(optionActivatedValues[i] + " ");
@@ -141,7 +141,7 @@ namespace KeyPixels.UI
         }
         public void setOptionValues(int[] value)
         {
-            optionActivatedValues=value;
+            optionActivatedValues = value;
         }
 
         public override void Update(GameTime gameTime)
@@ -197,6 +197,8 @@ namespace KeyPixels.UI
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Right))
                 {
+
+                    Game1.soundManager.menuclickEffect();
                     if (optionActivatedValues[optionActivatedIndex] + tempOptionActivatedValues[optionActivatedIndex] < optionActivatedMod[optionActivatedIndex] - 1)
                     {
                         tempOptionActivatedValues[optionActivatedIndex]++;
@@ -214,6 +216,8 @@ namespace KeyPixels.UI
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.Left))
                 {
+
+                    Game1.soundManager.menuclickEffect();
                     if (optionActivatedValues[optionActivatedIndex] + tempOptionActivatedValues[optionActivatedIndex] > 0)
                     {
                         tempOptionActivatedValues[optionActivatedIndex]--;
@@ -233,9 +237,9 @@ namespace KeyPixels.UI
 
         public bool goBackFlag()
         {
-            Game1.soundManager.menuclickEffect();
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
+                Game1.soundManager.menuclickEffect();
                 return true;
             }
             return false;
@@ -245,6 +249,7 @@ namespace KeyPixels.UI
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && optionActivatedIndex == 3)
             {
+                Game1.soundManager.menuclickEffect();
                 return true;
             }
             return false;

@@ -14,7 +14,6 @@ namespace KeyPixels
     {
         List<int[,]> _mapList;
         Enemy enemy;
-        //List<Enemy> elist;
         int n;
         int spawnrate;
         int maxenemy=4;
@@ -25,7 +24,6 @@ namespace KeyPixels
         {
             _mapList = mapList;
             enemy = new Enemy();
-            //elist = new List<Enemy>();
             n = 0;
             isspawnended = false;
         }
@@ -69,10 +67,7 @@ namespace KeyPixels
                 
                 if (a[j, i] != 0)
                 {
-
-                    //if ((Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > 2) || (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < -2) ||
-                    //    (Game1.getPosition().X - posx * 2 - i * 2 > 2 && Game1.getPosition().Z - posz * 2 - j * 2 > -2) || (Game1.getPosition().X - posx * 2 - i * 2 < -2 && Game1.getPosition().Z - posz * 2 - j * 2 < 2))
-                    //{
+                    
                     if (((player.getCurrentPlayerPosition().X - ((posx * 2) - (i * 2))) > 1 || player.getCurrentPlayerPosition().X - (posx * 2 - i * 2) < -1) && (player.getCurrentPlayerPosition().Z - (posz * 2 - j * 2) < 1 || player.getCurrentPlayerPosition().Z - (posz * 2 - j * 2) < -1))
                     {
                         if (count==0)
@@ -90,9 +85,7 @@ namespace KeyPixels
 
                             for (int l = 0; l < count; l++)
                             {
-                                //if ((enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > 2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2) ||
-                                //    (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 > -2) || (enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2 && enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2))
-                                //{
+                                
                                     if ((Enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 > 2 || Enemy.worldMatrix[l].Translation.X - posx * 2 - i * 2 < -2) && (Enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < 2 || Enemy.worldMatrix[l].Translation.Z - posz * 2 - j * 2 < -2))
                                     {
                                         Enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
@@ -107,26 +100,6 @@ namespace KeyPixels
                                 }
                             }
                         }
-                        //if (!elist.Any())
-                        //{
-                        //    enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                        //    n++;
-                        //    System.Diagnostics.Debug.WriteLine("1-2 funktioniert");
-                        //}
-                        //else
-                        //{
-                        //    foreach (Enemy e in elist)
-                        //    {
-                        //        System.Diagnostics.Debug.WriteLine("1-4 funktioniert");
-
-                        //        if (e.getPosition().X - posx * 2 - i * 2 > 3 && e.getPosition().Z - posz * 2 - j * 2 > 3)
-                        //        {
-                        //            enemy.worldMatrix.Add(Matrix.CreateTranslation(new Vector3(posx * 2 - i * 2, 0, posz * 2 - j * 2)));
-                        //            n++;
-                        //            System.Diagnostics.Debug.WriteLine("2 funktioniert");
-                        //        }
-                        //    }
-                        //}
                     }
                     //posx * 2 - i * 2, 0, posz * 2 - j * 2;
                     // pos = posx/posy * 2 because the ground model is 2 units big, -i/j *2 for the right pos like array

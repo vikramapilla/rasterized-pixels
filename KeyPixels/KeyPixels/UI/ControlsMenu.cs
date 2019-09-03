@@ -36,9 +36,9 @@ namespace KeyPixels.UI
 
         public bool goBackFlag()
         {
-            Game1.soundManager.menuclickEffect();
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
+                Game1.soundManager.menuclickEffect();
                 return true;
             }
             return false;

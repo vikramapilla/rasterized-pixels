@@ -135,6 +135,11 @@ namespace KeyPixels
                 Game1.isKeyFound = false;
                 Game1.isScenePlaying = false;
                 Game1.isGamePlaying = true;
+                if (keyFoundIndex != 2)
+                {
+                    Game1.soundManager.isCutscenePlay = false;
+                    Game1.soundManager.BackgroundMusicPlay();
+                }
             }
 
         }

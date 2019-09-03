@@ -62,17 +62,13 @@ namespace KeyPixels
             ParticleEngines = new List<ParticleEngine>();
             cbBarm2 = new CreateBoundingBox(bossModel._model[1], Matrix.CreateRotationY(MathHelper.ToRadians(90)) * Matrix.CreateTranslation(bossPosition));
             cbBarm3 = new CreateBoundingBox(bossModel._model[1], Matrix.CreateTranslation(bossPosition));
-            healthCounter = 1;
+            healthCounter = 2;
             numberShot = 2;
         }
 
         public void update(Shots shots, Player player, ref QuadTree<BoundingBox> map)
         {
             IsCollision(shots);
-            if (healthCounter < 1)
-            {
-                //dead
-            }
             healthCoolDown--;
 
             if (chase == false && round == false && bazooka == false && doubles == false && reset == false)
@@ -254,13 +250,11 @@ namespace KeyPixels
             worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(bossPosition);
             if (IsCollision(player, ref map, target) == true)
             {
-                //worldMatrix[i] = m;
                 target = tar * new Vector3(1, 1, 0);
                 angle = (float)Math.Atan2(target.X, target.Z);
                 worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
                 if (IsCollision(player, ref map, target) == true)
                 {
-                    //worldMatrix[i] = m;
                     target = tar * new Vector3(0, 1, 1);
                     angle = (float)Math.Atan2(target.X, target.Z);
                     worldMatrix = Matrix.CreateRotationY(angle) * Matrix.CreateTranslation(m.Translation + target);
@@ -293,7 +287,6 @@ namespace KeyPixels
                         Game1.soundManager.enemyShotEffect();
                         ParticleEngines.Add(new ParticleEngine(particle, enemyDisappearPosition, 0f, "Enemy"));
                         healthCounter--;
-                        //worldMatrix.Remove(worldMatrix[n]);//disapear
                         healthCoolDown = HealthCoolDown;
                     }
                         hit = true;
@@ -345,7 +338,6 @@ namespace KeyPixels
                     cbBarm3.bBox.Max -= target;
                     cbBarm3.bBox.Min -= target;
                     return true;
-                    //hit = true;
                 }
             }
 
@@ -362,7 +354,6 @@ namespace KeyPixels
                     cbBarm3.bBox.Max -= target;
                     cbBarm3.bBox.Min -= target;
                     return true;
-                    //hit = true;
                 }
             }
 
@@ -379,7 +370,6 @@ namespace KeyPixels
                     cbBarm3.bBox.Max -= target;
                     cbBarm3.bBox.Min -= target;
                     return true;
-                    //hit = true;
                 }
             }
 
@@ -396,16 +386,8 @@ namespace KeyPixels
                     cbBarm3.bBox.Max -= target;
                     cbBarm3.bBox.Min -= target;
                     return true;
-                    //hit = true;
                 }
             }
-            //if (hit == true)
-            //{
-            //    cbBarm2.bBox.Max -= target;
-            //    cbBarm2.bBox.Min -= target;
-            //    cbBarm3.bBox.Max -= target;
-            //    cbBarm3.bBox.Min -= target;
-            //}
             return hit;
         }
 

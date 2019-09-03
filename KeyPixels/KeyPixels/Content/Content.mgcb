@@ -2503,3 +2503,21 @@
 /processorParam:Quality=Best
 /build:Audio/145443__soughtaftersounds__menu-click-dry.wav
 
+#begin Audio/Shooting/257929__kane53126__bat-hit-against-wall.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Shooting/257929__kane53126__bat-hit-against-wall.wav
+
+#begin Audio/Songs/326553__shadydave__the-sonata-piano-loop.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Audio/Songs/326553__shadydave__the-sonata-piano-loop.mp3
+
+#begin Audio/Player/332629__treasuresounds__item-pickup.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Audio/Player/332629__treasuresounds__item-pickup.wav
+

@@ -17,29 +17,38 @@ namespace KeyPixels
         Song menuBGM;
         Song background;
         Song fight;
+        Song cutscenes;
+        Song credit;
         SoundEffect typing;
         SoundEffect shot, wallShot, enemyShot, hurt;
         SoundEffect burstMove, portalShrine, mapChange, portalopen;
-        SoundEffect menuclick;
+        SoundEffect menuclick, pickup;
         SoundEffectInstance portal;
 
         public bool isPortalPlay = false;
         public bool fightPlay = false;
+        public bool isCutscenePlay = false;
 
         public static float Volume;
+        public static float Music;
+        public static float Effects;
 
         public void LoadContent(ContentManager Content)
         {
             menuBGM = Content.Load<Song>("Audio/Songs/416632__sirkoto51__castle-music-loop-1");
             background = Content.Load<Song>("Audio/Songs/337789__astronautchild__one-year-of-error-in-human-calendar");
             fight = Content.Load<Song>("Audio/Songs/443128__sirkoto51__boss-battle-loop-3");
+            cutscenes = Content.Load<Song>("Audio/Songs/326553__shadydave__the-sonata-piano-loop");
+            //credit = Content.Load<Song>("Audio/Songs/???");
             typing = Content.Load<SoundEffect>("Audio/typing_0");
 
             Volume = 0.5f;
+            Music = 0.5f;
+            Effects = 1f;
 
             //Shooting
             shot = Content.Load<SoundEffect>("Audio/Shooting/shot");
-            wallShot = Content.Load<SoundEffect>("Audio/Shooting/wall_shot");
+            wallShot = Content.Load<SoundEffect>("Audio/Shooting/257929__kane53126__bat-hit-against-wall");
             enemyShot = Content.Load<SoundEffect>("Audio/Shooting/enemy_shot");
             hurt = Content.Load<SoundEffect>("Audio/Shooting/350920__cabled-mess__hurt-c-06");
 
@@ -50,13 +59,14 @@ namespace KeyPixels
             portalShrine = Content.Load<SoundEffect>("Audio/Player/170523__alexkandrell__royal-sparkle-whoosh-centre");
             portal = portalShrine.CreateInstance();
             portal.IsLooped = true;
-
+            pickup = Content.Load<SoundEffect>("Audio/Player/332629__treasuresounds__item-pickup");
+            MediaPlayer.Volume = 0.25f;
             menuclick = Content.Load<SoundEffect>("Audio/145443__soughtaftersounds__menu-click-dry");
         }
 
         public void update()
         {
-            MediaPlayer.Volume = Volume;
+            MediaPlayer.Volume = Volume*Music;
             MediaPlayer.IsRepeating = true;
         }
 
@@ -85,6 +95,26 @@ namespace KeyPixels
             MediaPlayer.Stop();
         }
 
+        public void CreditMusicPlay()
+        {
+            MediaPlayer.Play(credit);
+        }
+
+        public void CreditMusicStop()
+        {
+            MediaPlayer.Stop();
+        }
+
+        public void CutsceneMusicPlay()
+        {
+            MediaPlayer.Play(cutscenes);
+        }
+
+        public void CutsceneMusicStop()
+        {
+            MediaPlayer.Stop();
+        }
+
         public void FightMusicPlay()
         {
             MediaPlayer.Play(fight);
@@ -98,37 +128,41 @@ namespace KeyPixels
         public void shotEffect()
         {
             if (Game1.isGamePlaying)
-                shot.Play(Volume, 0, 0);
+                shot.Play(Volume* Effects, 0, 0);
         }
 
         public void wallShotEffect()
         {
             if (Game1.isGamePlaying)
-                wallShot.Play(Volume, 0, 0);
+                wallShot.Play(Volume * Effects, 0, 0);
         }
 
         public void enemyShotEffect()
         {
             if (Game1.isGamePlaying)
-                enemyShot.Play(Volume, 0, 0);
+                enemyShot.Play(Volume * Effects, 0, 0);
         }
 
         public void burstEffect()
         {
             if (Game1.isGamePlaying)
-                burstMove.Play(Volume, 0, 0);
+                burstMove.Play(Volume * Effects, 0, 0);
         }
 
         public void hurtEffect()
         {
             if (Game1.isGamePlaying)
-                hurt.Play(Volume, 0, 0);
+                hurt.Play(Volume * Effects, 0, 0);
         }
 
         public void menuclickEffect()
         {
-            if (Game1.isGamePlaying)
-                menuclick.Play(Volume, 0, 0);
+                menuclick.Play(Volume * Effects, 0, 0);
+        }
+
+        public void pickupEffect()
+        {
+            pickup.Play(Volume * Effects, 0, 0);
         }
 
         public void portalEffectPlay()
@@ -137,9 +171,9 @@ namespace KeyPixels
             {
                 if (!isPortalPlay)
                 {
-                    portalopen.Play(Volume, 0, 0);
+                    portalopen.Play(Volume * Effects, 0, 0);
                     
-                    portal.Volume = Volume;
+                    portal.Volume = Volume * Effects;
                     portal.Play();
                     isPortalPlay = true;
                 }
@@ -163,7 +197,7 @@ namespace KeyPixels
 
         public void mapChangeEffect()
         {
-            mapChange.Play(Volume, 0, 0);
+            mapChange.Play(Volume * Effects, 0, 0);
         }
     }
 }

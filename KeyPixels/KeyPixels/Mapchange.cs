@@ -27,7 +27,6 @@ namespace KeyPixels
             {
                 shots.clearAll();
                 turnSpeed +=0.5f;
-                //turnSpeed *= 0.90f;
                 player.teleportup(turnSpeed);
             }
             if (player.getCurrentPlayerPosition().Y > 9)

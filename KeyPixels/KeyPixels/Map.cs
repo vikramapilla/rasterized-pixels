@@ -243,7 +243,7 @@ namespace KeyPixels
             }
 
         }
-        public void Draw( Model model, Matrix world)
+        public void Draw(Model model, Matrix world)
 
         {
 
@@ -263,11 +263,6 @@ namespace KeyPixels
             }
 
         }
-
-        public void Update(GameTime gameTime, Matrix view)
-
-        {
-
-        }
-     }
+        
+    }
 }
