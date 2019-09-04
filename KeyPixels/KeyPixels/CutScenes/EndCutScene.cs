@@ -119,8 +119,8 @@ namespace KeyPixels
             else if (sceneIndex == 3)
             {
                 Game1.isCreditsPlaying = true;
-                if (Keyboard.GetState().IsKeyDown(Keys.NumPad2))
-                    creditIndex = Credits.Count;
+                //if (Keyboard.GetState().IsKeyDown(Keys.NumPad2))
+                //    creditIndex = Credits.Count;
 
                 if (creditIndex == Credits.Count)
                 {

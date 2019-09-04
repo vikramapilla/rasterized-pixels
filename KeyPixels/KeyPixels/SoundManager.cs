@@ -94,8 +94,6 @@ namespace KeyPixels
 
         public void menuBackgroundMusicPlay()
         {
-            if(Game1.mapindex == 4 || Game1.mapindex == 0)
-                System.Diagnostics.Debug.WriteLine("MEN");
             MediaPlayer.Play(menuBGM);
         }
 
@@ -103,33 +101,24 @@ namespace KeyPixels
         {
             fightPlay = false;
             isCutscenePlay = false;
-            if (Game1.mapindex == 4 || Game1.mapindex == 0)
-                System.Diagnostics.Debug.WriteLine("BKG");
             if(!Game1.isBossFight && Game1.isGamePlaying && !Game1.isScenePlaying)
             {
                 MediaPlayer.Play(background);
-                System.Diagnostics.Debug.WriteLine("BKG");
             }
         }
 
         public void CreditMusicPlay()
         {
-            if (Game1.mapindex == 4 || Game1.mapindex == 0)
-                System.Diagnostics.Debug.WriteLine("CRD");
             MediaPlayer.Play(credit);
         }
 
         public void CutsceneMusicPlay()
         {
-            if (Game1.mapindex == 4 || Game1.mapindex == 0)
-                System.Diagnostics.Debug.WriteLine("SCE");
             MediaPlayer.Play(cutscenes);
         }
         
         public void FightMusicPlay()
         {
-            if (Game1.mapindex == 4 || Game1.mapindex == 0)
-                System.Diagnostics.Debug.WriteLine("FGT");
             if(Game1.isEndCutScene1)
                 MediaPlayer.Play(fight);
         }

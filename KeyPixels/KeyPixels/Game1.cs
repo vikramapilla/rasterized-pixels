@@ -308,19 +308,19 @@ namespace KeyPixels
             }
 
             //test for multitread
-            if (Keyboard.GetState().IsKeyUp(Keys.NumPad1))
-            {
-                multitreadflag = false;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.NumPad1))
-            {
-                if (!multitreadflag)
-                {
-                    if (ismultitread) { ismultitread = false; }
-                    else ismultitread = true;
-                    multitreadflag = true;
-                }
-            }
+            //if (Keyboard.GetState().IsKeyUp(Keys.NumPad1))
+            //{
+            //    multitreadflag = false;
+            //}
+            //if (Keyboard.GetState().IsKeyDown(Keys.NumPad1))
+            //{
+            //    if (!multitreadflag)
+            //    {
+            //        if (ismultitread) { ismultitread = false; }
+            //        else ismultitread = true;
+            //        multitreadflag = true;
+            //    }
+            //}
             //
 
             if (!startMenuFlag && controlsMenuFlag)
@@ -472,35 +472,35 @@ namespace KeyPixels
 
                 pickUps.Update(gameTime);
 
-                if (!mapFlag)
-                {
-                    if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
-                    {
-                        mapindex -= 1;
-                        map.CreateMap(mapindex);
-                        sp.clearEnemy();
-                        Spawning.isspawnended = false;
-                        sp = new Spawning(map.getmapList());
-                        mapFlag = true;
-                        shots.clearAll();
-                        soundManager.portalEffectStop();
-                        sp.GetEnemy().initialize(Content);
+                //if (!mapFlag)
+                //{
+                //    if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
+                //    {
+                //        mapindex -= 1;
+                //        map.CreateMap(mapindex);
+                //        sp.clearEnemy();
+                //        Spawning.isspawnended = false;
+                //        sp = new Spawning(map.getmapList());
+                //        mapFlag = true;
+                //        shots.clearAll();
+                //        soundManager.portalEffectStop();
+                //        sp.GetEnemy().initialize(Content);
 
-                    }
-                    else if (Keyboard.GetState().IsKeyDown(Keys.D2) && mapindex != 4)
-                    {
-                        mapindex += 1;
-                        map.CreateMap(mapindex);
-                        sp.clearEnemy();
-                        Spawning.isspawnended = false;
-                        sp = new Spawning(map.getmapList());
-                        mapFlag = true;
-                        shots.clearAll();
-                        soundManager.portalEffectStop();
-                        sp.GetEnemy().initialize(Content);
-                    }
+                //    }
+                //    else if (Keyboard.GetState().IsKeyDown(Keys.D2) && mapindex != 4)
+                //    {
+                //        mapindex += 1;
+                //        map.CreateMap(mapindex);
+                //        sp.clearEnemy();
+                //        Spawning.isspawnended = false;
+                //        sp = new Spawning(map.getmapList());
+                //        mapFlag = true;
+                //        shots.clearAll();
+                //        soundManager.portalEffectStop();
+                //        sp.GetEnemy().initialize(Content);
+                //    }
 
-                }
+                //}
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
                 {
                     mapFlag = false;
@@ -670,7 +670,6 @@ namespace KeyPixels
 
             if (damage)
             {
-                System.Console.WriteLine(damage);
                 damagedraw();
                 damage = false;
             }
