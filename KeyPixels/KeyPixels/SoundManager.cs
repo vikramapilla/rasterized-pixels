@@ -19,15 +19,18 @@ namespace KeyPixels
         Song fight;
         Song cutscenes;
         Song credit;
+        Song gameOver;
         SoundEffect typing;
         SoundEffect shot, wallShot, enemyShot, hurt;
         SoundEffect burstMove, portalShrine, mapChange, portalopen;
         SoundEffect menuclick, pickup;
         SoundEffectInstance portal;
 
-        public bool isPortalPlay = false;
-        public bool fightPlay = false;
-        public bool isCutscenePlay = false;
+        public bool isPortalPlay;
+        public bool fightPlay;
+        public bool isCutscenePlay;
+        public bool isCreditPlay;
+        public bool isGameOverPlay;
 
         public static float Volume;
         public static float Music;
@@ -35,11 +38,20 @@ namespace KeyPixels
 
         public void LoadContent(ContentManager Content)
         {
+            MediaPlayer.Stop();
+
+            isPortalPlay = false;
+            fightPlay = false;
+            isCutscenePlay = false;
+            isCreditPlay = false;
+            isGameOverPlay = false;
             menuBGM = Content.Load<Song>("Audio/Songs/416632__sirkoto51__castle-music-loop-1");
             background = Content.Load<Song>("Audio/Songs/337789__astronautchild__one-year-of-error-in-human-calendar");
             fight = Content.Load<Song>("Audio/Songs/443128__sirkoto51__boss-battle-loop-3");
-            cutscenes = Content.Load<Song>("Audio/Songs/326553__shadydave__the-sonata-piano-loop");
-            //credit = Content.Load<Song>("Audio/Songs/???");
+            cutscenes = Content.Load<Song>("Audio/Player/331624__xtrgamr__the-dramatic-music");
+            //cutscenes = Content.Load<Song>("Audio/Songs/326553__shadydave__the-sonata-piano-loop");
+            credit = Content.Load<Song>("Audio/Songs/166748__afleetingspeck_haunting");
+            //credit = Content.Load<Song>("Audio/Songs/369251__funwithsound__battle-scene-music-score");
             typing = Content.Load<SoundEffect>("Audio/typing_0");
 
             Volume = 0.5f;
@@ -48,7 +60,8 @@ namespace KeyPixels
 
             //Shooting
             shot = Content.Load<SoundEffect>("Audio/Shooting/shot");
-            wallShot = Content.Load<SoundEffect>("Audio/Shooting/257929__kane53126__bat-hit-against-wall");
+            //wallShot = Content.Load<SoundEffect>("Audio/Shooting/257929__kane53126__bat-hit-against-wall");
+            wallShot = Content.Load<SoundEffect>("Audio/Shooting/347052__giomilko__kick-002");
             enemyShot = Content.Load<SoundEffect>("Audio/Shooting/enemy_shot");
             hurt = Content.Load<SoundEffect>("Audio/Shooting/350920__cabled-mess__hurt-c-06");
 
@@ -62,21 +75,23 @@ namespace KeyPixels
             pickup = Content.Load<SoundEffect>("Audio/Player/332629__treasuresounds__item-pickup");
             MediaPlayer.Volume = 0.25f;
             menuclick = Content.Load<SoundEffect>("Audio/145443__soughtaftersounds__menu-click-dry");
+            gameOver = Content.Load<Song>("Audio/Player/344778__rokzroom__dilemma-music-loop");
         }
 
         public void update()
         {
-            MediaPlayer.Volume = Volume*Music;
+            MediaPlayer.Volume = Volume * Music;
             MediaPlayer.IsRepeating = true;
         }
 
         public void typingEffect()
         {
-            typing.Play();
+            typing.Play(Volume * Effects, 0, 0);
         }
 
         public void menuBackgroundMusicPlay()
         {
+            MediaPlayer.Stop();
             MediaPlayer.Play(menuBGM);
         }
 
@@ -87,6 +102,7 @@ namespace KeyPixels
 
         public void BackgroundMusicPlay()
         {
+            MediaPlayer.Stop();
             MediaPlayer.Play(background);
         }
 
@@ -97,6 +113,7 @@ namespace KeyPixels
 
         public void CreditMusicPlay()
         {
+            MediaPlayer.Stop();
             MediaPlayer.Play(credit);
         }
 
@@ -107,6 +124,7 @@ namespace KeyPixels
 
         public void CutsceneMusicPlay()
         {
+            MediaPlayer.Stop();
             MediaPlayer.Play(cutscenes);
         }
 
@@ -117,6 +135,7 @@ namespace KeyPixels
 
         public void FightMusicPlay()
         {
+            MediaPlayer.Stop();
             MediaPlayer.Play(fight);
         }
 
@@ -128,7 +147,7 @@ namespace KeyPixels
         public void shotEffect()
         {
             if (Game1.isGamePlaying)
-                shot.Play(Volume* Effects, 0, 0);
+                shot.Play(Volume * Effects, 0, 0);
         }
 
         public void wallShotEffect()
@@ -155,9 +174,18 @@ namespace KeyPixels
                 hurt.Play(Volume * Effects, 0, 0);
         }
 
+        public void gameOverEffect()
+        {
+            if (Player.healthCounter <= 0 && !isGameOverPlay)
+            {
+                MediaPlayer.Play(gameOver);
+                isGameOverPlay = true;
+            }
+        }
+
         public void menuclickEffect()
         {
-                menuclick.Play(Volume * Effects, 0, 0);
+            menuclick.Play(Volume * Effects, 0, 0);
         }
 
         public void pickupEffect()
@@ -172,7 +200,7 @@ namespace KeyPixels
                 if (!isPortalPlay)
                 {
                     portalopen.Play(Volume * Effects, 0, 0);
-                    
+
                     portal.Volume = Volume * Effects;
                     portal.Play();
                     isPortalPlay = true;

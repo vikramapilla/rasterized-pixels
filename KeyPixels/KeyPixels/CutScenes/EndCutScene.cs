@@ -81,12 +81,18 @@ namespace KeyPixels
             CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/0_0"));
             Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/1"));
             CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/1_0"));
+            Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/1_1"));
+            CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/1_1_0"));
             Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/2"));
             CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/2_0"));
             Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/3"));
             CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/3_0"));
             Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/4"));
             CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/4_0"));
+            Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/5"));
+            CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/5_0"));
+            Credits.Add(Content.Load<Texture2D>("CutScenes/Credits/10"));
+            CreditsAnimate.Add(Content.Load<Texture2D>("CutScenes/Credits/10_0"));
 
             CreditTexture = Credits[0];
         }
@@ -113,6 +119,9 @@ namespace KeyPixels
             else if (sceneIndex == 3)
             {
                 Game1.isCreditsPlaying = true;
+                if (Keyboard.GetState().IsKeyDown(Keys.NumPad2))
+                    creditIndex = Credits.Count;
+
                 if (creditIndex == Credits.Count)
                 {
                     Game1.isCreditsPlaying = false;
@@ -157,18 +166,17 @@ namespace KeyPixels
                     Game1.isScenePlaying = false;
                     Game1.isEndCutScene1 = true;
                     incrementFlag = false;
-                    System.Diagnostics.Debug.WriteLine("Scene 1 Ended");
 
                     Game1.soundManager.isCutscenePlay = false;
                     Game1.soundManager.BackgroundMusicPlay();
                 }
                 else if (sceneIndex == 2)
                 {
+                    Game1.isGamePlaying = false;
                     Game1.isEndCutScene2 = true;
                     Game1.isCreditsPlaying = true;
                     Game1.isGameEnded = true;
                     incrementFlag = false;
-                    System.Diagnostics.Debug.WriteLine("Scene 2 Ended");
                 }
             }
         }

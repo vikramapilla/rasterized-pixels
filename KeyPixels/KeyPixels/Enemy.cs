@@ -46,7 +46,7 @@ namespace KeyPixels
             enemyModel._model.Add(contentManager.Load<Model>("Models/Body_Enemy"));
             enemyModel._model.Add(contentManager.Load<Model>("Models/Arms_Skelett_Tex2"));
             enemyModel._model.Add(contentManager.Load<Model>("Models/Legs_Skelett_Walk2"));
-            particle = contentManager.Load<Model>("Models/Shot_Tria");
+            particle = contentManager.Load<Model>("Models/partical");
             worldMatrix = new List<Matrix>();
             enemyPosition = new Vector3(2, 0, 0);
             //worldMatrix.Add(Matrix.CreateTranslation(enemyPosition));

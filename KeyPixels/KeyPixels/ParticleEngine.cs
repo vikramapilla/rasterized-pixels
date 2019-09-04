@@ -19,6 +19,10 @@ namespace KeyPixels
         private string ParticleType;
 
         private int particleCoolDown = 65;
+        private int enemyParticleCoolDown = 45;
+
+        Color portalColor = new Color(204, 255, 0, 75);
+        Color enemyColor = new Color(162, 53, 26);
 
         public ParticleEngine(Model model, Vector3 location, float rotation, String particleType)
         {
@@ -63,15 +67,18 @@ namespace KeyPixels
 
         private Particle GenerateEnemyParticle()
         {
-            Vector3 position = EmitterLocation;
-            Vector3 velocity = new Vector3(0.01f * (float)(random.NextDouble() * 2 - 1),
-                0.01f * (float)(random.NextDouble() * 2 - 1),
-                0.01f * (float)(random.NextDouble() * 2 - 1));
-            float angle = 0f;
+            Vector3 position = new Vector3(EmitterLocation.X + (float)random.NextDouble() * random.Next(-1, 2) * 0.25f,
+                EmitterLocation.Y + (float)random.NextDouble() * random.Next(-1, 2) * 0.25f,
+                EmitterLocation.Z + (float)random.NextDouble() * random.Next(-1, 2) * 0.25f);
+            Vector3 velocity;
+            velocity = new Vector3(0.005f * (float)(random.NextDouble() * 2 - 1),
+                0.005f * (float)(random.NextDouble() * 2 - 1),
+                0.005f * (float)(random.NextDouble() * 2 - 1));
+            float angle = EmitterRotation;
             float angularVelocity = 0.1f * (float)(random.NextDouble() * 2);
-            Color color = new Color((float)random.NextDouble(), (float)random.NextDouble(), (float)random.NextDouble());
+            Color color = Color.White;
             float size = (float)random.NextDouble();
-            int ttl = 35;
+            int ttl = 45;
 
             return new Particle(model, position, velocity, angle, angularVelocity, color, size, ttl);
         }
@@ -158,6 +165,18 @@ namespace KeyPixels
                                 particleCoolDown--;
                             }
                         }
+                        else if (ParticleType == "Enemy")
+                        {
+                            if (enemyParticleCoolDown < 0)
+                            {
+                                enemyParticleCoolDown = 45;
+                                particles.Add(GenerateNewParticle());
+                            }
+                            else
+                            {
+                                enemyParticleCoolDown--;
+                            }
+                        }
                         else
                         {
                             particles.Add(GenerateNewParticle());
@@ -213,14 +232,14 @@ namespace KeyPixels
             {
                 for (int i = 0; i < particles.Count; i++)
                 {
-                    particles[i].Draw(new Color(204, 255, 0, 75));
+                    particles[i].Draw(portalColor);
                 }
             }
             else
             {
                 for (int i = 0; i < particles.Count; i++)
                 {
-                    particles[i].Draw();
+                    particles[i].Draw(enemyColor);
                 }
             }
 

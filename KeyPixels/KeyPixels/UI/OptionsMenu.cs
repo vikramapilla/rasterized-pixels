@@ -26,6 +26,7 @@ namespace KeyPixels.UI
         bool downButtonFlag = false;
         bool leftButtonFlag = false;
         bool rightButtonFlag = false;
+        bool enterButtonFlag = false;
 
         public bool initializeFlag = true;
         public bool tempChangesFlag = false;
@@ -92,6 +93,7 @@ namespace KeyPixels.UI
 
 
         }
+        
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
@@ -249,8 +251,16 @@ namespace KeyPixels.UI
         {
             if (Keyboard.GetState().IsKeyDown(Keys.Enter) && optionActivatedIndex == 3)
             {
-                Game1.soundManager.menuclickEffect();
+                if (!enterButtonFlag)
+                {
+                    Game1.soundManager.menuclickEffect();
+                    enterButtonFlag = true;
+                }
                 return true;
+            }
+            if (Keyboard.GetState().IsKeyUp(Keys.Enter))
+            {
+                enterButtonFlag = false;
             }
             return false;
         }

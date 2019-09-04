@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Media;
 
 namespace KeyPixels
 {
@@ -126,7 +127,6 @@ namespace KeyPixels
             graphics.PreferredBackBufferWidth = 1280;
             graphics.PreferredBackBufferHeight = 720;
             graphics.ApplyChanges();
-
 
             DesiredResolution = new Vector2(1920, 1080);
             viewMatrix = Matrix.CreateLookAt(camera.position, camera.target, Vector3.Up);
@@ -273,13 +273,13 @@ namespace KeyPixels
                 isGameStarted = true;
 
                 soundManager.menuclickEffect();
-                soundManager.menuBackgroundMusicStop();
-                
+                //soundManager.menuBackgroundMusicStop();
+
                 if (mapindex == 4)
                 {
                     soundManager.FightMusicPlay();
                     soundManager.fightPlay = true;
-                    
+
                 }
                 else soundManager.BackgroundMusicPlay();
             }
@@ -483,6 +483,7 @@ namespace KeyPixels
                         sp = new Spawning(map.getmapList());
                         mapFlag = true;
                         shots.clearAll();
+                        soundManager.portalEffectStop();
                         sp.GetEnemy().initialize(Content);
 
                     }
@@ -495,6 +496,7 @@ namespace KeyPixels
                         sp = new Spawning(map.getmapList());
                         mapFlag = true;
                         shots.clearAll();
+                        soundManager.portalEffectStop();
                         sp.GetEnemy().initialize(Content);
                     }
 
@@ -568,12 +570,14 @@ namespace KeyPixels
             {
                 isGameEnded = true;
                 isGamePlaying = false;
-
+                soundManager.gameOverEffect();
                 cutScenes.makeGameOver();
                 endMenu.Update(gameTime);
                 particleEngine2D.Update();
                 if (endMenu.getButtonIndex() == 0 && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {
+
+
                     int rewith = graphics.PreferredBackBufferWidth;
                     int reheight = graphics.PreferredBackBufferHeight;
                     bool refull = graphics.IsFullScreen;
@@ -582,14 +586,17 @@ namespace KeyPixels
 
                     Initialize();
                     LoadContent();
+                    SoundManager.Volume = resound;
                     isGameEnded = false;
+                    isGameCompletelyEnded = false;
 
-                    graphics.PreferredBackBufferWidth=rewith;
-                    graphics.PreferredBackBufferHeight=reheight;
-                    graphics.IsFullScreen=refull;
+                    graphics.PreferredBackBufferWidth = rewith;
+                    graphics.PreferredBackBufferHeight = reheight;
+                    graphics.IsFullScreen = refull;
                     graphics.ApplyChanges();
+
+
                     optionsMenu.setOptionValues(values);
-                    SoundManager.Volume=resound;
 
 
 
@@ -611,16 +618,26 @@ namespace KeyPixels
                     soundManager.isCutscenePlay = true;
                 }
             }
+            if (isCreditsPlaying)
+            {
+                if (!soundManager.isCreditPlay)
+                {
+                    soundManager.CreditMusicPlay();
+                    soundManager.isCreditPlay = true;
+                }
+            }
             if (isGameCompletelyEnded)
             {
+                int[] values = optionsMenu.getOptionValues();
+
                 int rewith = graphics.PreferredBackBufferWidth;
                 int reheight = graphics.PreferredBackBufferHeight;
                 bool refull = graphics.IsFullScreen;
                 float resound = SoundManager.Volume;
-                int[] values = optionsMenu.getOptionValues();
 
                 Initialize();
                 LoadContent();
+                SoundManager.Volume = resound;
                 isGameEnded = false;
                 isGameCompletelyEnded = false;
 
@@ -628,8 +645,10 @@ namespace KeyPixels
                 graphics.PreferredBackBufferHeight = reheight;
                 graphics.IsFullScreen = refull;
                 graphics.ApplyChanges();
+
+
                 optionsMenu.setOptionValues(values);
-                SoundManager.Volume = resound;
+
             }
 
         }
@@ -641,7 +660,7 @@ namespace KeyPixels
             GraphicsDevice.BlendState = BlendState.Opaque;
             GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             GraphicsDevice.SamplerStates[0] = SamplerState.LinearWrap;
-            
+
 
             if (damage)
             {
@@ -754,12 +773,12 @@ namespace KeyPixels
             {
                 endCutScene.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
             }
-            if(isEndCutScene2 && !isGamePlaying)
+            if (isEndCutScene2 && !isGamePlaying)
             {
                 endCutScene.Draw(gameTime, spriteBatch, graphics.GraphicsDevice);
             }
-            if (isEndCutScene2 & isCreditsPlaying && isGameEnded) {
-
+            if (isEndCutScene2 & isCreditsPlaying && isGameEnded)
+            {
                 particleEngine2D.Update();
                 particleEngine2D.Draw(spriteBatch);
             }
@@ -796,7 +815,7 @@ namespace KeyPixels
         }
         public static void Draw3DModelColor(Model model, Matrix worldMatrix, Matrix _viewMatrix, Matrix _projectionMatrix, Color _color)
         {
-            
+
             foreach (ModelMesh mesh in model.Meshes)
             {
                 foreach (BasicEffect effect in mesh.Effects)
