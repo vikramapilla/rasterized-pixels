@@ -171,11 +171,11 @@ namespace KeyPixels
             ground = Content.Load<Model>("Models/Ground_Tex");
             wall = Content.Load<Model>("Models/Wall_Long_Small");
             particle = Content.Load<Model>("Models/Shot_Tria");
-            shots = new Shots(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), Color.Red);
+            shots = new Shots(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), Color.OrangeRed);
             shots.initialize(Content);
-            shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.Blue);
-            shots.addModel(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), Color.Green);
-            shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.Violet);
+            shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), Color.OrangeRed);
+            shots.addModel(Content, "Models/Shot_Big3", 0.05f, new Vector3(0, 0, 1), new Color(41, 128, 157));
+            shots.addModel(Content, "Models/Shot_Big4", 0.05f, new Vector3(0, 0, 1), new Color(41,128,157));
             numberShot = 0;
             player = new Player();
             player.initialize(Content);
