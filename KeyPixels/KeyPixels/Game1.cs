@@ -428,7 +428,7 @@ namespace KeyPixels
                 if (mapindex == 4)
                 {
                     boss.update(shots, player, ref map.QTree);
-                    if (!soundManager.fightPlay)
+                    if (!soundManager.fightPlay && isEndCutScene1)
                     {
                         soundManager.FightMusicPlay();
                         soundManager.fightPlay = true;
@@ -598,8 +598,14 @@ namespace KeyPixels
 
                     optionsMenu.setOptionValues(values);
 
+                    startMenuFlag = false;
+                    isGamePlaying = true;
+                    if (!isGameStarted)
+                        isScenePlaying = true;
+                    isGameStarted = true;
 
-
+                    soundManager.menuclickEffect();
+                    
                 }
                 else if (endMenu.getButtonIndex() == 1 && Keyboard.GetState().IsKeyDown(Keys.Enter))
                 {

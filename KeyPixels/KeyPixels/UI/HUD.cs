@@ -75,7 +75,9 @@ namespace KeyPixels.UI
 
             if (Game1.isBossFight)
             {
-                spriteBatch.Draw(HUDBossBackground, Vector2.Zero, Color.White);
+                if(Game1.isEndCutScene1)
+                    spriteBatch.Draw(HUDBossBackground, Vector2.Zero, Color.White);
+
                 for (int i = 0; i < bossHealthCount && i < 10; i++)
                 {
                     spriteBatch.Draw(HUDPoint, bossHealthBar[i], Color.White);

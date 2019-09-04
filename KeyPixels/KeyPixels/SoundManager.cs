@@ -48,11 +48,12 @@ namespace KeyPixels
             menuBGM = Content.Load<Song>("Audio/Songs/416632__sirkoto51__castle-music-loop-1");
             background = Content.Load<Song>("Audio/Songs/337789__astronautchild__one-year-of-error-in-human-calendar");
             fight = Content.Load<Song>("Audio/Songs/443128__sirkoto51__boss-battle-loop-3");
-            cutscenes = Content.Load<Song>("Audio/Player/331624__xtrgamr__the-dramatic-music");
+            gameOver = Content.Load<Song>("Audio/Player/331624__xtrgamr__the-dramatic-music");
             //cutscenes = Content.Load<Song>("Audio/Songs/326553__shadydave__the-sonata-piano-loop");
-            credit = Content.Load<Song>("Audio/Songs/166748__afleetingspeck_haunting");
+            cutscenes = Content.Load<Song>("Audio/Songs/166748__afleetingspeck_haunting");
             //credit = Content.Load<Song>("Audio/Songs/369251__funwithsound__battle-scene-music-score");
             typing = Content.Load<SoundEffect>("Audio/typing_0");
+            credit = Content.Load<Song>("Audio/Player/344778__rokzroom__dilemma-music-loop");
 
             Volume = 0.5f;
             Music = 0.5f;
@@ -78,7 +79,6 @@ namespace KeyPixels
             pickup = Content.Load<SoundEffect>("Audio/Player/332629__treasuresounds__item-pickup");
             MediaPlayer.Volume = 0.25f;
             menuclick = Content.Load<SoundEffect>("Audio/145443__soughtaftersounds__menu-click-dry");
-            gameOver = Content.Load<Song>("Audio/Player/344778__rokzroom__dilemma-music-loop");
         }
 
         public void update()
@@ -94,59 +94,44 @@ namespace KeyPixels
 
         public void menuBackgroundMusicPlay()
         {
-            MediaPlayer.Stop();
+            if(Game1.mapindex == 4 || Game1.mapindex == 0)
+                System.Diagnostics.Debug.WriteLine("MEN");
             MediaPlayer.Play(menuBGM);
-        }
-
-        public void menuBackgroundMusicStop()
-        {
-            MediaPlayer.Stop();
         }
 
         public void BackgroundMusicPlay()
         {
             fightPlay = false;
             isCutscenePlay = false;
-            MediaPlayer.Stop();
-            MediaPlayer.Play(background);
-        }
-
-        public void BackgroundMusicStop()
-        {
-            MediaPlayer.Stop();
+            if (Game1.mapindex == 4 || Game1.mapindex == 0)
+                System.Diagnostics.Debug.WriteLine("BKG");
+            if(!Game1.isBossFight && Game1.isGamePlaying && !Game1.isScenePlaying)
+            {
+                MediaPlayer.Play(background);
+                System.Diagnostics.Debug.WriteLine("BKG");
+            }
         }
 
         public void CreditMusicPlay()
         {
-            MediaPlayer.Stop();
+            if (Game1.mapindex == 4 || Game1.mapindex == 0)
+                System.Diagnostics.Debug.WriteLine("CRD");
             MediaPlayer.Play(credit);
-        }
-
-        public void CreditMusicStop()
-        {
-            MediaPlayer.Stop();
         }
 
         public void CutsceneMusicPlay()
         {
-            MediaPlayer.Stop();
+            if (Game1.mapindex == 4 || Game1.mapindex == 0)
+                System.Diagnostics.Debug.WriteLine("SCE");
             MediaPlayer.Play(cutscenes);
         }
-
-        public void CutsceneMusicStop()
-        {
-            MediaPlayer.Stop();
-        }
-
+        
         public void FightMusicPlay()
         {
-            MediaPlayer.Stop();
-            MediaPlayer.Play(fight);
-        }
-
-        public void FightMusicStop()
-        {
-            MediaPlayer.Stop();
+            if (Game1.mapindex == 4 || Game1.mapindex == 0)
+                System.Diagnostics.Debug.WriteLine("FGT");
+            if(Game1.isEndCutScene1)
+                MediaPlayer.Play(fight);
         }
 
         public void shotEffect()
