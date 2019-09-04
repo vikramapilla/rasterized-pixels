@@ -68,8 +68,8 @@ namespace KeyPixels
                 player.resetbbox();
                 Game1.isTeleportPlaying = false;
                 Game1.isKeyPickup = false;
-
                 Game1.soundManager.mapChangeEffectStop();
+
             }
 
         }

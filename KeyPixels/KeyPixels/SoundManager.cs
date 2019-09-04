@@ -230,8 +230,9 @@ namespace KeyPixels
 
         public void mapChangeEffect()
         {
-            mapChange.Play(Volume * Effects, 0, 0);
-            map.Volume = Volume * Effects;
+            //mapChange.Play(Volume * Effects, 0, 0);
+            map.Volume = Volume * Effects*0.6f;
+            map.Pitch = 0.38f;
             map.Play();
         }
         public void mapChangeEffectStop()
