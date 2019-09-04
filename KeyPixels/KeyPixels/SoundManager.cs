@@ -24,7 +24,7 @@ namespace KeyPixels
         SoundEffect shot, wallShot, enemyShot, hurt;
         SoundEffect burstMove, portalShrine, mapChange, portalopen;
         SoundEffect menuclick, pickup;
-        SoundEffectInstance portal;
+        SoundEffectInstance portal, map;
 
         public bool isPortalPlay;
         public bool fightPlay;
@@ -68,6 +68,9 @@ namespace KeyPixels
             //Player
             burstMove = Content.Load<SoundEffect>("Audio/Player/burst_move");
             mapChange = Content.Load<SoundEffect>("Audio/Player/map_change");
+            map = mapChange.CreateInstance();
+            map.IsLooped = true;
+
             portalopen = Content.Load<SoundEffect>("Audio/Player/401324__alanmcki__magical-portal-open");
             portalShrine = Content.Load<SoundEffect>("Audio/Player/170523__alexkandrell__royal-sparkle-whoosh-centre");
             portal = portalShrine.CreateInstance();
@@ -102,6 +105,8 @@ namespace KeyPixels
 
         public void BackgroundMusicPlay()
         {
+            fightPlay = false;
+            isCutscenePlay = false;
             MediaPlayer.Stop();
             MediaPlayer.Play(background);
         }
@@ -226,6 +231,12 @@ namespace KeyPixels
         public void mapChangeEffect()
         {
             mapChange.Play(Volume * Effects, 0, 0);
+            map.Volume = Volume * Effects;
+            map.Play();
+        }
+        public void mapChangeEffectStop()
+        {
+            map.Stop();
         }
     }
 }

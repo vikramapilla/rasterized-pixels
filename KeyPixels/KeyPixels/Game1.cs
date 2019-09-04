@@ -896,7 +896,7 @@ namespace KeyPixels
         }
         public void damagedraw()
         {
-            Draw3DModelColor(playerModel, player.worldMatrix * Matrix.CreateScale(1.001f), viewMatrix, projectionMatrix, Color.Red);
+            Draw3DModelColor(playerModel, player.worldMatrix * Matrix.CreateScale(1.001f, 1.001f, 1.001f), viewMatrix, projectionMatrix, Color.IndianRed);
         }
 
         public static int numberOfShots()

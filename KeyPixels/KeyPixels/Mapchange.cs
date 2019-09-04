@@ -36,7 +36,6 @@ namespace KeyPixels
                 down = true;
                 PickUps.clearpickup();
 
-
                 player.teleport();//down move player to start pos (0,0,-4)
                 
             }
@@ -69,6 +68,8 @@ namespace KeyPixels
                 player.resetbbox();
                 Game1.isTeleportPlaying = false;
                 Game1.isKeyPickup = false;
+
+                Game1.soundManager.mapChangeEffectStop();
             }
 
         }

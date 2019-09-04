@@ -168,7 +168,8 @@ namespace KeyPixels
                     incrementFlag = false;
 
                     Game1.soundManager.isCutscenePlay = false;
-                    Game1.soundManager.BackgroundMusicPlay();
+                    Game1.soundManager.FightMusicPlay();
+                    Game1.soundManager.fightPlay = true;
                 }
                 else if (sceneIndex == 2)
                 {
