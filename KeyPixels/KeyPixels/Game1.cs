@@ -472,35 +472,36 @@ namespace KeyPixels
 
                 pickUps.Update(gameTime);
 
-                //if (!mapFlag)
-                //{
-                //    if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
-                //    {
-                //        mapindex -= 1;
-                //        map.CreateMap(mapindex);
-                //        sp.clearEnemy();
-                //        Spawning.isspawnended = false;
-                //        sp = new Spawning(map.getmapList());
-                //        mapFlag = true;
-                //        shots.clearAll();
-                //        soundManager.portalEffectStop();
-                //        sp.GetEnemy().initialize(Content);
+                if (!mapFlag)
+                {
+                    if (Keyboard.GetState().IsKeyDown(Keys.D1) && mapindex != 0)
+                    {
+                        mapindex -= 1;
+                        map.CreateMap(mapindex);
+                        sp.clearEnemy();
+                        Spawning.isspawnended = false;
+                        sp = new Spawning(map.getmapList());
+                        mapFlag = true;
+                        shots.clearAll();
+                        soundManager.portalEffectStop();
+                        sp.GetEnemy().initialize(Content);
 
-                //    }
-                //    else if (Keyboard.GetState().IsKeyDown(Keys.D2) && mapindex != 4)
-                //    {
-                //        mapindex += 1;
-                //        map.CreateMap(mapindex);
-                //        sp.clearEnemy();
-                //        Spawning.isspawnended = false;
-                //        sp = new Spawning(map.getmapList());
-                //        mapFlag = true;
-                //        shots.clearAll();
-                //        soundManager.portalEffectStop();
-                //        sp.GetEnemy().initialize(Content);
-                //    }
+                    }
+                    else if (Keyboard.GetState().IsKeyDown(Keys.D2) && mapindex != 4)
+                    {
+                        isTeleportPlaying = true;
+                        //mapindex += 1;
+                        //map.CreateMap(mapindex);
+                        //sp.clearEnemy();
+                        //Spawning.isspawnended = false;
+                        //sp = new Spawning(map.getmapList());
+                        //mapFlag = true;
+                        //shots.clearAll();
+                        //soundManager.portalEffectStop();
+                        //sp.GetEnemy().initialize(Content);
+                    }
 
-                //}
+                }
                 if (Keyboard.GetState().IsKeyUp(Keys.D1) && Keyboard.GetState().IsKeyUp(Keys.D2))
                 {
                     mapFlag = false;

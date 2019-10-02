@@ -66,6 +66,7 @@ namespace KeyPixels
                 down = false;
                 turnSpeed = 0;
                 player.resetbbox();
+                Player.healthCounter = 10;
                 Game1.isTeleportPlaying = false;
                 Game1.isKeyPickup = false;
                 Game1.soundManager.mapChangeEffectStop();
